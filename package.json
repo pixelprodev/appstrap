@@ -1,11 +1,12 @@
 {
   "name": "appstrap",
   "version": "0.0.1",
-  "description": "",
+  "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.3"
-  }
+  },
+  "bin": "./index.js"
 }
