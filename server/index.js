@@ -25,6 +25,4 @@ async function loadRoutes(config) {
 }
 
 
-module.exports = {
-  initialize
-}
+
