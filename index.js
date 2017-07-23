@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 const { version } = require('./package.json')
-const { initialize } = require('./server')
-const AppstrapConfig = require('./server/AppstrapConfig')
-const AppstrapServer = require('./server/AppstrapServer')
+const AppstrapServer = require('./lib/Server')
 const program = require('commander')
 
 program
@@ -11,7 +9,4 @@ program
   .option('-p, --port <port>', 'Port to start express server on')
   .parse(process.argv);
 
-const config = new AppstrapConfig(program)
-const server = new AppstrapServer(config)
-
-server.start()
+AppstrapServer.start(program)
