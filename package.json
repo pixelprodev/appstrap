@@ -13,5 +13,8 @@
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"
   },
-  "bin": "./index.js"
+  "bin": "./index.js",
+  "devDependencies": {
+    "jest": "^20.0.4"
+  }
 }
