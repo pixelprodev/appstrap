@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "storybook": "NODE_ENV=story start-storybook -p 9001 -c ./interface/.storybook"
+  },
   "dependencies": {
     "body-parser": "1.17.2",
     "commander": "^2.11.0",
@@ -15,6 +18,15 @@
   },
   "bin": "./index.js",
   "devDependencies": {
-    "jest": "^20.0.4"
+    "@storybook/react": "^3.2.12",
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "glamor": "^2.20.40",
+    "glamorous": "^4.9.7",
+    "jest": "^20.0.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "webpack": "^3.6.0"
   }
 }
