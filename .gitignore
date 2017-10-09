@@ -1,3 +1,4 @@
 .idea
 node_modules
 demo
+interface/dist/interface.js

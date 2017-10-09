@@ -1,6 +1,9 @@
 doctype html
 html
     head
-
+        script(src='https://use.typekit.net/qxd4ymv.js')
+        script.
+            try{Typekit.load({ async: true });}catch(e){}
     body
-        span testing
+        div#react-host
+        script(src='/interface.js')
