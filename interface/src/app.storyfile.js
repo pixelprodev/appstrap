@@ -4,6 +4,7 @@ import Header from './Header'
 import React from 'react'
 import Tabs from './components/Tabs'
 import VerticalNav from './components/VerticalNav'
+import EndpointDetail from './components/EndpointDetail'
 
 const routes = [
   {endpoint: '/loadInitialData'},
@@ -22,4 +23,7 @@ storiesOf('Frame', module)
     <MemoryRouter initialEntries={['/routes']}>
       <VerticalNav routes={routes} />
     </MemoryRouter>
+  )
+  .add('Endpoint Detail', () =>
+    <EndpointDetail method='GET' endpoint='/loadInitialData'/>
   )
