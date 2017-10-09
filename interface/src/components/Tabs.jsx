@@ -9,7 +9,7 @@ const TabContainer = glamorous(Flex)({
   borderBottom: `1px solid ${colors.borderColor}`,
   ' a': {
     fontSize: 12,
-    fontWeight: 500,
+    fontWeight: 600,
     color: colors.text.greyMedium,
     display: 'block',
     lineHeight: '40px',
