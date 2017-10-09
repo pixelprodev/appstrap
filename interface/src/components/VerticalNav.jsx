@@ -29,7 +29,7 @@ const VerticalNavContainer = glamorous(Flex)({
 
 class VerticalNav extends React.Component {
   render () {
-    const { routes } = this.props
+    const { routes = [] } = this.props
     return (
       <VerticalNavContainer column>
         {routes.map(({endpoint}) =>
