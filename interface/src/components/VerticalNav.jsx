@@ -33,7 +33,7 @@ class VerticalNav extends React.Component {
     return (
       <VerticalNavContainer column>
         {routes.map(({endpoint}) =>
-          <NavLink to={endpoint} activeClassName='active'>{endpoint}</NavLink>)
+          <NavLink to={`/routes${endpoint}`} activeClassName='active'>{endpoint}</NavLink>)
         }
       </VerticalNavContainer>
     )

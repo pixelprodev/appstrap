@@ -31,15 +31,15 @@ const AppVersion = glamorous(Flex)({
 
 const ReloadConfigButton = glamorous(Button)({ width: 155 })
 
-const Header = () =>
+const Header = ({appName, appVersion}) =>
   <HeaderContainer center>
     <Flex center>
       <AppIcon />
       <AppDetails column>
-        <AppName>Test app name</AppName>
+        <AppName>{appName}</AppName>
         <AppVersion center>
           <Tag />
-          v155.5.0.1
+          {appVersion}
         </AppVersion>
       </AppDetails>
     </Flex>
