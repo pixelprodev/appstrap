@@ -25,7 +25,7 @@ class Frame extends React.Component {
         <Tabs />
         <Switch>
           <Route path='/presets' component={Presets} />
-          <Route path='/routes' component={Routes} />
+          <Route path='/routes/:endpoint?' component={Routes} />
           <Redirect to='/routes' />
         </Switch>
       </div>
