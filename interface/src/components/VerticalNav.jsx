@@ -1,12 +1,12 @@
 import { colors, Flex } from '../styles'
-import { NavLink } from 'react-router-dom'
 import glamorous from 'glamorous'
 import React from 'react'
+import { connect } from 'react-redux'
 
 const VerticalNavContainer = glamorous(Flex)({
   width: 275,
   border: `1px solid ${colors.borderColor}`,
-  ' a': {
+  ' div': {
     height: 40,
     width: '100%',
     fontSize: 12,
@@ -29,15 +29,24 @@ const VerticalNavContainer = glamorous(Flex)({
 
 class VerticalNav extends React.Component {
   render () {
-    const { routes = [] } = this.props
+    const { routes = [], activeRoute } = this.props
     return (
       <VerticalNavContainer column>
-        {routes.map(({endpoint}) =>
-          <NavLink key={endpoint} to={`/routes${endpoint}`} activeClassName='active'>{endpoint}</NavLink>)
-        }
+        {routes.map(({endpoint}, indx) =>
+          <div
+            key={endpoint}
+            className={activeRoute === indx ? 'active' : null}
+            onClick={() => this.props.setActiveRoute(indx)}>
+            {endpoint}
+          </div>
+        )}
       </VerticalNavContainer>
     )
   }
 }
 
-export default VerticalNav
+export const mapState = (state) => ({activeRoute: state.activeRoute})
+export const mapDispatch = (dispatch) => ({
+  setActiveRoute: (indx) => dispatch({type: 'SET_ACTIVE_ROUTE', activeRoute: indx})
+})
+export default connect(mapState, mapDispatch)(VerticalNav)

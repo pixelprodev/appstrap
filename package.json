@@ -38,6 +38,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-saga": "^0.15.6",
+    "reselect": "^3.0.1",
     "webpack": "^3.6.0",
     "webpack-build-notifier": "^0.1.16"
   }

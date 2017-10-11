@@ -1,7 +1,7 @@
-import { colors, Flex } from '../styles'
+import { colors, Flex } from '../../styles'
 import glamorous from 'glamorous'
 import React from 'react'
-import Button from './Button'
+import Button from '../Button'
 
 const EndpointDetailContainer = glamorous(Flex)({
   padding: 20
