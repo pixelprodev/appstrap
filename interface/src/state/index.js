@@ -4,13 +4,13 @@ import createSagaMiddleware from 'redux-saga'
 import reducer from './reducer'
 import rootSaga from './rootSaga'
 
-export function generateStore ({mode = (process.env.NODE_ENV || 'test'), injectedState = {}}) {
+export function generateStore () {
   let sagaMiddleware = createSagaMiddleware()
-  let generatedStore = mode === 'development'
-    ? createStore(reducer, injectedState, composeWithDevTools(applyMiddleware(sagaMiddleware)))
-    : createStore(reducer, injectedState, applyMiddleware(sagaMiddleware))
+  let generatedStore = process.env.NODE_ENV !== 'production'
+    ? createStore(reducer, composeWithDevTools(applyMiddleware(sagaMiddleware)))
+    : createStore(reducer, applyMiddleware(sagaMiddleware))
   sagaMiddleware.run(rootSaga)
   return generatedStore
 }
-const State = generateStore({})
+const State = generateStore()
 export default State

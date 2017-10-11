@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import { Flex } from './styles'
 import glamorous from 'glamorous'
+import EndpointDetails from './components/EndpointDetails'
 import React from 'react'
 import VerticalNav from './components/VerticalNav'
 
@@ -12,6 +13,7 @@ class Routes extends React.Component {
     return (
       <RoutesContainer>
         <VerticalNav routes={routes}/>
+        {routes.length > 0 && <EndpointDetails />}
       </RoutesContainer>
     )
   }

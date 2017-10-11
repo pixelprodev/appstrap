@@ -14,6 +14,7 @@ const EndpointLabel = glamorous.div({
 }, ({method}) => {
   switch (method) {
     case 'GET': return { color: '#44C164' }
+    case 'POST': return { color: '#2A9EF5' }
   }
 })
 const EndpointActions = glamorous(Flex)({ marginTop: 20 })
