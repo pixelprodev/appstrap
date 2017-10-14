@@ -1,4 +1,5 @@
 import { call, put, select } from 'redux-saga/effects'
+import { delay } from 'redux-saga'
 import { callAPI } from './api'
 import { selActiveRoute } from './state/selectors'
 
@@ -23,4 +24,10 @@ export function * setRouteModifier ({op, method, property, value}) {
   } catch (e) {
     console.error(e)
   }
+}
+
+export function * reloadConfig () {
+  yield call(callAPI, 'GET', '/reload')
+  yield delay(500)
+  window.location.reload()
 }

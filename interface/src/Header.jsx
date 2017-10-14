@@ -31,7 +31,7 @@ const AppVersion = glamorous(Flex)({
 
 const ReloadConfigButton = glamorous(Button)({ width: 155 })
 
-const Header = ({appName, appVersion}) =>
+const Header = ({appName, appVersion, reloadConfig}) =>
   <HeaderContainer center>
     <Flex center>
       <AppIcon />
@@ -43,7 +43,7 @@ const Header = ({appName, appVersion}) =>
         </AppVersion>
       </AppDetails>
     </Flex>
-    <ReloadConfigButton onClick={() => console.log('clicked')}>Reload Global Config</ReloadConfigButton>
+    <ReloadConfigButton onClick={() => reloadConfig()}>Reload Global Config</ReloadConfigButton>
   </HeaderContainer>
 
 export default Header

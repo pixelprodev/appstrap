@@ -18,10 +18,9 @@ css.global('*, *:before, *:after', {
 class Frame extends React.Component {
   componentWillMount () { this.props.loadAppData() }
   render () {
-    const { appName, appVersion } = this.props
     return (
       <div>
-        <Header appName={appName} appVersion={appVersion} />
+        <Header {...this.props} />
         <Tabs />
         <Switch>
           <Route path='/presets' component={Presets} />
@@ -34,7 +33,10 @@ class Frame extends React.Component {
 }
 
 const mapState = ({appName, appVersion}) => ({appName, appVersion})
-const mapDispatch = (dispatch) => ({loadAppData: () => dispatch({type: 'LOAD_APP_DATA'})})
+const mapDispatch = (dispatch) => ({
+  loadAppData: () => dispatch({type: 'LOAD_APP_DATA'}),
+  reloadConfig: () => dispatch({type: 'RELOAD_CONFIG'})
+})
 const ConnectedFrame = withRouter(connect(mapState, mapDispatch)(Frame))
 
 const DecoratedFrame = () =>
