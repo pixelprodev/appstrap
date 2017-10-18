@@ -10,6 +10,7 @@ class AppServer {
     this.app = express()
     this.config = config
     this.routeModifiers = routeModifiers
+    this.appState = {}
     this._configureApp()
     this._serveStaticAssets()
     this._serveUserProvidedRoutes()
@@ -28,13 +29,33 @@ class AppServer {
     })
   }
 
-  routeStateMiddleware (req, res, next) {
-    //todo assign state to req object
+  routeStateProviderMiddleware (req, res, next) {
+    let endpoint = req.path
+    let method = req.method
+    req.appState = this.appState
+    req.storedEndpointResponse = (this.appState[endpoint] && this.appState[endpoint][method])
+      ? this.appState[endpoint][method]
+      : {}
+    next()
+  }
+
+  routeStateUpdaterMiddleware (req, res, next) {
+    let defaultResJson = res.json
+    let endpoint = req.path
+    let method = req.method
+
+    res.json = (data) => {
+      if (!this.appState[endpoint]) { this.appState[endpoint] = {} }
+      if (!this.appState[endpoint][method]) { this.appState[endpoint][method] = {} }
+      this.appState[endpoint][method] = data
+      defaultResJson.call(res, data)
+    }
+
     next()
   }
 
   routeModifierMiddleware (req, res, next) {
-    let method = req.method.toLowerCase()
+    let method = req.method
     let endpoint = req.path
     let thisModifierGroup = this.routeModifiers.find(modifier => modifier.endpoint === endpoint)
     if (!thisModifierGroup) { return next() }
@@ -51,11 +72,12 @@ class AppServer {
   _serveUserProvidedRoutes () {
     const router = express.Router()
     this.config.model.routes.forEach(route => {
-      ['get', 'post', 'put', 'delete'].forEach(method => {
+      ['GET', 'POST', 'PUT', 'DELETE'].forEach(method => {
         if (route[method]) {
-          router[method](route.endpoint,
+          router[method.toLowerCase()](route.endpoint,
+            this.routeStateProviderMiddleware.bind(this),
             this.routeModifierMiddleware.bind(this),
-            this.routeStateMiddleware.bind(this),
+            this.routeStateUpdaterMiddleware.bind(this),
             route[method])
         }
       })

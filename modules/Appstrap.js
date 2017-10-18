@@ -34,7 +34,7 @@ class Appstrap {
     const modifierDefaults = {latency: false, latencyMS: 0, error: false}
     this.config.model.routes.forEach(route => {
       let thisRouteModifier = {endpoint: route.endpoint};
-      ['get', 'post', 'put', 'delete'].forEach(method => {
+      ['GET', 'POST', 'PUT', 'DELETE'].forEach(method => {
         if (route[method]) {
           thisRouteModifier[method] = modifierDefaults
         }
