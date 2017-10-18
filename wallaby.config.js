@@ -2,11 +2,14 @@ module.exports = function (wallaby) {
   return {
     files: [
       {pattern: 'interface/src/**/*.js'},
-      {pattern: 'interface/src/**/*.spec.js', ignore: true}
+      {pattern: 'interface/src/**/*.spec.js', ignore: true},
+      {pattern: 'lib/*.js'},
+      {pattern: 'modules/**/*.js'}
     ],
 
     tests: [
-      {pattern: 'interface/src/**/*.spec.js'}
+      {pattern: 'interface/src/**/*.spec.js'},
+      {pattern: 'test/**/*.spec.js'}
     ],
 
     testFramework: 'jest',

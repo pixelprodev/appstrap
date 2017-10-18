@@ -13,13 +13,12 @@ export function * loadAppData () {
 // property = error, latency, latencyMS
 // value only applies on latencyMS
 export function * setRouteModifier ({op, method, property, value}) {
-  const routeIndex = yield select(store => store.activeRoute)
   const activeRoute = yield select(selActiveRoute)
   const activeHandler = activeRoute.handlers.find(handler => handler.method === method)
   const modifiers = {...activeHandler}
   modifiers[property] = op === 'toggle' ? !modifiers[property] : value
   try {
-    yield call(callAPI, 'PUT', '/endpoint', {routeIndex, method: method.toLowerCase(), modifiers})
+    yield call(callAPI, 'PUT', '/endpoint', {endpoint: activeRoute.endpoint, method: method.toLowerCase(), modifiers})
     yield put({type: 'LOAD_APP_DATA'})
   } catch (e) {
     console.error(e)

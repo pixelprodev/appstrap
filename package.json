@@ -2,7 +2,7 @@
   "name": "appstrap",
   "version": "0.0.1",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
-  "main": "index.js",
+  "main": "./modules/Appstrap.js",
   "author": "",
   "license": "ISC",
   "scripts": {
@@ -13,11 +13,12 @@
     "body-parser": "1.17.2",
     "commander": "^2.11.0",
     "express": "^4.15.3",
+    "openport": "0.0.4",
     "pug": "2.0.0-rc.2",
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"
   },
-  "bin": "./index.js",
+  "bin": "./modules/cli.js",
   "devDependencies": {
     "@storybook/react": "^3.2.12",
     "babel-core": "^6.26.0",

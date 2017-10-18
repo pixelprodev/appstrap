@@ -3,13 +3,12 @@ const express = require('express')
 const path = require('path')
 const pug = require('pug')
 
-
 class ManagementInterface {
-  constructor (config) {
-    this.setRouteModifierDefaults(config)
+  constructor ({appData, routeModifiers, setRouteModifier}) {
     this.vhostApp = express()
+    this.routes = routeModifiers
     this.configureVhostApp()
-    this.registerHandlers(config)
+    this.registerHandlers(appData, setRouteModifier)
   }
 
   configureVhostApp () {
@@ -20,39 +19,25 @@ class ManagementInterface {
     this.vhostApp.use(bodyParser.urlencoded({extended: true}))
   }
 
-  setRouteModifierDefaults (config) {
-    this.routes = []
-    const modifierDefaults = {latency: false, latencyMS: 0, error: false}
-    config.model.routes.forEach(route => {
-      let thisRoute = {endpoint: route.endpoint};
-      ['get', 'post', 'put', 'delete'].forEach(method => {
-        if (route[method]) {
-          thisRoute[method] = modifierDefaults
-        }
-      })
-      this.routes.push(thisRoute)
-    })
-  }
-
-  registerHandlers (config) {
+  registerHandlers (appData, setRouteModifier) {
     const Router = express.Router()
     Router.route('/app-data').get((req, res) => {
       res.json({
-        appName: config.model.appName,
-        appVersion: config.model.appVersion,
+        appName: appData.appName,
+        appVersion: appData.appVersion,
         presets: [],
         routes: this.routes
       })
     })
     Router.route('/endpoint').put((req, res) => {
-      const { routeIndex, method, modifiers } = req.body
+      const { endpoint, method, modifiers } = req.body
       delete modifiers.method
-      this.routes[routeIndex][method] = modifiers
+      console.log('got here at endpoint')
+      setRouteModifier(endpoint, method, modifiers)
       res.sendStatus(200)
     })
     Router.route('/reload').get((req, res) => {
       res.sendStatus(200)
-      process.send({reload: 'true'})
     })
     this.vhostApp.use(Router)
   }
