@@ -12,16 +12,21 @@ class Appstrap {
   }
 
   start () {
-    this.appServer = new AppServer({routeModifiers: this.routeModifiers, config: this.config})
-    this.managementInterface = new ManagementInterface({
-      appData: {appName: this.config.model.appName, appVersion: this.config.model.appVersion},
-      routeModifiers: this.routeModifiers,
-      setRouteModifier: this.setRouteModifier.bind(this)
+    return new Promise(done => {
+      this.appServer = new AppServer({routeModifiers: this.routeModifiers, config: this.config})
+      this.managementInterface = new ManagementInterface({
+        appData: {appName: this.config.model.appName, appVersion: this.config.model.appVersion},
+        routeModifiers: this.routeModifiers,
+        setRouteModifier: this.setRouteModifier.bind(this)
+      })
+      this.appServer.app.use(vhost('appstrap.localhost', this.managementInterface.vhostApp))
+      this.appServer.serveBundle()
+      this.appServer.start().then(done)
     })
-    this.appServer.app.use(vhost('appstrap.localhost', this.managementInterface.vhostApp))
-    this.appServer.serveBundle()
-    this.appServer.start()
-    this.host = `http://localhost:${this.appServer.port}`
+  }
+
+  loadPreset (presetName) {
+    return this.appServer.loadPreset(presetName)
   }
 
   setRouteModifier (endpoint, method, propValue) {

@@ -96,7 +96,7 @@ class AppServer {
 
 
   start () {
-    isPortTaken(this.config.port)
+    return isPortTaken(this.config.port)
       .then(isAvailable => {
         if (isAvailable) {
           this.port = this.config.port
@@ -108,6 +108,15 @@ class AppServer {
           })
         }
       })
+  }
+
+  loadPreset (presetName) {
+    try {
+      const preset = require(path.resolve(this.config.configPath, 'presets', presetName))
+      this.appState = preset.data
+    } catch (e) {
+      console.log('failed to load preset')
+    }
   }
 }
 
