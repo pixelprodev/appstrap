@@ -8,7 +8,6 @@ const EndpointDetailContainer = glamorous(Flex)({
   padding: 20
 })
 const EndpointLabel = glamorous.div({
-  width: '50%',
   fontSize: 16,
   padding: '5px 0',
   borderBottom: `1px solid ${colors.borderColor}`

@@ -9,7 +9,7 @@ export const selActiveRoute = createSelector(
       endpoint: selectedRoute.endpoint,
       handlers: []
     };
-    ['get', 'post', 'put', 'delete'].forEach(method => {
+    ['GET', 'POST', 'PUT', 'DELETE'].forEach(method => {
       if (selectedRoute[method]) {
         returnObj.handlers.push({
           method: method.toUpperCase(),

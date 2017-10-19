@@ -94,20 +94,21 @@ class AppServer {
     //thoughts: if webpack bundling is enabled - compile to a temp directory for the file and serve that instead - ignore the directive in config.model if watch is enabled
   }
 
-
   start () {
-    return isPortTaken(this.config.port)
-      .then(isAvailable => {
-        if (isAvailable) {
-          this.port = this.config.port
-          this.app.listen(this.port, () => console.log(`listening on ${this.port}`))
-        } else {
-          openport.find((err, port) => {
-            this.port = port
-            this.app.listen(this.port, () => console.log(`listening on ${this.port}`))
-          })
-        }
-      })
+    return new Promise(resolve => {
+      isPortTaken(this.config.port)
+        .then(isAvailable => new Promise(goNext => {
+          if (!isAvailable) {
+            openport.find((err, port) => {
+              this.config.port = port
+              goNext()
+            })
+          } else {
+            goNext()
+          }
+        }))
+        .then(() => this.app.listen(this.config.port, () => { resolve() }))
+    })
   }
 
   loadPreset (presetName) {
@@ -115,7 +116,7 @@ class AppServer {
       const preset = require(path.resolve(this.config.configPath, 'presets', presetName))
       this.appState = preset.data
     } catch (e) {
-      console.log('failed to load preset')
+      throw('failed to load preset')
     }
   }
 }

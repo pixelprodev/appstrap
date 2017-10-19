@@ -32,7 +32,6 @@ class ManagementInterface {
     Router.route('/endpoint').put((req, res) => {
       const { endpoint, method, modifiers } = req.body
       delete modifiers.method
-      console.log('got here at endpoint')
       setRouteModifier(endpoint, method, modifiers)
       res.sendStatus(200)
     })

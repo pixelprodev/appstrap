@@ -18,7 +18,7 @@ export function * setRouteModifier ({op, method, property, value}) {
   const modifiers = {...activeHandler}
   modifiers[property] = op === 'toggle' ? !modifiers[property] : value
   try {
-    yield call(callAPI, 'PUT', '/endpoint', {endpoint: activeRoute.endpoint, method: method.toLowerCase(), modifiers})
+    yield call(callAPI, 'PUT', '/endpoint', {endpoint: activeRoute.endpoint, method, modifiers})
     yield put({type: 'LOAD_APP_DATA'})
   } catch (e) {
     console.error(e)
