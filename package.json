@@ -1,10 +1,11 @@
 {
-  "name": "appstrap",
-  "version": "0.0.1",
+  "name": "@pixelprodotco/appstrap",
+  "version": "0.0.2",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./modules/Appstrap.js",
   "author": "",
   "license": "ISC",
+  "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
     "storybook": "NODE_ENV=story start-storybook -p 9001 -c ./interface/.storybook",
     "develop": "NODE_ENV=development webpack --progress --colors --watch"
