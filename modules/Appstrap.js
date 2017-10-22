@@ -4,20 +4,23 @@ const ManagementInterface = require('./ManagementInterface')
 const vhost = require('vhost')
 
 class Appstrap {
-  constructor ({configPath, port} = {}) {
+  constructor ({configPath, port, loadInterface = false} = {}) {
     this.config = new Config({configPath, port})
+    this.loadInterface = loadInterface
     this._setupDefaultRouteModifiers()
   }
 
   start () {
     return new Promise(done => {
       this.appServer = new AppServer({routeModifiers: this.routeModifiers, config: this.config})
-      this.managementInterface = new ManagementInterface({
-        appData: {appName: this.config.model.appName, appVersion: this.config.model.appVersion},
-        routeModifiers: this.routeModifiers,
-        setRouteModifier: this.setRouteModifier.bind(this)
-      })
-      this.appServer.app.use(vhost('appstrap.localhost', this.managementInterface.vhostApp))
+      if (this.loadInterface) {
+        this.managementInterface = new ManagementInterface({
+          appData: {appName: this.config.model.appName, appVersion: this.config.model.appVersion},
+          routeModifiers: this.routeModifiers,
+          setRouteModifier: this.setRouteModifier.bind(this)
+        })
+        this.appServer.app.use(vhost('appstrap.localhost', this.managementInterface.vhostApp))
+      }
       this.appServer.serveBundle()
       this.appServer.start().then(() => {
         this.host = `http://localhost:${this.config.port}`

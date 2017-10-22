@@ -9,5 +9,7 @@ program
   .option('-p, --port <port>', 'Port to start express server on')
   .parse(process.argv);
 
+program.loadInterface = true
+
 const Instance = new Appstrap(program)
 Instance.start()
