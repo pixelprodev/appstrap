@@ -138,7 +138,7 @@ class AppServer {
       }, {})
       this.appState = combinedPresetData
     } catch (e) {
-      throw('failed to load presets', e)
+      throw('failed to load presets')
     }
   }
 }
