@@ -52,6 +52,12 @@ class Appstrap {
     })
   }
 
+  async reset () {
+    await this.appServer.exit()
+    this._setupDefaultRouteModifiers()
+    await this.start()
+  }
+
   exit () {
     return this.appServer.exit()
   }
