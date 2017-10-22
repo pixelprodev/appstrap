@@ -4,6 +4,7 @@ const path = require('path')
 const pug = require('pug')
 const Net = require('net')
 const openport = require('openport')
+const http = require('http')
 
 class AppServer {
   constructor ({routeModifiers, config}) {
@@ -107,7 +108,16 @@ class AppServer {
             goNext()
           }
         }))
-        .then(() => this.app.listen(this.config.port, () => { resolve() }))
+        .then(() => {
+          this.serverInstance = http.createServer(this.app)
+          this.serverInstance.listen(this.config.port, () => { resolve() })
+        })
+    })
+  }
+
+  exit () {
+    return new Promise(resolve => {
+      this.serverInstance.close(() => resolve())
     })
   }
 

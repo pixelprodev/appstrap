@@ -53,7 +53,7 @@ class Appstrap {
   }
 
   exit () {
-    process.exit()
+    return this.appServer.exit()
   }
 }
 
