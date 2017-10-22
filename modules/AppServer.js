@@ -129,6 +129,18 @@ class AppServer {
       throw('failed to load preset')
     }
   }
+
+  loadPresets (presetArray) {
+    try {
+      const combinedPresetData = presetArray.reduce((dataObj, nextFileName) => {
+        const mergeData = require(path.resolve(this.config.configPath, 'presets', nextFileName))
+        return Object.assign(dataObj, mergeData.data)
+      }, {})
+      this.appState = combinedPresetData
+    } catch (e) {
+      throw('failed to load presets', e)
+    }
+  }
 }
 
 module.exports = AppServer

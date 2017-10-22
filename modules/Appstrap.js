@@ -33,6 +33,14 @@ class Appstrap {
     return this.appServer.loadPreset(presetName)
   }
 
+  loadPresets (presetArray) {
+    if (!Array.isArray(presetArray)) {
+      throw new Error ('Presets must be in the form of an array.  ' +
+        'If you only want to load one preset, use Appstrap.loadPreset() instead')
+    }
+    this.appServer.loadPresets(presetArray)
+  }
+
   setRouteModifier (endpoint, method, propValue) {
     const thisModifier = this.routeModifiers.find(modifier => modifier.endpoint === endpoint)
     thisModifier[method] = Object.assign({}, thisModifier[method], propValue)
