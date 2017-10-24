@@ -15,7 +15,6 @@ export const selActiveRoute = createSelector(
           method: method.toUpperCase(),
           ...selectedRoute[method]
         })
-
       }
     })
     return returnObj

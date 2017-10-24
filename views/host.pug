@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title Appstrap
+  body
+    if container.startsWith('#')
+      div(id= container.replace('#', ''))
+    else
+      div(class= container.replace('.', ''))
+
+    script(src= url)
