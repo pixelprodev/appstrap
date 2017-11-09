@@ -13,17 +13,26 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /(\.js[x]?$)/, loader: 'babel-loader' }
+      {
+        test: /(\.js[x]?$)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ["es2015", "es2017", "react"],
+            plugins: ["transform-object-rest-spread", "glamorous-displayname"]
+          }
+        }
+      }
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('development')
+        NODE_ENV: JSON.stringify('production')
       }
     }),
     new WebpackBuildNotifierPlugin({
-      title: 'Ply',
+      title: 'Appstrap-Interface',
       suppressSuccess: false
     })
   ]

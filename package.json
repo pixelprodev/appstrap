@@ -9,7 +9,7 @@
   "scripts": {
     "storybook": "NODE_ENV=story start-storybook -p 9001 -c ./interface/.storybook",
     "develop": "NODE_ENV=development webpack --progress --colors --watch",
-    "build": "babel ./lib/src --out-dir ./lib/dist",
+    "build": "webpack && babel ./lib/src --out-dir ./lib/dist",
     "prepublish": "npm run build"
   },
   "dependencies": {
