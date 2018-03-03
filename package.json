@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "body-parser": "1.17.2",
-    "commander": "^2.11.0",
+    "commander": "^2.14.1",
     "express": "^4.15.3",
     "openport": "0.0.4",
     "pug": "2.0.0-rc.2",
