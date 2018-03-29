@@ -46,5 +46,4 @@ const DecoratedFrame = () =>
     </BrowserRouter>
   </Provider>
 
-
 ReactDOM.render(<DecoratedFrame />, document.getElementById('react-host'))

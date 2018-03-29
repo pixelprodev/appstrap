@@ -45,15 +45,14 @@ b, u, i, center,
   article, aside, canvas, details, figcaption, figure,
   footer, header, hgroup, menu, nav, section, summary,
   time, mark, audio, video`,
-  {
-    margin: 0,
-    padding: 0,
-    border: 0,
-    outline: 0,
-    fontSize: 14,
-    verticalAlign: 'baseline'
-  }
-)
+{
+  margin: 0,
+  padding: 0,
+  border: 0,
+  outline: 0,
+  fontSize: 14,
+  verticalAlign: 'baseline'
+})
 /* HTML5 display-role reset for older browsers */
 css.global(`article, aside, details, figcaption, figure,
   footer, header, hgroup, menu, nav, section`, {display: 'block'})

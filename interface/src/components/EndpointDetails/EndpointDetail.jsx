@@ -26,7 +26,7 @@ const VerticalDivider = glamorous.div({
 })
 const ToggleErrorButton = glamorous(Button)({
   width: 155,
-  '.active':{
+  '.active': {
     background: 'red',
     color: '#ffffff'
   }
@@ -34,7 +34,7 @@ const ToggleErrorButton = glamorous(Button)({
 const ToggleLatencyButton = glamorous(Button)({
   width: 155,
   marginRight: 20,
-  '.active':{
+  '.active': {
     background: '#D4AC0D',
     color: '#ffffff'
   }
@@ -58,18 +58,18 @@ class EndpointDetail extends React.Component {
         <EndpointLabel method={method}>{`${method} ${endpoint}`}</EndpointLabel>
         <EndpointActions center>
           <ToggleErrorButton
-            className={error ? 'active' : null }
+            className={error ? 'active' : null}
             onClick={() => toggleError()}>
             Return Error
           </ToggleErrorButton>
           <VerticalDivider />
           <ToggleLatencyButton
-            className={latency ? 'active' : null }
+            className={latency ? 'active' : null}
             onClick={() => toggleLatency()}>
             Simulate Latency
           </ToggleLatencyButton>
           {latency &&
-            <LatencyMS value={latencyMS} onChange={(e) => setLatencyMS(e.target.value)}/>
+            <LatencyMS value={latencyMS} onChange={(e) => setLatencyMS(e.target.value)} />
           }
         </EndpointActions>
       </EndpointDetailContainer>
@@ -81,6 +81,6 @@ export const mapState = (state) => ({})
 export const mapDispatch = (dispatch, {method}) => ({
   toggleError: () => dispatch({type: 'SET_ROUTE_MODIFIER', op: 'toggle', property: 'error', method}),
   toggleLatency: () => dispatch({type: 'SET_ROUTE_MODIFIER', op: 'toggle', property: 'latency', method}),
-  setLatencyMS: (value) => dispatch({type: 'SET_ROUTE_MODIFIER', op: 'set', property: 'latencyMS', value, method}),
+  setLatencyMS: (value) => dispatch({type: 'SET_ROUTE_MODIFIER', op: 'set', property: 'latencyMS', value, method})
 })
 export default connect(mapState, mapDispatch)(EndpointDetail)

@@ -7,7 +7,7 @@ const initialState = {
   activeRoute: 0
 }
 function reducer (state = initialState, action) {
-  switch(action.type) {
+  switch (action.type) {
     case 'SET_APP_DATA':
       return {
         ...state,

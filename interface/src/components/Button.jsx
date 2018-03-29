@@ -1,6 +1,8 @@
 import { colors } from '../styles'
 import glamorous from 'glamorous'
+/* eslint-disable no-unused-vars */
 import React from 'react'
+/* eslint-disable no-unused-vars */
 
 const StyledButton = glamorous.button({
   cursor: 'pointer',

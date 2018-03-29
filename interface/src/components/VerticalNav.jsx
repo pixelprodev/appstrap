@@ -22,7 +22,7 @@ const VerticalNavContainer = glamorous(Flex)({
       borderRight: '2px solid #2A9EF5'
     },
     '&:not(:last-of-type)': {
-      borderBottom: `1px solid ${colors.borderColor}`,
+      borderBottom: `1px solid ${colors.borderColor}`
     }
   }
 })

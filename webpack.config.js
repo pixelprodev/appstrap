@@ -19,8 +19,8 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             babelrc: false,
-            presets: ["es2015", "es2017", "react"],
-            plugins: ["transform-object-rest-spread", "glamorous-displayname"]
+            presets: ['es2015', 'es2017', 'react'],
+            plugins: ['transform-object-rest-spread', 'glamorous-displayname']
           }
         }
       }

@@ -9,8 +9,9 @@
   "scripts": {
     "storybook": "NODE_ENV=story start-storybook -p 9001 -c ./interface/.storybook",
     "develop": "NODE_ENV=development webpack --progress --colors --watch",
-    "build": "webpack && babel ./lib/src --out-dir ./lib/dist",
-    "prepublish": "npm run build"
+    "build": "webpack && lint && babel ./lib/src --out-dir ./lib/dist",
+    "prepublish": "npm run build",
+    "lint": "standard"
   },
   "dependencies": {
     "body-parser": "1.17.2",
@@ -47,7 +48,14 @@
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1",
     "sinon": "^4.4.9",
+    "standard": "^11.0.1",
     "webpack": "^3.6.0",
     "webpack-build-notifier": "^0.1.16"
+  },
+  "standard": {
+    "envs": [
+      "jest",
+      "browser"
+    ]
   }
 }

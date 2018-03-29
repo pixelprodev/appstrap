@@ -12,7 +12,7 @@ class Routes extends React.Component {
     const { routes } = this.props
     return (
       <RoutesContainer>
-        <VerticalNav routes={routes}/>
+        <VerticalNav routes={routes} />
         {routes.length > 0 && <EndpointDetails />}
       </RoutesContainer>
     )

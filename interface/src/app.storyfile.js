@@ -25,5 +25,5 @@ storiesOf('Frame', module)
     </MemoryRouter>
   )
   .add('Endpoint Detail', () =>
-    <EndpointDetail method='GET' endpoint='/loadInitialData'/>
+    <EndpointDetail method='GET' endpoint='/loadInitialData' />
   )
