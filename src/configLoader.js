@@ -17,8 +17,8 @@ function _ensureFileExists (configFilePath) {
   }
 }
 
-function _ensureFileIntegrity ({bundle, assets, routes}) {
-  if (!bundle || !assets || !routes) {
+function _ensureFileIntegrity ({bundle, assets, endpoints}) {
+  if (!bundle || !assets || !endpoints) {
     throw new ErrConfigInvalid()
   }
 }

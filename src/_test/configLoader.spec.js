@@ -20,7 +20,7 @@ describe('config loader', () => {
       const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
       const filePath = dirParts.join(path.sep)
       const configData = configLoader.load(filePath)
-      expect(Object.keys(configData)).toEqual(['bundle', 'assets', 'routes', 'name', 'version'])
+      expect(Object.keys(configData)).toEqual(['bundle', 'assets', 'endpoints', 'name', 'version'])
     })
   })
   describe('private methods', () => {
@@ -36,22 +36,22 @@ describe('config loader', () => {
     })
     describe('_ensureFileIntegrity', () => {
       test('throws error when config file is missing "bundle" property', () => {
-        const configData = { assets: {foo: 'bar'}, routes: [] }
+        const configData = { assets: {foo: 'bar'}, endpoints: [] }
         expect(() => _ensureFileIntegrity(configData)).toThrow(ErrConfigInvalid)
       })
 
       test('throws error when config file is missing "assets" property', () => {
-        const configData = { bundle: {foo: 'bar'}, routes: [] }
+        const configData = { bundle: {foo: 'bar'}, endpoints: [] }
         expect(() => _ensureFileIntegrity(configData)).toThrow(ErrConfigInvalid)
       })
 
       test('throws error when config file is missing "routes" property', () => {
-        const configData = { bundle: {foo: 'bar'}, assets: {foo: 'bar'} }
+        const configData = { bundle: {foo: 'bar'}, endpoints: {foo: 'bar'} }
         expect(() => _ensureFileIntegrity(configData)).toThrow(ErrConfigInvalid)
       })
 
       test('function returns without error if all properties are valid', () => {
-        const configData = { bundle: {foo: 'bar'}, assets: {foo: 'bar'}, routes: [] }
+        const configData = { bundle: {foo: 'bar'}, assets: {foo: 'bar'}, endpoints: [] }
         expect(() => _ensureFileIntegrity(configData)).not.toThrow()
       })
     })
@@ -59,7 +59,7 @@ describe('config loader', () => {
       // TODO investigate reference mismatch on _ensureFileIntegrity
       xtest('it validates configData before returning', () => {
         sinon.spy(_ensureFileIntegrity)
-        const configData = {bundle: {}, assets: [{}], routes: []}
+        const configData = {bundle: {}, assets: [{}], endpoints: []}
         _getConfigFileData({configData})
         expect(_ensureFileIntegrity.called).toBe(true)
         _ensureFileIntegrity.restore()
