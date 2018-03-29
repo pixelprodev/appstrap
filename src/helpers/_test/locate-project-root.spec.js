@@ -12,7 +12,7 @@ describe('locate project root', () => {
     expect(locateProjectRoot()).toEqual(process.cwd())
   })
   test('Locates project root when cwd is in a child folder of parent that contains package.json', () => {
-    process.chdir('./lib/src/_test')
+    process.chdir('./src/_test')
     expect(locateProjectRoot()).toEqual(defaultDir)
   })
 })
