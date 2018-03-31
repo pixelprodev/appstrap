@@ -51,6 +51,7 @@
     "reselect": "^3.0.1",
     "sinon": "^4.4.9",
     "standard": "^11.0.1",
+    "supertest": "^3.0.0",
     "webpack": "^3.6.0",
     "webpack-build-notifier": "^0.1.16"
   },
@@ -60,5 +61,8 @@
       "browser"
     ]
   },
-  "pre-commit": ["lint", "test"]
+  "pre-commit": [
+    "lint",
+    "test"
+  ]
 }

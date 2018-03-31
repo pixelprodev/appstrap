@@ -6,6 +6,7 @@ const { ErrConfigNotFound, ErrConfigInvalid } = require('./errors')
 function load (configFilePath = './.appstrap/config.js') {
   _ensureFileExists(configFilePath)
   return {
+    configFilePath,
     ..._getConfigFileData({configFilePath}),
     ..._getPackageInfo()
   }

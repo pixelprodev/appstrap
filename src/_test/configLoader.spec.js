@@ -20,7 +20,12 @@ describe('config loader', () => {
       const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
       const filePath = dirParts.join(path.sep)
       const configData = configLoader.load(filePath)
-      expect(Object.keys(configData)).toEqual(['bundle', 'assets', 'endpoints', 'name', 'version'])
+      const configDataProperties = ['bundle', 'assets', 'endpoints', 'name', 'version', 'configFilePath']
+      expect.assertions(configDataProperties.length)
+      Object.keys(configData).forEach(key => {
+        const propertyIndex = configDataProperties.findIndex(prop => prop === key)
+        expect(propertyIndex).toBeGreaterThanOrEqual(0)
+      })
     })
   })
   describe('private methods', () => {

@@ -1,12 +1,20 @@
 class Endpoint {
-  constructor ({path, method, handler}) {
+  constructor (
+    {path, method, handler},
+    {
+      error = false,
+      errorStatus = 500,
+      latency = false,
+      latencyMS = 0
+    } = {}
+  ) {
     this.path = path
     this.method = method
     this.handler = handler
-    this.error = false
-    this.errorStatus = 500
-    this.latency = false
-    this.latencyMS = 0
+    this.error = error
+    this.errorStatus = errorStatus
+    this.latency = latency
+    this.latencyMS = latencyMS
   }
 }
 
