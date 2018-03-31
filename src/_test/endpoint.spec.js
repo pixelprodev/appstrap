@@ -6,24 +6,17 @@ describe('Endpoint', function () {
   this.config = loadTestConfig()
   describe('constructor', () => {
     test('property contract', () => {
-      let { path, ...endpointSet } = this.config.endpoints[0]
-      const endpoints = []
-      Object.keys(endpointSet).forEach(endpoint => {
-        endpoints.push(new Endpoint({
-          path,
-          method: endpoint,
-          handler: endpointSet[endpoint]
-        }))
+      this.config.endpoints.forEach(endpoint => {
+        expect(endpoint).toBeInstanceOf(Endpoint)
+        expect(typeof endpoint.path).toBe('string')
+        expect(endpoint.method).toBeDefined()
+        expect(endpoint.handler).toBeDefined()
+        expect(typeof endpoint.handler).toEqual('function')
+        expect(endpoint.error).toEqual(false)
+        expect(endpoint.errorStatus).toEqual(500)
+        expect(endpoint.latency).toEqual(false)
+        expect(endpoint.latencyMS).toEqual(0)
       })
-      const createdEndpoint = endpoints.shift()
-      expect(createdEndpoint.path).toEqual(path)
-      expect(createdEndpoint.method).toBeDefined()
-      expect(createdEndpoint.handler).toBeDefined()
-      expect(typeof createdEndpoint.handler).toEqual('function')
-      expect(createdEndpoint.error).toEqual(false)
-      expect(createdEndpoint.errorStatus).toEqual(500)
-      expect(createdEndpoint.latency).toEqual(false)
-      expect(createdEndpoint.latencyMS).toEqual(0)
     })
     test('throws error when attempting to create a new endpoint without path', () => {
       expect(() => new Endpoint({method: 'get', handler: () => {}})).toThrow(ErrEndpointInvalid)
