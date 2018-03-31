@@ -18,7 +18,17 @@ class ErrConfigInvalid extends Error {
   }
 }
 
+class ErrEndpointInvalid extends Error {
+  constructor () {
+    super(`
+      Endpoint supplied without path, handler, or method.  Please check and try again.
+    `, 500)
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
 module.exports = {
   ErrConfigNotFound,
-  ErrConfigInvalid
+  ErrConfigInvalid,
+  ErrEndpointInvalid
 }
