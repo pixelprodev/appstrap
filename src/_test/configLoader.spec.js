@@ -1,11 +1,13 @@
 const getProjectRoot = require('../helpers/locate-project-root')
 const path = require('path')
+const Endpoint = require('../Endpoint')
 const configLoader = require('../configLoader')
 const {
   _ensureFileExists,
   _ensureFileIntegrity,
   _getConfigFileData,
-  _getPackageInfo
+  _getPackageInfo,
+  _generateEndpointsFromConfig
 } = configLoader._test
 const {
   ErrConfigInvalid,
@@ -40,11 +42,6 @@ describe('config loader', () => {
       })
     })
     describe('_ensureFileIntegrity', () => {
-      test('throws error when config file is missing "bundle" property', () => {
-        const configData = { assets: {foo: 'bar'}, endpoints: [] }
-        expect(() => _ensureFileIntegrity(configData)).toThrow(ErrConfigInvalid)
-      })
-
       test('throws error when config file is missing "assets" property', () => {
         const configData = { bundle: {foo: 'bar'}, endpoints: [] }
         expect(() => _ensureFileIntegrity(configData)).toThrow(ErrConfigInvalid)
@@ -74,6 +71,27 @@ describe('config loader', () => {
       test('it returns the package name and version from nearest package json in folder tree', () => {
         const packageInfo = require('../../package.json')
         expect(_getPackageInfo()).toEqual({name: packageInfo.name, version: packageInfo.version})
+      })
+    })
+    describe('_generateEndpointsFromConfig', function () {
+      beforeAll(() => {
+        this.endpoints = [
+          { path: 'some', get: () => {} },
+          { path: 'some/nested/path', get: () => {} },
+          { path: 'some/nested', get: () => {} }
+        ]
+        this.generatedEndpoints = _generateEndpointsFromConfig(this.endpoints)
+      })
+      test('it returns an array of Endpoints', () => {
+        this.generatedEndpoints.forEach(endpoint => {
+          expect(endpoint).toBeInstanceOf(Endpoint)
+        })
+      })
+      test('the returned array is sorted from longest path to shortest path', () => {
+        const expectedPathOrder = ['some/nested/path', 'some/nested', 'some']
+        this.generatedEndpoints.forEach((endpoint, indx) => {
+          expect(endpoint.path).toEqual(expectedPathOrder[indx])
+        })
       })
     })
   })

@@ -23,13 +23,20 @@ function _ensureFileExists (configFilePath) {
 }
 
 function _ensureFileIntegrity ({bundle, assets, endpoints}) {
-  if (!bundle || !assets || !endpoints) {
+  if (!assets || !endpoints) {
     throw new ErrConfigInvalid()
   }
 }
 
 function _getConfigFileData ({configFilePath, configData = require(configFilePath)}) {
   _ensureFileIntegrity(configData)
+  /* If a config file is set up to be a single page app, it will contain a bundle declaration
+   * for those circumstances, we usually want to control the catch all route so it responds with the
+   * html file that calls the bundle.  If the user wants to override that, they can, but we should warn
+   * them not to. */
+  if (configData.bundle && configData.endpoints.findIndex(e => e.path === '*') > -1) {
+    _warnAboutCatchAllEndpoint()
+  }
   return configData
 }
 
@@ -49,12 +56,20 @@ function _generateEndpointsFromConfig (baseConfigEndpoints) {
   return endpoints.sort((a, b) => b.path.length - a.path.length)
 }
 
+function _warnAboutCatchAllEndpoint () {
+  console.warn(`
+    Your single page app config contains a wildcard endpoint ('*').
+    By default, we create this endpoint for you and handle serving your bundle appropriately.
+  `)
+}
+
 module.exports = {
   load,
   _test: {
     _ensureFileExists,
     _ensureFileIntegrity,
     _getConfigFileData,
-    _getPackageInfo
+    _getPackageInfo,
+    _generateEndpointsFromConfig
   }
 }
