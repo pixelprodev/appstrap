@@ -19,7 +19,7 @@
     "commander": "^2.14.1",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
-    "openport": "0.0.4",
+    "get-port": "^3.2.0",
     "pre-commit": "^1.2.2",
     "pug": "2.0.0-rc.2",
     "redux": "^3.7.2",
