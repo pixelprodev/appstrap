@@ -7,10 +7,6 @@ module.exports = {
       get: (req, res) => res.send('this is the root')
     },
     {
-      path: '*',
-      get: (req, res) => res.send('this is the catch all')
-    },
-    {
       path: '/test',
       get: (req, res) => res.json({test: 'test'}),
       post: (req, res) => res.sendStatus(200)

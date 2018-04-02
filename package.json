@@ -3,6 +3,7 @@
   "version": "0.0.15",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./dist/Appstrap.js",
+  "bin": "./dist/cli.js",
   "author": "",
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
@@ -26,7 +27,6 @@
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"
   },
-  "bin": "./dist/cli.js",
   "devDependencies": {
     "@storybook/react": "^3.2.12",
     "babel-cli": "6.26.0",

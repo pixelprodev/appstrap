@@ -1,4 +1,4 @@
-const locateProjectRoot = require('../helpers/locate-project-root')
+const locateProjectRoot = require('../helpers/locateProjectRoot')
 const path = require('path')
 const Appstrap = require('../Appstrap')
 const AppServer = require('../AppServer')
@@ -9,8 +9,8 @@ describe('Appstrap', () => {
     test('config is loaded from filepath when provided', () => {
       const projectRoot = locateProjectRoot()
       const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
-      const configFilePath = dirParts.join(path.sep)
-      const strap = new Appstrap({configFilePath})
+      const configPath = dirParts.join(path.sep)
+      const strap = new Appstrap({configPath})
       expect(strap.config.name).toEqual(pkg.name)
       expect(strap.config.version).toEqual(pkg.version)
     })

@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const locateProjectRoot = require('../locate-project-root')
+const locateProjectRoot = require('../locateProjectRoot')
 
 const defaultDir = process.cwd()
 

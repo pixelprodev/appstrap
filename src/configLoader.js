@@ -1,10 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
-const locateProjectRoot = require('./helpers/locate-project-root')
+const locateProjectRoot = require('./helpers/locateProjectRoot')
 const { ErrConfigNotFound, ErrConfigInvalid } = require('./errors')
 const Endpoint = require('./Endpoint')
 
-function load (configFilePath = './.appstrap/config.js') {
+function load (configFilePath = '/.appstrap/config.js') {
   _ensureFileExists(configFilePath)
   const configFileData = _getConfigFileData({configFilePath})
   const endpoints = _generateEndpointsFromConfig(configFileData.endpoints)
@@ -28,7 +28,7 @@ function _ensureFileIntegrity ({bundle, assets, endpoints}) {
   }
 }
 
-function _getConfigFileData ({configFilePath, configData = require(configFilePath)}) {
+function _getConfigFileData ({configFilePath, configData = require(path.resolve(configFilePath))}) {
   _ensureFileIntegrity(configData)
   /* If a config file is set up to be a single page app, it will contain a bundle declaration
    * for those circumstances, we usually want to control the catch all route so it responds with the
