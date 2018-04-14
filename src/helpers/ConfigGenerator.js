@@ -3,8 +3,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 const prompts = {
-  isSinglePageApp: `
-  Are you strapping a single page app? [y/n]:  `,
+  isSinglePageApp: `\rAre you strapping a single page app? [y/n]:  `,
   bundlePath: `  Please provide the path to your bundle file [relative to current dir]:  `,
   bundleHost: `  Please specify the html container your bundle expects [i.e. #container or .host]:  `
 }
@@ -22,16 +21,12 @@ class ConfigGenerator {
 
     if (isSinglePageApp) {
       bundle.path = await this.promptUser(prompts.bundlePath)
-      const splitFileName = this.bundle.path.split(path.sep)
-      bundle.fileName = splitFileName.pop()
-      bundle.directory = splitFileName.join(path.sep)
-      // todo validate bundle exists in path
       bundle.host = await this.promptUser(prompts.bundleHost)
     }
 
     const configContents = this.generateConfigContents(bundle)
     await this.writeConfigFile(configContents)
-    await this.showGenerationSummary()
+    this.showGenerationSummary()
 
     this.rl.close()
   }
@@ -44,6 +39,11 @@ class ConfigGenerator {
 
   static generateConfigContents (bundle = {}) {
     const isSinglePageApp = Object.keys(bundle).length > 0
+    if (isSinglePageApp) {
+      const splitFileName = bundle.path.split(path.sep)
+      bundle.fileName = splitFileName.pop()
+      bundle.directory = splitFileName.join(path.sep)
+    }
     let bundleMarkup = isSinglePageApp
       ? (`\n  bundle: {path: '${bundle.path}', host: '${bundle.host}'},`)
       : ''
@@ -59,6 +59,19 @@ class ConfigGenerator {
     const filePath = path.resolve(process.cwd(), './.appstrap/config.js')
     await fs.ensureFile(filePath)
     await fs.writeFile(path.resolve(process.cwd(), './.appstrap/config.js'), configContents)
+  }
+
+  static showGenerationSummary () {
+    console.log('=================================================')
+    console.log('         Config generated successfully!          ')
+    console.log('=================================================')
+    console.log(`Root Directory : ${process.cwd()}`)
+    console.log('   |- .appstrap')
+    console.log('      |- config.js')
+    console.log('')
+    console.log('For more information visit the following links:')
+    console.log('Getting started: https://some-getting-started-link-here')
+    console.log('Documentation: https://appstrap-documentation-link-here')
   }
 }
 

@@ -1,5 +1,5 @@
 .idea
 node_modules
-demo
+.appstrap
 interface/dist/interface.js
 dist
