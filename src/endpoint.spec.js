@@ -1,6 +1,6 @@
-const Endpoint = require('../Endpoint')
-const { ErrEndpointInvalid } = require('../errors')
-const loadTestConfig = require('./_loadTestConfig')
+const Endpoint = require('./Endpoint')
+const { ErrEndpointInvalid } = require('./errors')
+const loadTestConfig = require('../_test/_loadTestConfig')
 
 describe('Endpoint', function () {
   this.config = loadTestConfig()

@@ -1,7 +1,8 @@
-const getProjectRoot = require('../../utilities/locateProjectRoot')
+const getProjectRoot = require('../utilities/locateProjectRoot')
 const path = require('path')
-const Endpoint = require('../../Endpoint')
-const configLoader = require('../loader')
+const Endpoint = require('../Endpoint')
+const configLoader = require('./loader')
+const loadTestConfig = require('../../_test/_loadTestConfig')
 const {
   _ensureFileExists,
   _ensureFileIntegrity,
@@ -12,16 +13,14 @@ const {
 const {
   ErrConfigInvalid,
   ErrConfigNotFound
-} = require('../../errors')
+} = require('../errors')
 const sinon = require('sinon')
 const projectRoot = getProjectRoot()
 
 describe('config loader', () => {
   describe('load()', () => {
     test('config data is loaded and returned with package information', () => {
-      const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
-      const filePath = dirParts.join(path.sep)
-      const configData = configLoader.load(filePath)
+      const configData = loadTestConfig()
       const configDataProperties = ['bundle', 'assets', 'endpoints', 'name', 'version', 'configFilePath']
       expect.assertions(configDataProperties.length)
       Object.keys(configData).forEach(key => {
@@ -36,7 +35,7 @@ describe('config loader', () => {
         expect(() => _ensureFileExists('/foo/bar')).toThrow(ErrConfigNotFound)
       })
       test('Returns without throwing an error if the file exists', () => {
-        const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
+        const dirParts = [projectRoot, '_test', '_testConfig', 'config.js']
         const filePath = dirParts.join(path.sep)
         expect(() => _ensureFileExists(filePath)).not.toThrow()
       })
@@ -69,7 +68,7 @@ describe('config loader', () => {
     })
     describe('_getPackageInfo', () => {
       test('it returns the package name and version from nearest package json in folder tree', () => {
-        const packageInfo = require('../../../package.json')
+        const packageInfo = require('../../package.json')
         expect(_getPackageInfo()).toEqual({name: packageInfo.name, version: packageInfo.version})
       })
     })

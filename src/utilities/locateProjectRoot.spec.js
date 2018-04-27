@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const locateProjectRoot = require('../locateProjectRoot')
+const locateProjectRoot = require('./locateProjectRoot')
 
 const defaultDir = process.cwd()
 
@@ -12,7 +12,7 @@ describe('locate project root', () => {
     expect(locateProjectRoot()).toEqual(process.cwd())
   })
   test('Locates project root when cwd is in a child folder of parent that contains package.json', () => {
-    process.chdir('./src/_test')
+    process.chdir('./_test')
     expect(locateProjectRoot()).toEqual(defaultDir)
   })
 })

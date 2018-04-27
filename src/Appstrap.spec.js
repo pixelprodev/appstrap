@@ -1,14 +1,14 @@
-const locateProjectRoot = require('../utilities/locateProjectRoot')
+const locateProjectRoot = require('./utilities/locateProjectRoot')
 const path = require('path')
-const Appstrap = require('../Appstrap')
-const AppServer = require('../AppServer')
-const pkg = require('../../package.json')
+const Appstrap = require('./Appstrap')
+const AppServer = require('./AppServer')
+const pkg = require('../package.json')
 
 describe('Appstrap', () => {
   describe('constructor', () => {
     test('config is loaded from filepath when provided', () => {
       const projectRoot = locateProjectRoot()
-      const dirParts = [projectRoot, 'src', '_test', '_testConfig', 'config.js']
+      const dirParts = [projectRoot, '_test', '_testConfig', 'config.js']
       const configPath = dirParts.join(path.sep)
       const strap = new Appstrap({configPath})
       expect(strap.config.name).toEqual(pkg.name)
