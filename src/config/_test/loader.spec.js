@@ -1,7 +1,7 @@
-const getProjectRoot = require('../utilities/locateProjectRoot')
+const getProjectRoot = require('../../utilities/locateProjectRoot')
 const path = require('path')
-const Endpoint = require('../Endpoint')
-const configLoader = require('../configLoader')
+const Endpoint = require('../../Endpoint')
+const configLoader = require('../loader')
 const {
   _ensureFileExists,
   _ensureFileIntegrity,
@@ -12,7 +12,7 @@ const {
 const {
   ErrConfigInvalid,
   ErrConfigNotFound
-} = require('../errors')
+} = require('../../errors')
 const sinon = require('sinon')
 const projectRoot = getProjectRoot()
 
@@ -69,7 +69,7 @@ describe('config loader', () => {
     })
     describe('_getPackageInfo', () => {
       test('it returns the package name and version from nearest package json in folder tree', () => {
-        const packageInfo = require('../../package.json')
+        const packageInfo = require('../../../package.json')
         expect(_getPackageInfo()).toEqual({name: packageInfo.name, version: packageInfo.version})
       })
     })

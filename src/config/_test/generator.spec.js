@@ -1,5 +1,5 @@
 /* eslint no-eval: 0 */
-const ConfigGenerator = require('../ConfigGenerator')
+const ConfigGenerator = require('../generator')
 
 describe('ConfigGenerator', () => {
   describe('generateConfigContents', () => {

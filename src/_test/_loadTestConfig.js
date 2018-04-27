@@ -1,6 +1,6 @@
 const path = require('path')
 const locateProjectRoot = require('../utilities/locateProjectRoot')
-const configLoader = require('../configLoader')
+const configLoader = require('../config/loader')
 
 function loadTestConfig () {
   const projectRoot = locateProjectRoot()

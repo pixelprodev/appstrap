@@ -1,4 +1,4 @@
-const configLoader = require('./configLoader')
+const configLoader = require('./config/loader')
 const AppServer = require('./AppServer')
 const getPort = require('get-port')
 

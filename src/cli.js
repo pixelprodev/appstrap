@@ -17,9 +17,9 @@ program
   .command('start')
   .option('-c, --configPath <configPath>', 'Config directory path')
   .option('-p, --port <port>', 'Preferred port to listen on')
-  .action(async (cmd) => {
+  .action(async (params) => {
     try {
-      const Instance = new Appstrap(cmd)
+      const Instance = new Appstrap(params)
       await Instance.start()
     } catch (e) { throw (e) }
   })
