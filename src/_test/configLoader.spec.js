@@ -1,4 +1,4 @@
-const getProjectRoot = require('../helpers/locateProjectRoot')
+const getProjectRoot = require('../utilities/locateProjectRoot')
 const path = require('path')
 const Endpoint = require('../Endpoint')
 const configLoader = require('../configLoader')

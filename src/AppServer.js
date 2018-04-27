@@ -33,6 +33,7 @@ class AppServer {
         handler
       )
     })
+    // TODO load default route here if single page app
     this._router = Router
   }
 

@@ -1,4 +1,4 @@
 interface/src
 interface/.storybook
-lib/src
+src/src
 wallaby.config.js

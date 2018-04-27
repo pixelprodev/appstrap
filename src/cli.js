@@ -2,7 +2,7 @@
 const { version } = require('../package.json')
 const Appstrap = require('./Appstrap')
 const program = require('commander')
-const ConfigGenerator = require('./helpers/ConfigGenerator')
+const ConfigGenerator = require('./utilities/ConfigGenerator')
 
 program
   .name('appstrap')

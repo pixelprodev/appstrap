@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const locateProjectRoot = require('./helpers/locateProjectRoot')
+const locateProjectRoot = require('./utilities/locateProjectRoot')
 const { ErrConfigNotFound, ErrConfigInvalid } = require('./errors')
 const Endpoint = require('./Endpoint')
 

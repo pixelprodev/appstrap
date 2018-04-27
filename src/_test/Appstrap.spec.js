@@ -1,4 +1,4 @@
-const locateProjectRoot = require('../helpers/locateProjectRoot')
+const locateProjectRoot = require('../utilities/locateProjectRoot')
 const path = require('path')
 const Appstrap = require('../Appstrap')
 const AppServer = require('../AppServer')

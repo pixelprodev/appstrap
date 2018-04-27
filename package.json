@@ -8,9 +8,8 @@
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
-    "storybook": "NODE_ENV=story start-storybook -p 9001 -c ./interface/.storybook",
-    "develop": "NODE_ENV=development webpack --progress --colors --watch",
-    "build": "webpack && lint && babel ./src --out-dir ./dist",
+    "develop": "babel ./src --out-dir ./dist --watch",
+    "build": "lint && babel ./src --out-dir ./dist",
     "prepublish": "npm run build",
     "lint": "standard",
     "test": "jest"
@@ -22,43 +21,21 @@
     "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
     "pre-commit": "^1.2.2",
-    "pug": "2.0.0-rc.2",
-    "redux": "^3.7.2",
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"
   },
   "devDependencies": {
-    "@storybook/react": "^3.2.12",
-    "babel-cli": "6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-plugin-glamorous-displayname": "^2.1.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-runtime": "6.23.0",
-    "babel-polyfill": "6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "glamor": "^2.20.40",
-    "glamorous": "^4.9.7",
     "jest": "^20.0.4",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-redux": "^5.0.6",
-    "react-router": "^4.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-saga": "^0.2.6",
-    "redux-devtools-extension": "^2.13.2",
-    "redux-saga": "^0.15.6",
-    "reselect": "^3.0.1",
     "sinon": "^4.4.9",
     "standard": "^11.0.1",
-    "supertest": "^3.0.0",
-    "webpack": "^3.6.0",
-    "webpack-build-notifier": "^0.1.16"
+    "supertest": "^3.0.0"
   },
   "standard": {
     "envs": [
-      "jest",
-      "browser"
+      "jest"
     ]
   },
   "pre-commit": [
