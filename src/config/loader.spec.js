@@ -1,6 +1,6 @@
 const getProjectRoot = require('../utilities/locateProjectRoot')
 const path = require('path')
-const Endpoint = require('../Endpoint')
+const Endpoint = require('../endpoints/Endpoint')
 const configLoader = require('./loader')
 const loadTestConfig = require('../../_test/_loadTestConfig')
 const {

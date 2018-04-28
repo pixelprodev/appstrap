@@ -1,4 +1,4 @@
-const { ErrEndpointInvalid } = require('./errors')
+const { ErrEndpointInvalid } = require('../errors')
 
 class Endpoint {
   constructor (

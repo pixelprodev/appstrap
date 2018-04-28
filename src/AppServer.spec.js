@@ -1,5 +1,5 @@
 const AppServer = require('./AppServer')
-const Endpoint = require('./Endpoint')
+const Endpoint = require('./endpoints/Endpoint')
 const Request = require('supertest')
 
 describe('AppServer', () => {

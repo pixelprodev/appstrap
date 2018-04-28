@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const locateProjectRoot = require('../utilities/locateProjectRoot')
 const { ErrConfigNotFound, ErrConfigInvalid } = require('../errors')
-const Endpoint = require('../Endpoint')
+const Endpoint = require('../endpoints/Endpoint')
 
 function load (configFilePath = '/.appstrap/config.js') {
   _ensureFileExists(configFilePath)
