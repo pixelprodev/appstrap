@@ -3,9 +3,9 @@ const { ErrEndpointInvalid } = require('../errors')
 class Endpoint {
   constructor (
     {
-      path = throwInvalidError(),
-      method = throwInvalidError(),
-      handler = throwInvalidError()
+      path = this.throwInvalidError(),
+      method = this.throwInvalidError(),
+      handler = this.throwInvalidError()
     },
     {
       error = false,
@@ -22,10 +22,10 @@ class Endpoint {
     this.latency = latency
     this.latencyMS = latencyMS
   }
+
+  throwInvalidError () {
+    throw new ErrEndpointInvalid()
+  }
 }
 
-function throwInvalidError () {
-  throw new ErrEndpointInvalid()
-}
-
-module.exports = Endpoint
+export default Endpoint

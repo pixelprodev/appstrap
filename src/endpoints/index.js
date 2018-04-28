@@ -6,7 +6,9 @@ export class Endpoints {
   }
 
   addOne ({path, method, handler}) {
-    this._endpoints.push(new Endpoint({path, method, handler}))
+    const newEndpoint = new Endpoint({path, method, handler})
+    this._endpoints.push(newEndpoint)
+    return newEndpoint
   }
 
   clear () {
@@ -15,22 +17,27 @@ export class Endpoints {
 
   fetch ({path, method} = {}) {
     if (path && method) {
-      let endpointIndex = this._endpoints.findIndex(endpoint => endpoint.path === path && endpoint.method === method)
+      const endpointIndex = this._getEndpointIndex({path, method})
       return this._endpoints[endpointIndex]
     }
-    return this._endpoints
+    return this._endpoints.sort((a, b) => b.path.length - a.path.length)
   }
 
   setModifier ({path, method, ...setData}) {
-    let endpointIndex = this._endpoints.findIndex(endpoint => endpoint.path === path && endpoint.method === method)
+    const endpointIndex = this._getEndpointIndex({path, method})
     this._endpoints[endpointIndex] = {...this._endpoints[endpointIndex], ...setData}
   }
 
   clearModifier ({path, method}) {
-    let endpointIndex = this._endpoints.findIndex(endpoint => endpoint.path === path && endpoint.method === method)
+    const endpointIndex = this._getEndpointIndex({path, method})
     const { handler } = this._endpoints[endpointIndex]
     this._endpoints[endpointIndex] = new Endpoint({path, method, handler})
   }
+
+  _getEndpointIndex ({path, method}) {
+    return this._endpoints.findIndex(endpoint => endpoint.path === path && endpoint.method === method)
+  }
 }
 
-export default new Endpoints()
+const singleton = new Endpoints()
+export default singleton

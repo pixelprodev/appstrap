@@ -2,7 +2,7 @@ const AppServer = require('./AppServer')
 const Endpoint = require('./endpoints/Endpoint')
 const Request = require('supertest')
 
-describe('AppServer', () => {
+xdescribe('AppServer', () => {
   describe('constructor', () => {
     test('returns an express server that responds to all get calls with "Welcome to appstrap!"', async () => {
       const server = new AppServer()

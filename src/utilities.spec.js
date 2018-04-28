@@ -1,5 +1,5 @@
-const fs = require('fs-extra')
-const locateProjectRoot = require('./locateProjectRoot')
+import fs from 'fs-extra'
+import { locateProjectRoot } from './utilities'
 
 const defaultDir = process.cwd()
 

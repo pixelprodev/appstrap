@@ -1,6 +1,6 @@
-const path = require('path')
-const locateProjectRoot = require('../src/utilities/locateProjectRoot')
-const configLoader = require('../src/config/loader')
+import path from 'path'
+import { locateProjectRoot } from '../src/utilities'
+import configLoader from '../src/config/loader'
 
 function loadTestConfig () {
   const projectRoot = locateProjectRoot()
@@ -9,4 +9,4 @@ function loadTestConfig () {
   return configLoader.load(filePath)
 }
 
-module.exports = loadTestConfig
+export default loadTestConfig

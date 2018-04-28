@@ -1,7 +1,7 @@
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra'
+import path from 'path'
 
-function locateProjectRoot (level = process.cwd()) {
+export function locateProjectRoot (level = process.cwd()) {
   if (fs.existsSync(path.resolve(level, 'package.json'))) {
     return level
   } else {
@@ -11,5 +11,3 @@ function locateProjectRoot (level = process.cwd()) {
     return locateProjectRoot(levelUp)
   }
 }
-
-module.exports = locateProjectRoot

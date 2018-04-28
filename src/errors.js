@@ -1,4 +1,4 @@
-class ErrConfigNotFound extends Error {
+export class ErrConfigNotFound extends Error {
   constructor (message, configFilePath) {
     super(`
       Unable to load config file at ${configFilePath}
@@ -8,7 +8,7 @@ class ErrConfigNotFound extends Error {
   }
 }
 
-class ErrConfigInvalid extends Error {
+export class ErrConfigInvalid extends Error {
   constructor () {
     super(`
       You are missing crucial config data.  
@@ -18,17 +18,11 @@ class ErrConfigInvalid extends Error {
   }
 }
 
-class ErrEndpointInvalid extends Error {
+export class ErrEndpointInvalid extends Error {
   constructor () {
     super(`
       Endpoint supplied without path, handler, or method.  Please check and try again.
     `, 500)
     Error.captureStackTrace(this, this.constructor)
   }
-}
-
-module.exports = {
-  ErrConfigNotFound,
-  ErrConfigInvalid,
-  ErrEndpointInvalid
 }

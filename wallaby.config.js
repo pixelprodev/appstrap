@@ -15,7 +15,8 @@ module.exports = function (wallaby) {
     },
 
     compilers: {
-      'src/**/*.js': wallaby.compilers.babel()
+      'src/**/*.js': wallaby.compilers.babel(),
+      '_test/**/*.js': wallaby.compilers.babel()
     }
   }
 }
