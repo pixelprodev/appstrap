@@ -23,15 +23,6 @@ export class Loader {
     }
   }
 
-  reload (reloadFromFS = true) {
-    if (reloadFromFS) {
-      // TODO invalidate require cache?
-      // reload data from fs
-    } else {
-      this._generateEndpointsFromConfig(this.configFileData)
-    }
-  }
-
   _ensureFileExists (configFilePath) {
     if (!fs.existsSync(configFilePath)) {
       throw new ErrConfigNotFound(null, configFilePath)
