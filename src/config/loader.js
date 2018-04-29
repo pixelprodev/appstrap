@@ -23,6 +23,10 @@ export class Loader {
     }
   }
 
+  getConfigData () {
+    return this.configFileData
+  }
+
   _ensureFileExists (configFilePath) {
     if (!fs.existsSync(configFilePath)) {
       throw new ErrConfigNotFound(null, configFilePath)

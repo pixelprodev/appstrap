@@ -5,6 +5,8 @@ import http from 'http'
 import util from 'util'
 import getPort from 'get-port'
 import Endpoints from './endpoints'
+import Config from './config/loader'
+import { locateProjectRoot } from './utilities'
 
 export class AppServer {
   constructor () {
@@ -31,20 +33,47 @@ export class AppServer {
   configure ({port, isSPA}) {
     this.port = port
     this.isSPA = isSPA
-    this.loadEndpoints(Endpoints.fetch())
+    const {assets} = Config.getConfigData()
+    this.loadEndpoints({endpoints: Endpoints.fetch(), assets})
   }
 
-  reloadEndpoints (endpoints) { this.loadEndpoints(endpoints) }
-  loadEndpoints (endpoints) {
+  reloadEndpoints ({endpoints, assets}) { this.loadEndpoints({endpoints, assets}) }
+  loadEndpoints ({endpoints, assets}) {
     const Router = express.Router({})
+    const projectRoot = locateProjectRoot()
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
         this.modifierMiddleware.bind(endpoints[indx]),
         handler
       )
     })
-    // TODO load default route here if single page app
+    assets.forEach(asset => {
+      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
+    })
+    if (this.isSPA) {
+      Router.get('*', (req, res) => {
+        res.send(this.getSpaHarnessMarkup().trim())
+      })
+    }
     this._router = Router
+  }
+
+  getSpaHarnessMarkup () {
+    const configData = Config.getConfigData()
+    const { host, webPath } = configData.bundle
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <title>Appstrap | ${configData.name} - ${configData.version}</title>
+      </head>
+      <body>
+        <div ${host.startsWith('#') ? 'id' : 'class'}="${host.substring(1, host.length)}"></div>
+        <script src="${webPath}" type="text/javascript"></script>
+      </body>
+      </html>
+    `
   }
 
   async modifierMiddleware (req, res, next) {
