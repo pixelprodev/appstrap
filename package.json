@@ -9,7 +9,7 @@
   "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
     "develop": "babel --ignore *.spec.js ./src --out-dir ./dist --watch",
-    "build": "lint && babel --ignore *.spec.js ./src --out-dir ./dist",
+    "build": "npm run lint && babel --ignore *.spec.js ./src --out-dir ./dist",
     "prepublish": "npm run build",
     "lint": "standard",
     "test": "jest"

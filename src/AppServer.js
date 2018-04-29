@@ -1,10 +1,12 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const sleep = require('sleep-promise')
-const http = require('http')
-const util = require('util')
+import express from 'express'
+import bodyParser from 'body-parser'
+import sleep from 'sleep-promise'
+import http from 'http'
+import util from 'util'
+import getPort from 'get-port'
+import Endpoints from './endpoints'
 
-class AppServer {
+export class AppServer {
   constructor () {
     this._app = express()
 
@@ -16,12 +18,20 @@ class AppServer {
     this.httpServer = http.createServer(this._app)
     this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
     this.httpServer.closeAsync = util.promisify(this.httpServer.close)
+    this.start = this.start.bind(this)
+    this.stop = this.stop.bind(this)
   }
 
   _loadDefaultRouter () {
     const Router = express.Router({})
     Router.get('*', (req, res) => res.send('Welcome to appstrap!'))
     this._router = Router
+  }
+
+  configure ({port, isSPA}) {
+    this.port = port
+    this.isSPA = isSPA
+    this.loadEndpoints(Endpoints.fetch())
   }
 
   reloadEndpoints (endpoints) { this.loadEndpoints(endpoints) }
@@ -45,6 +55,23 @@ class AppServer {
       ? res.sendStatus(this.errorStatus)
       : next()
   }
+
+  async start () {
+    this.port = await getPort({port: this.port})
+    await this.httpServer.listenAsync(this.port)
+    console.log(`
+    ===============================================================
+      Appstrap loaded successfully.
+      A server has been started for you at the following address: 
+      http://localhost:${this.port}
+    ===============================================================
+    `)
+  }
+
+  async stop () {
+    await this.httpServer.closeAsync()
+  }
 }
 
-module.exports = AppServer
+const singleton = new AppServer()
+export default singleton

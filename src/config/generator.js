@@ -1,6 +1,6 @@
-const readline = require('readline')
-const path = require('path')
-const fs = require('fs-extra')
+import readline from 'readline'
+import path from 'path'
+import fs from 'fs-extra'
 
 const prompts = {
   isSinglePageApp: `\rAre you strapping a single page app? [y/n]:  `,
@@ -75,4 +75,4 @@ class ConfigGenerator {
   }
 }
 
-module.exports = ConfigGenerator
+export default ConfigGenerator
