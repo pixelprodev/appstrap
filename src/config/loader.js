@@ -7,7 +7,7 @@ import { locateProjectRoot } from '../utilities'
 export class Loader {
   constructor () {
     this.configFileData = {}
-    this.configFilePath = '/.appstrap/config.js'
+    this.configFilePath = '.appstrap/config.js'
   }
 
   load (configFilePath = this.configFilePath) {
