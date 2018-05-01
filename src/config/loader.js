@@ -33,7 +33,7 @@ export class Loader {
     }
   }
 
-  _ensureFileIntegrity ({bundle, assets, endpoints}) {
+  _ensureFileIntegrity ({assets, endpoints}) {
     if (!assets || !endpoints) {
       throw new ErrConfigInvalid()
     }

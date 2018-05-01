@@ -1,6 +1,5 @@
 module.exports = {
-  bundle: {},
-  assets: [{}],
+  assets: [],
   endpoints: [
     {
       path: '/',

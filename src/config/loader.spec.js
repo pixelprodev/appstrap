@@ -12,7 +12,7 @@ describe('config loader', () => {
   describe('load()', () => {
     test('config data is loaded and returned with package information', () => {
       const configData = loadTestConfig()
-      const configDataProperties = ['bundle', 'assets', 'endpoints', 'name', 'version']
+      const configDataProperties = ['assets', 'endpoints', 'name', 'version']
       expect.assertions(configDataProperties.length)
       Object.keys(configData).forEach(key => {
         const propertyIndex = configDataProperties.findIndex(prop => prop === key)
