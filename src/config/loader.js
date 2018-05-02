@@ -3,6 +3,7 @@ import path from 'path'
 import Endpoints from '../endpoints'
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
 import { locateProjectRoot } from '../utilities'
+import AppServer from '../AppServer'
 
 export class Loader {
   constructor () {
@@ -20,6 +21,15 @@ export class Loader {
     return {
       ...this.configFileData,
       ...{ endpoints: Endpoints.fetch() }
+    }
+  }
+
+  reload ({reloadFromFS = true}) {
+    if (reloadFromFS) {
+      this.load()
+    } else {
+      this._generateEndpointsFromConfig(this.configFileData.endpoints)
+      AppServer.reloadEndpoints(Endpoints.fetch())
     }
   }
 

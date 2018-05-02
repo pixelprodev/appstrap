@@ -3,6 +3,8 @@ import Endpoint from './Endpoint'
 export class Endpoints {
   constructor () {
     this._endpoints = []
+    this.setModifier = this.setModifier.bind(this)
+    this.clearModifier = this.clearModifier.bind(this)
   }
 
   addOne ({path, method, handler}) {

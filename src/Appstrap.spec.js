@@ -2,7 +2,6 @@ import { locateProjectRoot } from './utilities'
 import * as pkg from '../package.json'
 import path from 'path'
 const Appstrap = require('./Appstrap')
-const AppServer = require('./AppServer')
 
 xdescribe('Appstrap', () => {
   describe('constructor', () => {
@@ -18,11 +17,6 @@ xdescribe('Appstrap', () => {
       const config = {endpoints: []}
       const strap = new Appstrap({config})
       expect(strap.config).toEqual(config)
-    })
-    test('server is instance of AppServer', () => {
-      const strap = new Appstrap({config: {endpoints: []}})
-      expect(strap.server).toBeDefined()
-      expect(strap.server).toBeInstanceOf(AppServer)
     })
     test('sets initial port to default port when not passed in', () => {
       const strap = new Appstrap({config: {endpoints: []}})
