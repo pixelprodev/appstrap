@@ -6,7 +6,7 @@ class Appstrap {
   constructor ({configPath, port = 5000, config = Config.load(configPath)}) {
     AppServer.configure({port, isSPA: !!config.bundle})
   }
-
+  get port () { return AppServer.port }
   get start () { return AppServer.start }
   get stop () { return AppServer.stop }
   get reset () { return Config.reload({reloadFromFS: false}) }

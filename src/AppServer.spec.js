@@ -1,10 +1,11 @@
-const AppServer = require('./AppServer')
-const Endpoint = require('./endpoints/Endpoint')
-const Request = require('supertest')
+import { AppServer } from './AppServer'
+import Endpoint from './endpoints/Endpoint'
+import Request from 'supertest'
+import { stub } from 'sinon'
 
-xdescribe('AppServer', () => {
+describe('AppServer', () => {
   describe('constructor', () => {
-    test('returns an express server that responds to all get calls with "Welcome to appstrap!"', async () => {
+    test('Generates a default express server with static response', async () => {
       const server = new AppServer()
       const resp1 = await Request(server._app).get('/foo')
       expect(resp1.text).toEqual('Welcome to appstrap!')
@@ -18,7 +19,44 @@ xdescribe('AppServer', () => {
     })
   })
 
-  describe('load / reloadEndpoints', function () {
+  describe('configure', () => {
+    test('it sets server port', () => {
+      const server = new AppServer()
+      const func = stub(server, 'loadEndpoints').callsFake(() => {})
+      server.configure({port: 5000, isSPA: true})
+      expect(server.port).toEqual(5000)
+      func.restore()
+    })
+    test('it indicates whether or not to serve the spa endpoint', () => {
+      const server = new AppServer()
+      const func = stub(server, 'loadEndpoints').callsFake(() => {})
+      server.configure({port: 5000, isSPA: true})
+      expect(server.isSPA).toEqual(true)
+      server.configure({port: 5000, isSPA: false})
+      expect(server.isSPA).toEqual(false)
+      func.restore()
+    })
+    test('it attempts to load the endpoints', () => {
+      const server = new AppServer()
+      const func = stub(server, 'loadEndpoints').callsFake(() => {})
+      server.configure()
+      expect(func.called).toBe(true)
+      func.restore()
+    })
+  })
+
+  describe('reloadEndpoints', () => {
+
+  })
+  describe('loadEndpoints', () => {
+
+  })
+
+  describe('getSpaHarnessMockup()', () => {
+
+  })
+
+  xdescribe('load / reloadEndpoints', function () {
     beforeEach(() => {
       this.server = new AppServer()
     })

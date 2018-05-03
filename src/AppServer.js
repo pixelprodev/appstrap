@@ -30,15 +30,17 @@ export class AppServer {
     this._router = Router
   }
 
-  configure ({port, isSPA}) {
+  configure ({port = 5000, isSPA = false} = {}) {
     this.port = port
     this.isSPA = isSPA
-    const {assets} = Config.getConfigData()
-    this.loadEndpoints({endpoints: Endpoints.fetch(), assets})
+    this.loadEndpoints()
   }
 
-  reloadEndpoints ({endpoints, assets}) { this.loadEndpoints({endpoints, assets}) }
-  loadEndpoints ({endpoints, assets}) {
+  reloadEndpoints (args) { this.loadEndpoints(args) }
+  loadEndpoints ({
+    endpoints = Endpoints.fetch(),
+    assets = Config.getConfigData().assets
+  } = {}) {
     const Router = express.Router({})
     const projectRoot = locateProjectRoot()
     endpoints.forEach(({handler, method, path}, indx) => {
@@ -47,15 +49,16 @@ export class AppServer {
         handler
       )
     })
-    assets.forEach(asset => {
-      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
-    })
     if (this.isSPA) {
       Router.get('*', (req, res) => {
         res.send(this.getSpaHarnessMarkup().trim())
       })
     }
+    assets.forEach(asset => {
+      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
+    })
     this._router = Router
+    return this._router
   }
 
   getSpaHarnessMarkup () {
