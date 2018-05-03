@@ -37,7 +37,9 @@ export class Endpoints {
   }
 
   _getEndpointIndex ({path, method}) {
-    return this._endpoints.findIndex(endpoint => endpoint.path === path && endpoint.method === method)
+    return this._endpoints.findIndex(endpoint => {
+      return endpoint.path === path && endpoint.method === method
+    })
   }
 }
 
