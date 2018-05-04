@@ -39,37 +39,34 @@ export class AppServer {
   reloadEndpoints (args) { this.loadEndpoints(args) }
   loadEndpoints ({
     endpoints = Endpoints.fetch(),
-    assets = Config.getConfigData().assets
+    configData = Config.getConfigData(),
+    isSPA = this.isSPA
   } = {}) {
     const Router = express.Router({})
-    const projectRoot = locateProjectRoot()
+    const bundleIsDefined = Object.keys(configData.bundle).length > 0
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
-        this.modifierMiddleware.bind(endpoints[indx]),
+        this.getModifierMiddleware(endpoints[indx]),
         handler
       )
     })
-    if (this.isSPA) {
-      Router.get('*', (req, res) => {
-        res.send(this.getSpaHarnessMarkup().trim())
-      })
+    if (endpoints.length === 0 && !isSPA) { this.generateNoEndpointCatch(Router) }
+    if (isSPA) {
+      const markup = this.getSpaHarnessMarkup(configData)
+      Router.get('*', (req, res) => res.send(markup))
     }
-    assets.forEach(asset => {
-      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
-    })
+    if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
     this._router = Router
     return this._router
   }
 
-  getSpaHarnessMarkup () {
-    const configData = Config.getConfigData()
-    const { host, webPath } = configData.bundle
+  getSpaHarnessMarkup ({name, version, bundle: {host, webPath}} = Config.getConfigData()) {
     return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
           <meta charset="UTF-8">
-          <title>Appstrap | ${configData.name} - ${configData.version}</title>
+          <title>Appstrap | ${name} - ${version}</title>
       </head>
       <body>
         <div ${host.startsWith('#') ? 'id' : 'class'}="${host.substring(1, host.length)}"></div>
@@ -79,23 +76,40 @@ export class AppServer {
     `
   }
 
-  async modifierMiddleware (req, res, next) {
-    if (this.latency) {
-      await sleep(this.latencyMS)
+  getModifierMiddleware ({
+    latency = false,
+    latencyMS = 0,
+    error = false,
+    errorStatus = 500,
+    delay = sleep
+  }) {
+    return async (req, res, next) => {
+      if (latency) { await delay(latencyMS) }
+      return error ? res.sendStatus(errorStatus) : next()
     }
-    return this.error
-      ? res.sendStatus(this.errorStatus)
-      : next()
   }
 
-  async start () {
-    this.port = await getPort({port: this.port})
-    await this.httpServer.listenAsync(this.port)
+  generateNoEndpointCatch (Router) {
+    const message = 'No endpoints have been defined.  Please check your config'
+    Router.all('*', (req, res) => res.send('No endpoints have been defined.  Please check your config'))
+    return message
+  }
+
+  generateAssetEndpoints (Router, {configData = Config.getConfigData()} = {}) {
+    const projectRoot = locateProjectRoot()
+    configData.assets.forEach(asset => {
+      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
+    })
+  }
+
+  async start ({port = this.port}) {
+    this.port = await getPort({port})
+    await this.httpServer.listenAsync(port)
     console.log(`
     ===============================================================
       Appstrap loaded successfully.
       A server has been started for you at the following address: 
-      http://localhost:${this.port}
+      http://localhost:${port}
     ===============================================================
     `)
   }

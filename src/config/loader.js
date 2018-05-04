@@ -7,7 +7,7 @@ import AppServer from '../AppServer'
 
 export class Loader {
   constructor () {
-    this.configFileData = {}
+    this.configFileData = {bundle: {}, assets: [], endpoints: []}
     this.configFilePath = '.appstrap/config.js'
   }
 
