@@ -91,11 +91,11 @@ export class AppServer {
 
   generateNoEndpointCatch (Router) {
     const message = 'No endpoints have been defined.  Please check your config'
-    Router.all('*', (req, res) => res.send('No endpoints have been defined.  Please check your config'))
+    Router.all('*', (req, res) => res.send(message))
     return message
   }
 
-  generateAssetEndpoints (Router, {configData = Config.getConfigData()} = {}) {
+  generateAssetEndpoints (Router, configData = Config.getConfigData()) {
     const projectRoot = locateProjectRoot()
     configData.assets.forEach(asset => {
       Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))

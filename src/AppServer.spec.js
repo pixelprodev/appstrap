@@ -1,7 +1,8 @@
 import { AppServer } from './AppServer'
-import Endpoint from './endpoints/Endpoint'
+import express from 'express'
 import Request from 'supertest'
 import { stub } from 'sinon'
+import { locateProjectRoot } from './utilities'
 
 describe('AppServer', () => {
   describe('constructor', () => {
@@ -51,7 +52,7 @@ describe('AppServer', () => {
       this.mockConfigData = {
         name: 'test application',
         version: '1.0.0',
-        bundle: { host: '#host', webPath: '/foo' }
+        bundle: {host: '#host', webPath: '/foo'}
       }
     })
     test('add default route to router when no endpoints specified', () => {
@@ -140,19 +141,19 @@ describe('AppServer', () => {
     })
   })
 
-  xdescribe('load / reloadEndpoints', function () {
-    beforeEach(() => {
-      this.server = new AppServer()
-    })
-    test('replaces the internal instance of express router', async () => {
-      const initialResp = await Request(this.server._app).get('/')
-      expect(initialResp.text).toEqual('Welcome to appstrap!')
-
-      const endpoints = [new Endpoint({path: '/', method: 'get', handler: (req, res) => res.send('updated!')})]
-      this.server.reloadEndpoints(endpoints)
-
-      const updatedResp = await Request(this.server._app).get('/')
-      expect(updatedResp.text).toEqual('updated!')
+  describe('generateAssetEndpoints()', () => {
+    test('sets up express serve static with asset data', () => {
+      const server = new AppServer()
+      const configData = {assets: [{webPath: '/foo', directory: '/bar'}]}
+      const mockRouter = {use: stub()}
+      const staticStub = stub(express, 'static')
+      const projectRoot = locateProjectRoot()
+      server.generateAssetEndpoints(mockRouter, configData)
+      expect(mockRouter.use.called).toBe(true)
+      const assetWebPath = mockRouter.use.args[0][0]
+      expect(assetWebPath).toEqual(configData.assets[0].webPath)
+      expect(staticStub.args[0][0]).toEqual(`${projectRoot}${configData.assets[0].directory}`)
+      staticStub.restore()
     })
   })
 })
