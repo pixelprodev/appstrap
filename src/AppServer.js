@@ -6,6 +6,7 @@ import util from 'util'
 import getPort from 'get-port'
 import Endpoints from './endpoints'
 import Config from './config/loader'
+import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 
 export class AppServer {
@@ -16,10 +17,6 @@ export class AppServer {
     this._app.use(bodyParser.urlencoded({extended: true}))
 
     this._loadDefaultRouter()
-    this._app.use((req, res, next) => this._router(req, res, next))
-    this.httpServer = http.createServer(this._app)
-    this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
-    this.httpServer.closeAsync = util.promisify(this.httpServer.close)
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
   }
@@ -30,10 +27,17 @@ export class AppServer {
     this._router = Router
   }
 
-  configure ({port = 5000, isSPA = false} = {}) {
+  configure ({port = 5000, isSPA = false, invokedFromCLI} = {}) {
     this.port = port
     this.isSPA = isSPA
+    if (invokedFromCLI) {
+      this.loadManagementInterface()
+    }
+    this._app.use((req, res, next) => this._router(req, res, next))
     this.loadEndpoints()
+    this.httpServer = http.createServer(this._app)
+    this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
+    this.httpServer.closeAsync = util.promisify(this.httpServer.close)
   }
 
   reloadEndpoints (args) { this.loadEndpoints(args) }
@@ -43,7 +47,7 @@ export class AppServer {
     isSPA = this.isSPA
   } = {}) {
     const Router = express.Router({})
-    const bundleIsDefined = Object.keys(configData.bundle).length > 0
+    const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
         this.getModifierMiddleware(endpoints[indx]),
@@ -102,7 +106,11 @@ export class AppServer {
     })
   }
 
-  async start ({port = this.port}) {
+  loadManagementInterface () {
+    this._app.use(managementInterface.configure({AppServer: this, Config, Endpoints}))
+  }
+
+  async start ({port = this.port} = {}) {
     this.port = await getPort({port})
     await this.httpServer.listenAsync(port)
     console.log(`

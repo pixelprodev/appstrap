@@ -19,6 +19,7 @@ program
   .option('-p, --port <port>', 'Preferred port to listen on')
   .action(async (params) => {
     try {
+      params.invokedFromCLI = true
       const Instance = new Appstrap(params)
       await Instance.start()
     } catch (e) { throw (e) }

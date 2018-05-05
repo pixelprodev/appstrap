@@ -1,25 +1,9 @@
 import { AppServer } from './AppServer'
 import express from 'express'
-import Request from 'supertest'
 import { stub } from 'sinon'
 import { locateProjectRoot } from './utilities'
 
 describe('AppServer', () => {
-  describe('constructor', () => {
-    test('Generates a default express server with static response', async () => {
-      const server = new AppServer()
-      const resp1 = await Request(server._app).get('/foo')
-      expect(resp1.text).toEqual('Welcome to appstrap!')
-      const resp2 = await Request(server._app).get('/bar')
-      expect(resp2.text).toEqual('Welcome to appstrap!')
-      const resp3 = await Request(server._app).get('/some/nested/route')
-      expect(resp3.text).toEqual('Welcome to appstrap!')
-
-      const resp4 = await Request(server._app).post('/')
-      expect(resp4.status).toEqual(404)
-    })
-  })
-
   describe('configure', () => {
     test('it sets server port', () => {
       const server = new AppServer()

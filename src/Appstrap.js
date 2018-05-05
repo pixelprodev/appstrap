@@ -3,8 +3,8 @@ import Endpoints from './endpoints'
 import Config from './config/loader'
 
 class Appstrap {
-  constructor ({configPath, port = 5000, config = Config.load(configPath)}) {
-    AppServer.configure({port, isSPA: (config.bundle && Object.keys(config.bundle).length > 0)})
+  constructor ({configPath, port = 5000, invokedFromCLI = false, config = Config.load(configPath)}) {
+    AppServer.configure({port, invokedFromCLI, isSPA: (config.bundle && Object.keys(config.bundle).length > 0)})
   }
   get port () { return AppServer.port }
   get start () { return AppServer.start }
