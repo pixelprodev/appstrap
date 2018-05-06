@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./dist/Appstrap.js",
   "bin": "./dist/cli.js",
@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@pixelprodotco/appstrap-management-interface": "0.0.1",
+    "@pixelprodotco/appstrap-management-interface": "0.1.0",
     "body-parser": "1.17.2",
     "commander": "^2.14.1",
     "express": "^4.15.3",
