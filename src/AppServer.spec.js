@@ -1,6 +1,8 @@
+import fetch from 'isomorphic-fetch'
 import { AppServer } from './AppServer'
 import express from 'express'
 import { stub } from 'sinon'
+import Endpoint from './endpoints/Endpoint'
 import { locateProjectRoot } from './utilities'
 
 describe('AppServer', () => {
@@ -138,6 +140,34 @@ describe('AppServer', () => {
       expect(assetWebPath).toEqual(configData.assets[0].webPath)
       expect(staticStub.args[0][0]).toEqual(`${projectRoot}${configData.assets[0].directory}`)
       staticStub.restore()
+    })
+  })
+
+  describe('start/stop', () => {
+    test('starts and stops a server', async () => {
+      const dummyEndpoint = {path: '/', method: 'get', handler: (req, res) => res.send('ok')}
+      let server = new AppServer()
+      server.configure({endpoints: [new Endpoint(dummyEndpoint)]})
+      expect.assertions(3)
+      // Server should not respond by default
+      try {
+        await fetch(`http://localhost:${server.port}/`)
+      } catch (e) {
+        expect(e).toBeDefined()
+      }
+      // Server responds when started
+      await server.start()
+      let response = await fetch(`http://localhost:${server.port}/`)
+      let responseText = await response.text()
+      expect(responseText).toBe('ok')
+      await server.stop()
+
+      // Server no longer responds when stopped
+      try {
+        await fetch(`http://localhost:${server.port}`)
+      } catch (e) {
+        expect(e).toBeDefined()
+      }
     })
   })
 })

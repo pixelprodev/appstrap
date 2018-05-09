@@ -24,7 +24,7 @@ export class Loader {
     }
   }
 
-  reload ({reloadFromFS = true}) {
+  reload ({reloadFromFS = false}) {
     if (reloadFromFS) {
       this.load()
     } else {

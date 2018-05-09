@@ -27,14 +27,14 @@ export class AppServer {
     this._router = Router
   }
 
-  configure ({port = 5000, isSPA = false, invokedFromCLI} = {}) {
+  configure ({port = 5000, isSPA = false, configData, endpoints, invokedFromCLI} = {}) {
     this.port = port
     this.isSPA = isSPA
     if (invokedFromCLI) {
       this.loadManagementInterface()
     }
     this._app.use((req, res, next) => this._router(req, res, next))
-    this.loadEndpoints()
+    this.loadEndpoints({endpoints})
     this.httpServer = http.createServer(this._app)
     this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
     this.httpServer.closeAsync = util.promisify(this.httpServer.close)
@@ -112,12 +112,12 @@ export class AppServer {
 
   async start ({port = this.port} = {}) {
     this.port = await getPort({port})
-    await this.httpServer.listenAsync(port)
+    await this.httpServer.listenAsync(this.port)
     console.log(`
     ===============================================================
       Appstrap loaded successfully.
       A server has been started for you at the following address: 
-      http://localhost:${port}
+      http://localhost:${this.port}
     ===============================================================
     `)
   }
