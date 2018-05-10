@@ -52,7 +52,7 @@ export class AppServer {
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
         this.modifierMiddleware(endpoints[indx]),
-        this.preHandlerMiddleware.bind(endpoints[indx]),
+        this.preHandlerMiddleware(endpoints[indx]),
         handler
       )
     })
@@ -95,25 +95,20 @@ export class AppServer {
     }
   }
 
-  preHandlerMiddleware (req, res, next) {
-    const defaultMethods = {
-      json: res.json,
-      send: res.send
+  preHandlerMiddleware ({ path, method }) {
+    return (req, res, next) => {
+      res.json = this.interceptJsonResponse({res, path, method})
+      next()
     }
+  }
 
-    const respMethods = ['json', 'send']
-    respMethods.forEach(respMethod => {
-      res[respMethod] = (data) => {
-        const preset = Presets.fetch({path: this.path, method: this.method})
-        if (preset !== -1) {
-          data = preset.mode === 'merge'
-            ? {...data, ...preset.data}
-            : preset.data
-        }
-        defaultMethods[respMethod].call(res, data)
+  interceptJsonResponse ({res, path, method, preset = Presets.fetch({path, method})}) {
+    return (data) => {
+      if (preset !== -1) {
+        data = preset.mode === 'merge' ? {...data, ...preset.data} : preset.data
       }
-    })
-    next()
+      res.json(data)
+    }
   }
 
   generateNoEndpointCatch (Router) {
