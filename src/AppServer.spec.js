@@ -100,26 +100,26 @@ describe('AppServer', () => {
     })
   })
 
-  describe('getModifierMiddleware()', function () {
+  describe('modifierMiddleware()', function () {
     beforeAll(() => {
       this.server = new AppServer()
     })
     test('returns 500 error when error is enabled', async () => {
       const errorStub = stub()
-      const middleware = this.server.getModifierMiddleware({error: true})
+      const middleware = this.server.modifierMiddleware({error: true})
       await middleware({}, {sendStatus: errorStub}, () => {})
       expect(errorStub.calledOnceWith(500)).toBe(true)
     })
     test('returns custom error code when provided', async () => {
       const errorStub = stub()
-      const middleware = this.server.getModifierMiddleware({error: true, errorStatus: 400})
+      const middleware = this.server.modifierMiddleware({error: true, errorStatus: 400})
       await middleware({}, {sendStatus: errorStub}, () => {})
       expect(errorStub.calledOnceWith(500)).toBe(false)
       expect(errorStub.calledOnceWith(400)).toBe(true)
     })
     test('waits X ms when latency is enabled', async () => {
       const sleepStub = stub().usingPromise(Promise)
-      const middleware = this.server.getModifierMiddleware({
+      const middleware = this.server.modifierMiddleware({
         latency: true, latencyMS: 3000, delay: sleepStub
       })
       await middleware({}, {}, () => {})

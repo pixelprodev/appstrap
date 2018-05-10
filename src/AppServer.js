@@ -8,6 +8,7 @@ import Endpoints from './endpoints'
 import Config from './config/loader'
 import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
+import Presets from './presets'
 
 export class AppServer {
   constructor () {
@@ -50,7 +51,8 @@ export class AppServer {
     const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
-        this.getModifierMiddleware(endpoints[indx]),
+        this.modifierMiddleware(endpoints[indx]),
+        this.preHandlerMiddleware.bind(endpoints[indx]),
         handler
       )
     })
@@ -80,7 +82,7 @@ export class AppServer {
     `
   }
 
-  getModifierMiddleware ({
+  modifierMiddleware ({
     latency = false,
     latencyMS = 0,
     error = false,
@@ -91,6 +93,27 @@ export class AppServer {
       if (latency) { await delay(latencyMS) }
       return error ? res.sendStatus(errorStatus) : next()
     }
+  }
+
+  preHandlerMiddleware (req, res, next) {
+    const defaultMethods = {
+      json: res.json,
+      send: res.send
+    }
+
+    const respMethods = ['json', 'send']
+    respMethods.forEach(respMethod => {
+      res[respMethod] = (data) => {
+        const preset = Presets.fetch({path: this.path, method: this.method})
+        if (preset !== -1) {
+          data = preset.mode === 'merge'
+            ? {...data, ...preset.data}
+            : preset.data
+        }
+        defaultMethods[respMethod].call(res, data)
+      }
+    })
+    next()
   }
 
   generateNoEndpointCatch (Router) {

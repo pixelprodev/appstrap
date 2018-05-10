@@ -18,10 +18,17 @@ export class Loader {
     if (configFilePath !== this.configFilePath) {
       this.configFilePath = configFilePath
     }
+    this.setConfigDirectory()
     return {
       ...this.configFileData,
       ...{ endpoints: Endpoints.fetch() }
     }
+  }
+
+  setConfigDirectory () {
+    const splitPath = this.configFilePath.split(path.sep)
+    splitPath.pop()
+    this.configDirectory = splitPath.join(path.sep)
   }
 
   reload ({reloadFromFS = false}) {
