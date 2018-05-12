@@ -2,11 +2,13 @@ import path from 'path'
 import Config from '../config/loader'
 import fs from 'fs-extra'
 import { ErrPresetNotFound } from '../errors'
+import { locateProjectRoot } from '../utilities'
 import Preset from './Preset'
 
 export class Presets {
   constructor () {
     this._presets = []
+    this._availablePresets = []
     this.loadPreset = this.loadPreset.bind(this)
     this.loadPresets = this.loadPresets.bind(this)
   }
@@ -61,6 +63,10 @@ export class Presets {
     })
   }
 
+  setAvailablePresetCollection (presets) {
+    this._availablePresets = presets
+  }
+
   async validateAndLoadPresetFile (presetName) {
     let filePath = this._buildFilePath(presetName)
     await this._ensureFileExists(filePath)
@@ -81,6 +87,24 @@ export class Presets {
       })
       return acc
     }, [])
+  }
+
+  async preloadPresets (configDirectory = Config.configDirectory) {
+    const projectRoot = locateProjectRoot()
+    const presetFiles = await fs.readdir(path.resolve(`${configDirectory}/presets`))
+    const presets = []
+    presetFiles.forEach(fileName => {
+      const fileData = require(path.resolve(`${projectRoot}/${configDirectory}/presets/${fileName}`))
+      presets.push(this._getPresetFileData({fileData}))
+    })
+    this.setAvailablePresetCollection(presets)
+  }
+
+  getStatus () {
+    return {
+      active: this._presets,
+      available: this._availablePresets
+    }
   }
 }
 

@@ -12,6 +12,9 @@ export class Appstrap {
       endpoints,
       isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
     })
+    if (invokedFromCLI) {
+      Presets.preloadPresets()
+    }
   }
   get port () { return AppServer.port }
   get start () { return AppServer.start }

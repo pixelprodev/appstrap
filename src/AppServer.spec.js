@@ -134,27 +134,28 @@ describe('AppServer', () => {
   describe('interceptJsonResponse()', function () {
     beforeEach(() => {
       this.AppServer = new AppServer()
-      this.fakeRouter = { res: {json: stub()} }
+      this.jsonStub = stub()
+      this.fakeRouter = { res: {} }
     })
     test('returns the same data if no preset found', () => {
-      const func = this.AppServer.interceptJsonResponse({res: this.fakeRouter.res, preset: -1})
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset: -1})
       const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
       func(data)
-      expect(this.fakeRouter.res.json.lastCall.args[0]).toEqual(data)
+      expect(this.jsonStub.lastCall.args[0]).toEqual(data)
     })
     test('merges preset data in with existing data if mode = merge', () => {
       const preset = {mode: 'merge', data: { baz: 'pow' }}
-      const func = this.AppServer.interceptJsonResponse({res: this.fakeRouter.res, preset})
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
       const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
       func(data)
-      expect(this.fakeRouter.res.json.lastCall.args[0]).toEqual({...data, ...preset.data})
+      expect(this.jsonStub.lastCall.args[0]).toEqual({...data, ...preset.data})
     })
     test('replaces existing data with preset data if mode !== merge', () => {
       const preset = { mode: 'replace', data: {zip: 'zap', zow: 'wow'} }
-      const func = this.AppServer.interceptJsonResponse({res: this.fakeRouter.res, preset})
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
       const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
       func(data)
-      expect(this.fakeRouter.res.json.lastCall.args[0]).toEqual({...preset.data})
+      expect(this.jsonStub.lastCall.args[0]).toEqual({...preset.data})
     })
   })
 

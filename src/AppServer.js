@@ -97,17 +97,18 @@ export class AppServer {
 
   preHandlerMiddleware ({ path, method }) {
     return (req, res, next) => {
-      res.json = this.interceptJsonResponse({res, path, method})
+      const defaultResJSON = res.json
+      res.json = this.interceptJsonResponse({res, path, method, defaultResJSON})
       next()
     }
   }
 
-  interceptJsonResponse ({res, path, method, preset = Presets.fetch({path, method})}) {
+  interceptJsonResponse ({res, defaultResJSON, path, method, preset = Presets.fetch({path, method})}) {
     return (data) => {
       if (preset !== -1) {
         data = preset.mode === 'merge' ? {...data, ...preset.data} : preset.data
       }
-      res.json(data)
+      defaultResJSON.call(res, data)
     }
   }
 
