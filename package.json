@@ -8,7 +8,7 @@
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
-    "develop": "babel --ignore *.spec.js ./src --out-dir ./dist --watch",
+    "develop": "babel -s --ignore *.spec.js ./src --out-dir ./dist --watch",
     "build": "npm run lint && babel --ignore *.spec.js ./src --out-dir ./dist",
     "prepare": "npm run build",
     "lint": "standard",

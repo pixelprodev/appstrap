@@ -64,10 +64,6 @@ export class Presets {
     })
   }
 
-  setAvailablePresetCollection (presets) {
-    this._availablePresets = presets
-  }
-
   async validateAndLoadPresetFile (presetName) {
     let filePath = this._buildFilePath(presetName)
     await this._ensureFileExists(filePath)
@@ -79,9 +75,9 @@ export class Presets {
       presetFile.forEach(preset => {
         let existingIndex = acc.findIndex(row => row.path === preset.path && row.method === preset.method)
         if (existingIndex > -1) {
-          acc[existingIndex].data = preset.mode === 'merge'
-            ? {...acc[existingIndex].data, ...preset.data}
-            : {...preset.data}
+          preset.mode === 'replace'
+            ? acc[existingIndex] = preset
+            : acc[existingIndex].data = {...acc[existingIndex].data, ...preset.data}
         } else {
           acc.push(preset)
         }
@@ -99,7 +95,7 @@ export class Presets {
       const fileData = require(path.resolve(`${projectRoot}/${configDirectory}/presets/${fileName}`))
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
-    this.setAvailablePresetCollection(presets)
+    this._availablePresets = presets
   }
 
   getStatus () {
@@ -111,18 +107,25 @@ export class Presets {
   }
 
   activatePresetGroup ({name}) {
-    this._activePresetGroups.unshift(name)
-    const presetsToGroup = this._activePresetGroups.map(groupName =>
-      this._availablePresets.filter(row => row.name === groupName)
-    )
-    this._presets = this.combinePresets(presetsToGroup)
+    this._activePresetGroups.push(name)
+    this.groupPresetsAndSetInternal()
   }
 
   deactivatePresetGroup ({name}) {
     this._activePresetGroups = this._activePresetGroups.filter(activeName => activeName !== name)
-    const presetsToGroup = this._activePresetGroups.map(groupName =>
-      this._availablePresets.filter(row => row.name === groupName)
-    )
+    this.groupPresetsAndSetInternal()
+  }
+
+  groupPresetsAndSetInternal () {
+    const presetsToGroup = this._activePresetGroups.map(groupName => {
+      const matches = []
+      this._availablePresets.forEach(row => {
+        if (row.name === groupName) {
+          matches.push(new Preset({...row}))
+        }
+      })
+      return matches
+    })
     this._presets = this.combinePresets(presetsToGroup)
   }
 }

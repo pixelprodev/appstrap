@@ -49,10 +49,6 @@ describe('Presets', () => {
     })
   })
 
-  describe('_ensureFileIntegrity()', () => {
-    test('validates file contents')
-  })
-
   describe('_buildFilePath()', function () {
     beforeEach(() => {
       this.Presets = new Presets()
@@ -218,5 +214,54 @@ describe('Presets', () => {
       const replaced = combinedPresets.find(preset => preset.path === '/bar')
       expect(replaced.data).toEqual({fuzz: 'zow'})
     })
+  })
+
+  describe('getStatus()', function () {
+    beforeAll(() => {
+      this.Presets = new Presets()
+    })
+    test('returns active presets, availablePresets, and activeGroups', () => {
+      const status = this.Presets.getStatus()
+      expect(status.activeGroups).toBeDefined()
+      expect(status.activePresets).toBeDefined()
+      expect(status.availablePresets).toBeDefined()
+    })
+  })
+
+  describe('activatePresetGroup()', function () {
+    beforeAll(() => {
+      this.Presets = new Presets()
+      this.setInternalStub = stub(this.Presets, 'groupPresetsAndSetInternal')
+    })
+    test('adds new name to end of group array to preserve stacking order', () => {
+      this.Presets.activatePresetGroup({name: 'test1'})
+      this.Presets.activatePresetGroup({name: 'test2'})
+      expect(this.Presets._activePresetGroups).toHaveLength(2)
+      expect(this.Presets._activePresetGroups).toEqual(['test1', 'test2'])
+    })
+    test('sets internal presets', () => {
+      this.Presets.activatePresetGroup({name: 'test1'})
+      expect(this.setInternalStub.called).toBe(true)
+    })
+  })
+
+  describe('deactivatePresetGroup', function () {
+    beforeAll(() => {
+      this.Presets = new Presets()
+      this.setInternalStub = stub(this.Presets, 'groupPresetsAndSetInternal')
+    })
+    test('removes name from activePresetGroups', () => {
+      this.Presets._activePresetGroups = ['foo', 'bar', 'baz']
+      this.Presets.deactivatePresetGroup({name: 'bar'})
+      expect(this.Presets._activePresetGroups).toEqual(['foo', 'baz'])
+    })
+    test('sets internal presets', () => {
+      this.Presets.activatePresetGroup({name: 'test1'})
+      expect(this.setInternalStub.called).toBe(true)
+    })
+  })
+
+  describe('groupPresetsAndSetInternal()', function () {
+    test('array returned does not have object references to availablePresets')
   })
 })
