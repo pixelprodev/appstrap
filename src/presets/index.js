@@ -104,21 +104,26 @@ export class Presets {
 
   getStatus () {
     return {
-      active: this._presets,
-      available: this._availablePresets
+      activePresets: this._presets,
+      availablePresets: this._availablePresets,
+      activeGroups: this._activePresetGroups
     }
   }
 
   activatePresetGroup ({name}) {
-    this._activePresetGroups.push(name)
-    this._presets = this._availablePresets.filter(row => this._activePresetGroups.includes(row.name))
-    return this._presets
+    this._activePresetGroups.unshift(name)
+    const presetsToGroup = this._activePresetGroups.map(groupName =>
+      this._availablePresets.filter(row => row.name === groupName)
+    )
+    this._presets = this.combinePresets(presetsToGroup)
   }
 
   deactivatePresetGroup ({name}) {
     this._activePresetGroups = this._activePresetGroups.filter(activeName => activeName !== name)
-    this._presets = this._availablePresets.filter(row => this._activePresetGroups.includes(row.name))
-    return this._presets
+    const presetsToGroup = this._activePresetGroups.map(groupName =>
+      this._availablePresets.filter(row => row.name === groupName)
+    )
+    this._presets = this.combinePresets(presetsToGroup)
   }
 }
 
