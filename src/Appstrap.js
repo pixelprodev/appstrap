@@ -4,7 +4,13 @@ import Config from './config/loader'
 import Presets from './presets'
 
 export class Appstrap {
-  constructor ({configPath, port = 5000, invokedFromCLI = false, endpoints, config = Config.load(configPath)}) {
+  constructor ({
+    configPath,
+    port = 5000,
+    invokedFromCLI = false,
+    endpoints,
+    config = Config.load(configPath)
+  }) {
     AppServer.configure({
       port,
       invokedFromCLI,
@@ -12,6 +18,7 @@ export class Appstrap {
       endpoints,
       isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
     })
+    this._AppServer = AppServer._app
     if (invokedFromCLI) {
       Presets.preloadPresets()
     }
