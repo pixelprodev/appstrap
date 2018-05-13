@@ -126,7 +126,7 @@ export class AppServer {
   }
 
   loadManagementInterface () {
-    this._app.use(managementInterface.configure({AppServer: this, Config, Endpoints}))
+    this._app.use(managementInterface.configure({AppServer: this, Config, Endpoints, Presets}))
   }
 
   async start ({port = this.port} = {}) {

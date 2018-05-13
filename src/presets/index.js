@@ -9,6 +9,7 @@ export class Presets {
   constructor () {
     this._presets = []
     this._availablePresets = []
+    this._activePresetGroups = []
     this.loadPreset = this.loadPreset.bind(this)
     this.loadPresets = this.loadPresets.bind(this)
   }
@@ -32,11 +33,11 @@ export class Presets {
     return `${configDirectory}/presets/${fileName}.js`
   }
 
-  _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)) }) {
+  _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)), name }) {
     const presets = []
     fileData.forEach(({path, mode, ...methods}) => {
       Object.keys(methods).forEach(method => {
-        presets.push(new Preset({ path, mode, method, data: methods[method] }))
+        presets.push(new Preset({ name, path, mode, method, data: methods[method] }))
       })
     })
     return presets
@@ -70,7 +71,7 @@ export class Presets {
   async validateAndLoadPresetFile (presetName) {
     let filePath = this._buildFilePath(presetName)
     await this._ensureFileExists(filePath)
-    return this._getPresetFileData({filePath})
+    return this._getPresetFileData({filePath, name: presetName})
   }
 
   combinePresets (presetDataCollection) {
@@ -92,10 +93,11 @@ export class Presets {
   async preloadPresets (configDirectory = Config.configDirectory) {
     const projectRoot = locateProjectRoot()
     const presetFiles = await fs.readdir(path.resolve(`${configDirectory}/presets`))
-    const presets = []
+    let presets = []
     presetFiles.forEach(fileName => {
+      const name = fileName.replace('.js', '')
       const fileData = require(path.resolve(`${projectRoot}/${configDirectory}/presets/${fileName}`))
-      presets.push(this._getPresetFileData({fileData}))
+      presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this.setAvailablePresetCollection(presets)
   }
@@ -105,6 +107,18 @@ export class Presets {
       active: this._presets,
       available: this._availablePresets
     }
+  }
+
+  activatePresetGroup ({name}) {
+    this._activePresetGroups.push(name)
+    this._presets = this._availablePresets.filter(row => this._activePresetGroups.includes(row.name))
+    return this._presets
+  }
+
+  deactivatePresetGroup ({name}) {
+    this._activePresetGroups = this._activePresetGroups.filter(activeName => activeName !== name)
+    this._presets = this._availablePresets.filter(row => this._activePresetGroups.includes(row.name))
+    return this._presets
   }
 }
 

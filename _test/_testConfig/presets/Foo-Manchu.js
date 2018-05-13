@@ -1,6 +1,6 @@
 module.exports = [
   {
-    path: '/bar',
+    path: '/',
     mode: 'merge',
     get: {
       foo: 'two',
