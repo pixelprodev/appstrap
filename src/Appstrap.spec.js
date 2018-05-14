@@ -1,4 +1,4 @@
-import Endpoints from './Endpoints'
+import Endpoints from './endpoints'
 import AppServer from './AppServer'
 import Config from './config/loader'
 import Presets from './presets'
