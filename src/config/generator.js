@@ -58,6 +58,7 @@ class ConfigGenerator {
   static async writeConfigFile (configContents) {
     const filePath = path.resolve(process.cwd(), './.appstrap/config.js')
     await fs.ensureFile(filePath)
+    await fs.ensureDir(path.resolve(process.cwd(), './.appstrap/config/presets'))
     await fs.writeFile(path.resolve(process.cwd(), './.appstrap/config.js'), configContents)
   }
 
@@ -67,6 +68,7 @@ class ConfigGenerator {
     console.log('=================================================')
     console.log(`Root Directory : ${process.cwd()}`)
     console.log('   |- .appstrap')
+    console.log('      |- presets/')
     console.log('      |- config.js')
     console.log('')
     console.log('For more information visit the following links:')
