@@ -9,6 +9,7 @@ export class Loader {
   constructor () {
     this.configFileData = {bundle: {}, assets: [], endpoints: []}
     this.configFilePath = '.appstrap/config.js'
+    this.reload = this.reload.bind(this)
   }
 
   load (configFilePath = this.configFilePath) {
@@ -31,7 +32,7 @@ export class Loader {
     this.configDirectory = splitPath.join(path.sep)
   }
 
-  reload ({reloadFromFS = false}) {
+  reload ({reloadFromFS = false} = {}) {
     if (reloadFromFS) {
       this.load()
     } else {
