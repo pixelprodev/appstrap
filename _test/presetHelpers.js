@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-async function getPresets () {
+export async function getPresets () {
   const presetFiles = await fs.readdir(path.resolve(`${__dirname}/_testConfig/presets`))
   const presets = {}
   presetFiles.forEach(fileName => {
@@ -10,4 +10,7 @@ async function getPresets () {
   return presets
 }
 
-export default getPresets
+export async function getPresetData (presetName) {
+  const presetFiles = await getPresets()
+  return presetFiles[presetName].find(({path}) => path === '/').get
+}

@@ -16,6 +16,7 @@ export class Presets {
 
   clear () {
     this._presets = []
+    this._activePresetGroups = []
   }
 
   fetch ({path, method}) {
@@ -49,10 +50,7 @@ export class Presets {
   }
 
   async loadPresets (presetNames) {
-    const presetDataCollection = presetNames.map(async (name) => {
-      await this.validateAndLoadPresetFile(name)
-    })
-
+    const presetDataCollection = await Promise.all(presetNames.map(async (name) => this.validateAndLoadPresetFile(name)))
     const presets = this.combinePresets(presetDataCollection)
     this.addPresetsToInternalCollection(presets)
   }

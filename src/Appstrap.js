@@ -18,7 +18,7 @@ export class Appstrap {
       endpoints,
       isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
     })
-    this._AppServer = AppServer._app
+    this._app = AppServer._app
     if (invokedFromCLI) {
       Presets.preloadPresets()
     }

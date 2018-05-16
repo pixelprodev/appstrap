@@ -4,6 +4,7 @@ import Endpoints from '../endpoints'
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
 import { locateProjectRoot } from '../utilities'
 import AppServer from '../AppServer'
+import Presets from '../presets'
 
 export class Loader {
   constructor () {
@@ -39,6 +40,7 @@ export class Loader {
       this._generateEndpointsFromConfig(this.configFileData.endpoints)
       AppServer.reloadEndpoints(Endpoints.fetch())
     }
+    Presets.clear()
   }
 
   getConfigData () {

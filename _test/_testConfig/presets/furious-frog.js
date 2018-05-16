@@ -6,5 +6,12 @@ module.exports = [
       foo: 'two',
       bar: 'zub'
     }
+  },
+  {
+    path: '/Test',
+    mode: 'replace',
+    get: {
+      case: 'insensitive'
+    }
   }
 ]
