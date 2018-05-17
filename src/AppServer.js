@@ -49,6 +49,7 @@ export class AppServer {
   } = {}) {
     const Router = express.Router({})
     const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
+    if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
         this.modifierMiddleware(endpoints[indx]),
@@ -61,7 +62,6 @@ export class AppServer {
       const markup = this.getSpaHarnessMarkup(configData)
       Router.get('*', (req, res) => res.send(markup))
     }
-    if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
     this._router = Router
     return this._router
   }
