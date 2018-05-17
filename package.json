@@ -8,20 +8,21 @@
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
-    "develop": "babel --ignore *.spec.js ./src --out-dir ./dist --watch",
+    "develop": "babel -s --ignore *.spec.js ./src --out-dir ./dist --watch",
     "build": "npm run lint && babel --ignore *.spec.js ./src --out-dir ./dist",
     "prepare": "npm run build",
     "lint": "standard",
     "test": "jest"
   },
   "dependencies": {
-    "@pixelprodotco/appstrap-management-interface": "0.1.0",
+    "@pixelprodotco/appstrap-management-interface": "0.2.0",
     "body-parser": "1.17.2",
     "commander": "^2.14.1",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
     "pre-commit": "^1.2.2",
+    "require-all": "^2.2.0",
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"
   },

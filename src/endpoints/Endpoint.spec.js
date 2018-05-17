@@ -1,9 +1,10 @@
 import Endpoint from './Endpoint'
 import { ErrEndpointInvalid } from '../errors'
-import loadTestConfig from '../../_test/_loadTestConfig'
+import { Loader } from '../config/loader'
 
 describe('Endpoint', function () {
-  this.config = loadTestConfig()
+  this.Loader = new Loader()
+  this.config = this.Loader.load('./_test/_testConfig/config.js')
   describe('constructor', () => {
     test('property contract', () => {
       this.config.endpoints.forEach(endpoint => {

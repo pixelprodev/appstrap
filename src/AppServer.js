@@ -8,6 +8,7 @@ import Endpoints from './endpoints'
 import Config from './config/loader'
 import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
+import Presets from './presets'
 
 export class AppServer {
   constructor () {
@@ -50,7 +51,8 @@ export class AppServer {
     const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
-        this.getModifierMiddleware(endpoints[indx]),
+        this.modifierMiddleware(endpoints[indx]),
+        this.preHandlerMiddleware(endpoints[indx]),
         handler
       )
     })
@@ -80,7 +82,7 @@ export class AppServer {
     `
   }
 
-  getModifierMiddleware ({
+  modifierMiddleware ({
     latency = false,
     latencyMS = 0,
     error = false,
@@ -90,6 +92,23 @@ export class AppServer {
     return async (req, res, next) => {
       if (latency) { await delay(latencyMS) }
       return error ? res.sendStatus(errorStatus) : next()
+    }
+  }
+
+  preHandlerMiddleware ({ path, method }) {
+    return (req, res, next) => {
+      const defaultResJSON = res.json
+      res.json = this.interceptJsonResponse({res, path, method, defaultResJSON})
+      next()
+    }
+  }
+
+  interceptJsonResponse ({res, defaultResJSON, path, method, preset = Presets.fetch({path, method})}) {
+    return (data) => {
+      if (preset !== -1) {
+        data = preset.mode === 'merge' ? {...data, ...preset.data} : preset.data
+      }
+      defaultResJSON.call(res, data)
     }
   }
 
@@ -107,7 +126,7 @@ export class AppServer {
   }
 
   loadManagementInterface () {
-    this._app.use(managementInterface.configure({AppServer: this, Config, Endpoints}))
+    this._app.use(managementInterface.configure({AppServer: this, Config, Endpoints, Presets}))
   }
 
   async start ({port = this.port} = {}) {

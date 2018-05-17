@@ -4,11 +4,13 @@ import Endpoints from '../endpoints'
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
 import { locateProjectRoot } from '../utilities'
 import AppServer from '../AppServer'
+import Presets from '../presets'
 
 export class Loader {
   constructor () {
     this.configFileData = {bundle: {}, assets: [], endpoints: []}
     this.configFilePath = '.appstrap/config.js'
+    this.reload = this.reload.bind(this)
   }
 
   load (configFilePath = this.configFilePath) {
@@ -18,19 +20,27 @@ export class Loader {
     if (configFilePath !== this.configFilePath) {
       this.configFilePath = configFilePath
     }
+    this.setConfigDirectory()
     return {
       ...this.configFileData,
       ...{ endpoints: Endpoints.fetch() }
     }
   }
 
-  reload ({reloadFromFS = false}) {
+  setConfigDirectory () {
+    const splitPath = this.configFilePath.split(path.sep)
+    splitPath.pop()
+    this.configDirectory = splitPath.join(path.sep)
+  }
+
+  reload ({reloadFromFS = false} = {}) {
     if (reloadFromFS) {
       this.load()
     } else {
       this._generateEndpointsFromConfig(this.configFileData.endpoints)
       AppServer.reloadEndpoints(Endpoints.fetch())
     }
+    Presets.clear()
   }
 
   getConfigData () {

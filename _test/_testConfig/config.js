@@ -3,7 +3,7 @@ module.exports = {
   endpoints: [
     {
       path: '/',
-      get: (req, res) => res.send('this is the root')
+      get: (req, res) => res.json({message: 'this is the root'})
     },
     {
       path: '/test',

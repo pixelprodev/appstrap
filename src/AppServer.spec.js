@@ -100,30 +100,62 @@ describe('AppServer', () => {
     })
   })
 
-  describe('getModifierMiddleware()', function () {
+  describe('modifierMiddleware()', function () {
     beforeAll(() => {
       this.server = new AppServer()
     })
     test('returns 500 error when error is enabled', async () => {
       const errorStub = stub()
-      const middleware = this.server.getModifierMiddleware({error: true})
+      const middleware = this.server.modifierMiddleware({error: true})
       await middleware({}, {sendStatus: errorStub}, () => {})
       expect(errorStub.calledOnceWith(500)).toBe(true)
     })
     test('returns custom error code when provided', async () => {
       const errorStub = stub()
-      const middleware = this.server.getModifierMiddleware({error: true, errorStatus: 400})
+      const middleware = this.server.modifierMiddleware({error: true, errorStatus: 400})
       await middleware({}, {sendStatus: errorStub}, () => {})
       expect(errorStub.calledOnceWith(500)).toBe(false)
       expect(errorStub.calledOnceWith(400)).toBe(true)
     })
     test('waits X ms when latency is enabled', async () => {
       const sleepStub = stub().usingPromise(Promise)
-      const middleware = this.server.getModifierMiddleware({
+      const middleware = this.server.modifierMiddleware({
         latency: true, latencyMS: 3000, delay: sleepStub
       })
       await middleware({}, {}, () => {})
       expect(sleepStub.calledOnceWith(3000)).toEqual(true)
+    })
+  })
+
+  describe('preHandlerMiddleware()', () => {
+    test('overrides res.json with middleware to account for presets')
+  })
+
+  describe('interceptJsonResponse()', function () {
+    beforeEach(() => {
+      this.AppServer = new AppServer()
+      this.jsonStub = stub()
+      this.fakeRouter = { res: {} }
+    })
+    test('returns the same data if no preset found', () => {
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset: -1})
+      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
+      func(data)
+      expect(this.jsonStub.lastCall.args[0]).toEqual(data)
+    })
+    test('merges preset data in with existing data if mode = merge', () => {
+      const preset = {mode: 'merge', data: { baz: 'pow' }}
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
+      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
+      func(data)
+      expect(this.jsonStub.lastCall.args[0]).toEqual({...data, ...preset.data})
+    })
+    test('replaces existing data with preset data if mode !== merge', () => {
+      const preset = { mode: 'replace', data: {zip: 'zap', zow: 'wow'} }
+      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
+      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
+      func(data)
+      expect(this.jsonStub.lastCall.args[0]).toEqual({...preset.data})
     })
   })
 
@@ -144,7 +176,7 @@ describe('AppServer', () => {
   })
 
   describe('start/stop', () => {
-    test('starts and stops a server', async () => {
+    xtest('starts and stops a server', async () => {
       const dummyEndpoint = {path: '/', method: 'get', handler: (req, res) => res.send('ok')}
       let server = new AppServer()
       server.configure({endpoints: [new Endpoint(dummyEndpoint)]})

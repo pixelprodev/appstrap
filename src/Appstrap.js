@@ -1,9 +1,16 @@
 import AppServer from './AppServer'
 import Endpoints from './endpoints'
 import Config from './config/loader'
+import Presets from './presets'
 
 export class Appstrap {
-  constructor ({configPath, port = 5000, invokedFromCLI = false, endpoints, config = Config.load(configPath)}) {
+  constructor ({
+    configPath,
+    port = 5000,
+    invokedFromCLI = false,
+    endpoints,
+    config = Config.load(configPath)
+  }) {
     AppServer.configure({
       port,
       invokedFromCLI,
@@ -11,6 +18,10 @@ export class Appstrap {
       endpoints,
       isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
     })
+    this._app = AppServer._app
+    if (invokedFromCLI) {
+      Presets.preloadPresets()
+    }
   }
   get port () { return AppServer.port }
   get start () { return AppServer.start }
@@ -18,6 +29,8 @@ export class Appstrap {
   get reset () { return Config.reload }
   get setModifier () { return Endpoints.setModifier }
   get clearModifier () { return Endpoints.clearModifier }
+  get loadPreset () { return Presets.loadPreset }
+  get loadPresets () { return Presets.loadPresets }
 }
 
 export default Appstrap

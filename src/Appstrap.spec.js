@@ -1,6 +1,7 @@
-import Endpoints from './Endpoints'
+import Endpoints from './endpoints'
 import AppServer from './AppServer'
 import Config from './config/loader'
+import Presets from './presets'
 import { Appstrap } from './Appstrap'
 
 describe('Appstrap', () => {
@@ -47,6 +48,20 @@ describe('Appstrap', () => {
     test('Exposes Endpoints.clearModifier', () => {
       const strap = new Appstrap({config: {}})
       expect(strap.clearModifier.toString()).toEqual(Endpoints.clearModifier.toString())
+    })
+  })
+
+  describe('loadPreset', () => {
+    test('Expostes Presets.loadPreset', () => {
+      const strap = new Appstrap({config: {}})
+      expect(strap.loadPreset.toString()).toEqual(Presets.loadPreset.toString())
+    })
+  })
+
+  describe('loadPreset', () => {
+    test('Expostes Presets.loadPresets', () => {
+      const strap = new Appstrap({config: {}})
+      expect(strap.loadPresets.toString()).toEqual(Presets.loadPresets.toString())
     })
   })
 })

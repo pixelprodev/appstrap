@@ -8,6 +8,15 @@ export class ErrConfigNotFound extends Error {
   }
 }
 
+export class ErrPresetNotFound extends Error {
+  constructor (message, presetFilePath) {
+    super(`
+      Unable to load preset file at ${presetFilePath}
+    `, 500)
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
 export class ErrConfigInvalid extends Error {
   constructor () {
     super(`
