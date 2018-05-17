@@ -17,6 +17,7 @@ export class Loader {
     this._ensureFileExists(configFilePath)
     this.configFileData = { ...this._getConfigFileData({configFilePath}), ...this._getPackageInfo() }
     this._generateEndpointsFromConfig(this.configFileData.endpoints)
+    this.initialState = this.configFileData.initialState
     if (configFilePath !== this.configFilePath) {
       this.configFilePath = configFilePath
     }

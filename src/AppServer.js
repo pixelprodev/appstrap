@@ -45,14 +45,17 @@ export class AppServer {
   loadEndpoints ({
     endpoints = Endpoints.fetch(),
     configData = Config.getConfigData(),
+    initialState = Config.initialState,
     isSPA = this.isSPA
   } = {}) {
+    this.internalState = initialState
     const Router = express.Router({})
     const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
     if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
         this.modifierMiddleware(endpoints[indx]),
+        this.stateProviderMiddleware(),
         this.preHandlerMiddleware(endpoints[indx]),
         handler
       )
@@ -92,6 +95,13 @@ export class AppServer {
     return async (req, res, next) => {
       if (latency) { await delay(latencyMS) }
       return error ? res.sendStatus(errorStatus) : next()
+    }
+  }
+
+  stateProviderMiddleware () {
+    return (req, res, next) => {
+      req.state = this.internalState
+      next()
     }
   }
 

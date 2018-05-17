@@ -20,7 +20,7 @@ export class Presets {
   }
 
   fetch ({path, method}) {
-    const presetIndex = this._presets.findIndex(preset => preset.method === method && preset.path === path)
+    const presetIndex = this._presets.findIndex(preset => preset.method === method.toLowerCase() && preset.path === path.toLowerCase())
     return presetIndex === -1 ? presetIndex : this._presets[presetIndex]
   }
 
