@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@pixelprodotco/appstrap-management-interface": "0.2.0",
+    "@pixelprodotco/appstrap-management-interface": "0.2.1",
     "body-parser": "1.17.2",
     "commander": "^2.14.1",
     "express": "^4.15.3",
