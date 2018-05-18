@@ -1,8 +1,8 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-export async function getPresets () {
-  const presetFiles = await fs.readdir(path.resolve(`${__dirname}/_testConfig/presets`))
+export function getPresets () {
+  const presetFiles = fs.readdirSync(path.resolve(`${__dirname}/_testConfig/presets`))
   const presets = {}
   presetFiles.forEach(fileName => {
     presets[fileName.replace('.js', '')] = require(`${__dirname}/_testConfig/presets/${fileName}`)
@@ -10,7 +10,7 @@ export async function getPresets () {
   return presets
 }
 
-export async function getPresetData (presetName) {
-  const presetFiles = await getPresets()
+export function getPresetData (presetName) {
+  const presetFiles = getPresets()
   return presetFiles[presetName].find(({path}) => path === '/').get
 }

@@ -84,9 +84,9 @@ export class Presets {
     }, [])
   }
 
-  async preloadPresets (configDirectory = Config.configDirectory) {
+  preloadPresets (configDirectory = Config.configDirectory) {
     const projectRoot = locateProjectRoot()
-    const presetFiles = await fs.readdir(path.resolve(`${configDirectory}/presets`))
+    const presetFiles = fs.readdirSync(path.resolve(`${configDirectory}/presets`))
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')

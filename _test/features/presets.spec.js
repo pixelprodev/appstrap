@@ -10,7 +10,7 @@ describe('Presets feature', () => {
   describe('Appstrap.reset()', function () {
     beforeAll(async () => {
       this.server = new Appstrap({configPath: './_test/_testConfig/config.js'})
-      await Presets.preloadPresets()
+      Presets.preloadPresets()
       await this.server.loadPreset('furious-frog')
       this.server.reset()
     })
@@ -32,13 +32,13 @@ describe('Presets feature', () => {
       this.baseResponse = JSON.parse(text)
     })
     test('active preset merges onto base response payload', async () => {
-      const presetResponse = await getPresetData('furious-frog')
+      const presetResponse = getPresetData('furious-frog')
       await this.server.loadPreset('furious-frog')
       const enhancedResponse = await this.routes.get('/')
       expect(enhancedResponse.text).toEqual(JSON.stringify({...this.baseResponse, ...presetResponse}))
     })
     test('active preset replaces base response payload', async () => {
-      const presetResponse = await getPresetData('rambunctious-rhino')
+      const presetResponse = getPresetData('rambunctious-rhino')
       await this.server.loadPreset('rambunctious-rhino')
       const enhancedResponse = await this.routes.get('/')
       Object.keys(this.baseResponse).forEach(key => expect(enhancedResponse.text).not.toContain(key))
@@ -63,9 +63,9 @@ describe('Presets feature', () => {
     })
     test('activating presets with modes of merge <- merge <- merge combine appropriately on base', async () => {
       const mergedPresets = {
-        ...await getPresetData('curious-coyote'),
-        ...await getPresetData('furious-frog'),
-        ...await getPresetData('laughing-leopard')
+        ...getPresetData('curious-coyote'),
+        ...getPresetData('furious-frog'),
+        ...getPresetData('laughing-leopard')
       }
       await this.server.loadPresets(['curious-coyote', 'furious-frog', 'laughing-leopard'])
       const response = await this.routes.get('/')
@@ -73,15 +73,15 @@ describe('Presets feature', () => {
     })
     test('activating presets with modes of merge <- replace <- merge result in replace <- merge', async () => {
       const replacedAndMerged = {
-        ...await getPresetData('rambunctious-rhino'),
-        ...await getPresetData('laughing-leopard')
+        ...getPresetData('rambunctious-rhino'),
+        ...getPresetData('laughing-leopard')
       }
       await this.server.loadPresets(['curious-coyote', 'rambunctious-rhino', 'laughing-leopard'])
       const response = await this.routes.get('/')
       expect(response.text).toEqual(JSON.stringify({...replacedAndMerged}))
     })
     test('activating presets with modes of merge <- merge <- replace result in replace only', async () => {
-      const replaced = await getPresetData('rambunctious-rhino')
+      const replaced = getPresetData('rambunctious-rhino')
 
       await this.server.loadPresets(['curious-coyote', 'laughing-leopard', 'rambunctious-rhino'])
       const response = await this.routes.get('/')
@@ -99,7 +99,7 @@ describe('Presets feature', () => {
       this.baseResponse = JSON.parse(text)
     })
     test('activating a preset updates endpoint behavior as expected', async () => {
-      const presetResponse = await getPresetData('furious-frog')
+      const presetResponse = getPresetData('furious-frog')
       await this.server.loadPreset('furious-frog')
       const enhancedResponse = await this.routes.get('/')
       expect(enhancedResponse.text).toEqual(JSON.stringify({...this.baseResponse, ...presetResponse}))
