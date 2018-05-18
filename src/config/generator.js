@@ -45,11 +45,11 @@ class ConfigGenerator {
       bundle.directory = splitFileName.join(path.sep)
     }
     let bundleMarkup = isSinglePageApp
-      ? (`\n  bundle: {path: '${bundle.path}', host: '${bundle.host}'},`)
+      ? (`\n  bundle: {webPath: '${bundle.path}', host: '${bundle.host}'},`)
       : ''
 
     let assetsMarkup = isSinglePageApp
-      ? (`\n  assets: [{ webPath: '/${bundle.fileName}', fsDir: '${bundle.directory}' }]`)
+      ? (`\n  assets: [{ webPath: '/${bundle.fileName}', directory: '${bundle.directory}' }]`)
       : '\n  assets: []'
     let endpointsMarkup = `\n  endpoints: []\n`
     return (`module.exports = {${bundleMarkup}${assetsMarkup}, ${endpointsMarkup}}`)
