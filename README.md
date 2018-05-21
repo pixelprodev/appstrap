@@ -1,60 +1,76 @@
 # Appstrap
 
-Appstrap is an uber-configurable mock server for bootstrapping single page apps.  It is powered by node.js and express.
+Appstrap is an interactive tool for REST api mocking.  It is powered by node.js and express.
 
-Driven by a simple but powerful configuration, your server can be as simple or as robust as you desire with very little effort.  From a single endpoint that responds with a simple json payload all the way up to an in-depth set of functions that provide a realistic stand-in for your production server - you can do it with appstrap.
+Driven by a simple but powerful configuration, your mock api can adapt its complexity to the needs of your application.  From a single endpoint that responds with a simple json payload, to an in-depth set of functions that provide a realistic stand-in for your production server - you can do it with appstrap.
 
-Appstrap's primary mission is providing an easy way to enable a workflow that allows you to see data backed interface changes in your browser, but that's only the beginning.  Once your server configuration is set up, it can also spin up headless server(s) for local integration testing.  QA can be a bit unstable at times?  No problem when you can run locally!  The robust command line api provides access to the same set of features you would see via the web control panel so you have a seemless experience no matter how you use it.
+Appstrap's mission:
+  - Isolate applications or services at their REST boundaries
+  - Ensure easy reproduction of bugs in local from other environment sources
+  - Ensure higher code quality before the code even hits your ci/cd pipeline
+  - Eliminate reliance on other services/tiers to be in place
 
-### But.. why?
-Appstrap was the solution I designed to solve a few personal problems in my day job.  With a very large enterprise codebase and a sizeable and complex stack to deal with, it often felt like I spent more time setting up data to test my interface than I spent actually developing it.  In addition, there were unit tests, integration tests, writing detailed pull requests on how another engineer would have to spend their time again mocking more data to test the code, etc.  It all just seemed tedious, frustrating, and not worth it.
+As in all good things, Appstrap was born from necessity.  I often found myself spending more time setting up data, waiting on unreliable environments, or even waiting on other services to be ready than I spent developing my code. 
 
-I set out to design a solution for my own use that could reduce or even eliminate the need to set this data up more than once.  That data could then be used in all scenarios from development, testing, and product verification.
+I wanted something that was dead simple to use, could effectively mock any external service without my app knowing the difference, and something that would help make my integration tests easy to transition to qa and production.
 
-### How is this any different from webpack-dev-server or something like that?
+Previous attempts to solve this problem included creating a bunch of json files for "fake" data to inject.  Although it was servicable for getting data back from a service, it did nothing in terms of interaction between a service.  I found I was pushing bugs into qa that had more to do about what happens after I interact with a service than anything else.  Something had to change.
 
-Appstrap was designed first and foremost to be a convenient way to **test** an application.  The fact that it spins up an express server is about where the similarities end.
-
-Some of the features you can expect from your appstrap instance are:
-
-#### Error mocking
-So you've mocked an endpoint or two.  When all goes well, its great.  What happens if a route fails?  Your interface probably needs to handle that scenario also.  Simply open the appstrap control panel at `appstrap.localhost:{yourport}`, select your endpoint, and enable the "Return Error" toggle.  When enabled, the toggle will turn red.  All calls to the endpoint while this setting is on will return a 500 http error instead.  Simply toggle the setting back off to return back to receiving your original endpoint response as expected.
-
-Note: In the future, this error code will be configurable via the control panel also.
-
-// TODO add gif of this process once demo project is built
-
-#### Latency mocking
-Often once your application makes it to production and is no longer on your local machine, latency between requests becomes one of those things you just can't ignore.  Appstrap provides an easy way to test latency in your local environment via toggle as well. Simply open the appstrap control panel at `appstrap.localhost:{yourport}`, select your endpoint, and enable the "Simulate latency" toggle.  When enabled, the toggle will turn yellow and a text input will appear beside it.  Enter the amount of delay (in miliseconds) that you would like to add to the endpoint and it will take effect immediately.  All calls to the endpoint will wait the specified amount of miliseconds before returning the response.  Simply toggle the setting back off to return back to receiving your original endpoint response immediately as expected.
-
-// TODO add gif of this process once demo project is built
-
-#### Presets (aka fixtures)
-
-#### Headless support
+With Appstrap, all data can now be mocked on the fly.  Changes as a result of a service interaction are now reflected the next time data is retrieved.  The same integration tests we run against qa and production can run right along side of my unit tests.  Life is better with Appstrap.  Follow the getting started guide below to use Appstrap in your project today!
 
 
-#### In-Memory state
-When your appstrap server is first started, an in-memory state object is created for you. In any of your specified endpoint method handlers, the state will be added to the `req` object as `req.state`.
+## Getting started
 
-State can be preloaded at instance startup by providing a value to the `initialState` property in your appstrap config file.  Whether you are setting your state from the payload of a json file, or the result of a generation function, it just needs to be an object.
+### Install via NPM
+```
+npm install --save-dev @pixelprodotco/appstrap
+```
+### Set up your config file
+At the root of your project, run the following command
+```
+appstrap init
+```
+After answering the prompts, a new configuration file will be created for you.
 
-If you do not preload your state, it is defaulted to an empty object `{}`
+If you prefer to make your own config file instead, you may do so.  When the server is started, it looks for the config at`.appstrap/config.js` relative to the root of your project directory.  This can be overridden by invoking the appstrap constructor with the property `configPath: './your/path/here'` or via command line with `-c ./your/path/here`
+
+The table below illustrates the building blocks of a config file.
+
+|Property|Type|Purpose| |
+|---|---|---|---|
+|bundle|Object|If you are developing a single page application, by specifying a bundle, the server will add the necessary logic to serve the single page app and enable client side routing. |(optional)|
+|initialState|Object|When the server is started, req.state will be set to an empty object - {} -  by default.  Override that behavior and prime in some initial state here.|(optional)|
+|assets|Array|Any folders that contain static files that may be requested from your server should be declared here. If you arent serving any static files, provide an empty array.|required|
+|endpoints|Array|Specify a collection of endpoints here.  These will be used to respond to requests passed to your server.  Each handler shares an identical signature to express route handlers.|required|
+
+For detailed information about the configuration setup, follow [this link](./docs/config.md)
+
+### Add a start script to your package json
+```
+"scripts": {
+  ...
+  "appstrap": "appstrap start"
+  ...
+}
+```
+
+### Launch!
+```
+npm run appstrap
+```
+This will start your server and assign a port.  By default, 5000 is preferred, however you may override this by passing the `-p 3000` argument into your startup script.  If the port is already taken, Appstrap will automatically find an open port and bind to it instead.  You may now access your server.
+
+#### Don't forget about the management ui!
+When your server is created via `appstrap start`, a mangement interface is also created for you.  This interface is accessible via `appstrap.localhost:{yourport}` - with `yourport` being the same port that we bound your server to.
+
+From here, you can toggle errors, simulate latency, and even load/unload presets.  More information on the management ui can be found [here](https://www.github.com/pixelprodotco/appstrap-management-interface)
 
 
+## API reference
+For api documentation follow [this link](/docs/api.md).
 
-// Unique to the instance of the server
-
-#### Parallel runners
-As you write feature tests that utilize your appstrap server, running your integration tests in parallel allows for much faster iteration on your test suite.  As you create new instances of appstrap (via `new Appstrap()`), if the port specified in your config is already in use by another instance, appstrap will automatically bind the new instance to an available open port on the machine. As long as you have ports to bind to, you can continue to spawn new servers!  Use within reason of course.
-
-All calls to this.server.{method} will access the appropriate instance.  This allows you to isolate state between features and even on a test by test level without interfering with other unrelated tests that are in flight.
-
---
-
-### Future plans
-
-#### Feature demo mode
-Based on a step definition in your tests (mocha, jest, etc..) you'll be able to utilize the power of other appstrap features to stage your app to a relevant state to queue your feature and step through it piece by piece in the browser.  This is especially useful for someone doing a code review (for easy visual confirmation) or presenting to product for acceptance!
-
-
+## Features
+### Error Mocking
+### Latency Mocking
+### Presets
+### Headless Mode
