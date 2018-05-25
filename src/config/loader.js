@@ -9,7 +9,7 @@ import Presets from '../presets'
 export class Loader {
   constructor () {
     this.configFileData = {bundle: {}, assets: [], endpoints: []}
-    this.configFilePath = '.appstrap/config.js'
+    this.configFilePath = '.appstrap' + path.sep + 'config.js'
     this.reload = this.reload.bind(this)
   }
 
