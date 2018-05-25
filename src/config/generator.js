@@ -58,7 +58,7 @@ class ConfigGenerator {
   static async writeConfigFile (configContents) {
     const filePath = path.resolve(process.cwd(), './.appstrap/config.js')
     await fs.ensureFile(filePath)
-    await fs.ensureDir(path.resolve(process.cwd(), './.appstrap/config/presets'))
+    await fs.ensureDir(path.resolve(process.cwd(), './.appstrap/presets'))
     await fs.writeFile(path.resolve(process.cwd(), './.appstrap/config.js'), configContents)
   }
 
