@@ -23,7 +23,7 @@ describe('config loader', () => {
   describe('private methods', () => {
     describe('_ensureFileExists', () => {
       test('Throws an error if the file does not exist', () => {
-        expect(() => configLoader._ensureFileExists('/foo/bar')).toThrow(ErrConfigNotFound)
+        expect(() => configLoader._ensureFileExists(path.normalize('/foo/bar'))).toThrow(ErrConfigNotFound)
       })
       test('Returns without throwing an error if the file exists', () => {
         const dirParts = [projectRoot, '_test', '_testConfig', 'config.js']

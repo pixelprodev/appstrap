@@ -2,6 +2,7 @@ import AppServer from './AppServer'
 import Endpoints from './endpoints'
 import Config from './config/loader'
 import Presets from './presets'
+import path from 'path'
 
 export class Appstrap {
   constructor ({
@@ -9,7 +10,7 @@ export class Appstrap {
     port = 5000,
     invokedFromCLI = false,
     endpoints,
-    config = Config.load(configPath)
+    config = Config.load(path.normalize(configPath))
   }) {
     AppServer.configure({
       port,

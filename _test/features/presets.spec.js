@@ -1,6 +1,7 @@
 import Appstrap from '../../src/Appstrap'
 import Request from 'supertest'
 import Presets from '../../src/presets'
+import path from 'path'
 import {getPresetData} from '../presetHelpers'
 
 describe('Presets feature', () => {
@@ -9,7 +10,7 @@ describe('Presets feature', () => {
   })
   describe('Appstrap.reset()', function () {
     beforeAll(async () => {
-      this.server = new Appstrap({configPath: './_test/_testConfig/config.js'})
+      this.server = new Appstrap({configPath: path.normalize('./_test/_testConfig/config.js')})
       Presets.preloadPresets()
       await this.server.loadPreset('furious-frog')
       this.server.reset()
