@@ -9,6 +9,7 @@ import Config from './config/loader'
 import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 import Presets from './presets'
+import path from 'path'
 
 export class AppServer {
   constructor () {
@@ -131,7 +132,7 @@ export class AppServer {
   generateAssetEndpoints (Router, configData = Config.getConfigData()) {
     const projectRoot = locateProjectRoot()
     configData.assets.forEach(asset => {
-      Router.use(asset.webPath, express.static(`${projectRoot}${asset.directory}`))
+      Router.use(asset.webPath, express.static(path.normalize(`${projectRoot}${asset.directory}`)))
     })
   }
 

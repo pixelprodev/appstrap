@@ -42,7 +42,7 @@ class ConfigGenerator {
     if (isSinglePageApp) {
       const splitFileName = bundle.path.split(path.sep)
       bundle.fileName = splitFileName.pop()
-      bundle.directory = splitFileName.join(path.sep)
+      bundle.directory = path.join(...splitFileName)
     }
     let bundleMarkup = isSinglePageApp
       ? (`\n  bundle: {webPath: '${bundle.path}', host: '${bundle.host}'},`)

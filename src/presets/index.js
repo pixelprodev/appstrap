@@ -86,6 +86,8 @@ export class Presets {
 
   preloadPresets (configDirectory = Config.configDirectory) {
     const projectRoot = locateProjectRoot()
+    console.log(configDirectory)
+    console.log(path.resolve(`${configDirectory}/presets`))
     const presetFiles = fs.readdirSync(path.resolve(`${configDirectory}/presets`))
     let presets = []
     presetFiles.forEach(fileName => {

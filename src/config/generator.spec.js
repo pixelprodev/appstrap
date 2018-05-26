@@ -1,5 +1,6 @@
 /* eslint no-eval: 0 */
 import ConfigGenerator from './generator'
+import path from 'path'
 
 describe('ConfigGenerator', () => {
   describe('generateConfigContents', () => {
@@ -13,15 +14,15 @@ describe('ConfigGenerator', () => {
       expect(output.endpoints.length).toBe(0)
     })
     test('Generates spa app config when bundle defined', () => {
-      const path = './foo/bundle.js'
+      const filePath = path.normalize('./foo/bundle.js')
       const host = '#host'
-      const splitPath = path.split('/')
+      const splitPath = filePath.split('/')
       const webPath = `/${splitPath.pop()}`
       const directory = splitPath.join('/')
-      let output = ConfigGenerator.generateConfigContents({path, host})
+      let output = ConfigGenerator.generateConfigContents({path: filePath, host})
       output = eval(output)
       expect(output.bundle).toBeDefined()
-      expect(output.bundle.webPath).toEqual(path)
+      expect(output.bundle.webPath).toEqual(filePath)
       expect(output.bundle.host).toEqual(host)
       expect(Array.isArray(output.assets)).toBe(true)
       expect(output.assets.length).not.toBe(0)
