@@ -56,7 +56,8 @@ describe('Presets', () => {
     test('returns a path for use in loading a preset file', () => {
       const configDir = '/foo/bar/baz'
       const presetName = 'some-preset'
-      expect(this.Presets._buildFilePath(presetName, configDir)).toEqual(`${configDir}/presets/${presetName}.js`)
+      expect(this.Presets._buildFilePath(presetName, configDir))
+        .toEqual(path.join(configDir, 'presets', `${presetName}.js`))
     })
   })
 

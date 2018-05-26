@@ -12,7 +12,9 @@
     "build": "npm run lint && babel --ignore *.spec.js ./src --out-dir ./dist",
     "prepare": "npm run build",
     "lint": "standard",
-    "test": "jest"
+    "test": "jest",
+    "test-config-generate": "node dist/cli.js init",
+    "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js"
   },
   "dependencies": {
     "@pixelprodotco/appstrap-management-interface": "0.2.1",
@@ -33,6 +35,7 @@
     "babel-preset-env": "^1.6.1",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^20.0.4",
+    "prettier": "^1.12.1",
     "sinon": "^4.4.9",
     "standard": "^11.0.1",
     "supertest": "^3.0.0"

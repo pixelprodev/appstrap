@@ -6,7 +6,6 @@ describe('ConfigGenerator', () => {
   describe('generateConfigContents', () => {
     test('Generates empty config when no bundle defined', () => {
       let output = ConfigGenerator.generateConfigContents()
-      output = eval(output)
       expect(output.bundle).not.toBeDefined()
       expect(Array.isArray(output.assets)).toBe(true)
       expect(output.assets.length).toBe(0)
@@ -16,11 +15,10 @@ describe('ConfigGenerator', () => {
     test('Generates spa app config when bundle defined', () => {
       const filePath = path.normalize('./foo/bundle.js')
       const host = '#host'
-      const splitPath = filePath.split('/')
+      const splitPath = filePath.split(path.sep)
       const webPath = `/${splitPath.pop()}`
-      const directory = splitPath.join('/')
+      const directory = splitPath.join(path.sep)
       let output = ConfigGenerator.generateConfigContents({path: filePath, host})
-      output = eval(output)
       expect(output.bundle).toBeDefined()
       expect(output.bundle.webPath).toEqual(filePath)
       expect(output.bundle.host).toEqual(host)

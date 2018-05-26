@@ -25,13 +25,14 @@ export class Presets {
   }
 
   _ensureFileExists (configFilePath) {
+    console.log(configFilePath)
     if (!fs.existsSync(configFilePath)) {
       throw new ErrPresetNotFound()
     }
   }
 
   _buildFilePath (fileName, configDirectory = Config.configDirectory) {
-    return `${configDirectory}/presets/${fileName}.js`
+    return path.join(configDirectory, 'presets', `${fileName}.js`)
   }
 
   _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)), name }) {
@@ -86,9 +87,7 @@ export class Presets {
 
   preloadPresets (configDirectory = Config.configDirectory) {
     const projectRoot = locateProjectRoot()
-    console.log(configDirectory)
-    console.log(path.resolve(`${configDirectory}/presets`))
-    const presetFiles = fs.readdirSync(path.resolve(`${configDirectory}/presets`))
+    const presetFiles = fs.readdirSync(path.join(configDirectory, 'presets'))
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
