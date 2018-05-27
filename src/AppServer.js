@@ -10,6 +10,7 @@ import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 import Presets from './presets'
 import path from 'path'
+import chalk from 'chalk'
 
 export class AppServer {
   constructor () {
@@ -143,11 +144,14 @@ export class AppServer {
   async start ({port = this.port} = {}) {
     this.port = await getPort({port})
     await this.httpServer.listenAsync(this.port)
-    console.log(`
+    console.log(chalk`
     ===============================================================
-      Appstrap loaded successfully.
+      {yellow.bold Appstrap} loaded {green successfully}.
       A server has been started for you at the following address: 
-      http://localhost:${this.port}
+      {blue http://localhost:${this.port}}
+      
+      The management interface is located at the following address: 
+      {blue http://appstrap.localhost:${this.port}}
     ===============================================================
     `)
   }
