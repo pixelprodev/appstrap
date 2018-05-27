@@ -19,6 +19,7 @@
   "dependencies": {
     "@pixelprodotco/appstrap-management-interface": "0.2.1",
     "body-parser": "1.17.2",
+    "chalk": "^2.4.1",
     "commander": "^2.14.1",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
