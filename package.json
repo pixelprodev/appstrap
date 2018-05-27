@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./dist/Appstrap.js",
   "bin": "./dist/cli.js",
@@ -12,7 +12,9 @@
     "build": "npm run lint && babel --ignore *.spec.js ./src --out-dir ./dist",
     "prepare": "npm run build",
     "lint": "standard",
-    "test": "jest"
+    "test": "jest",
+    "test-config-generate": "node dist/cli.js init",
+    "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js"
   },
   "dependencies": {
     "@pixelprodotco/appstrap-management-interface": "0.2.1",
@@ -22,6 +24,7 @@
     "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
     "pre-commit": "^1.2.2",
+    "prettier": "^1.12.1",
     "require-all": "^2.2.0",
     "sleep-promise": "2.0.0",
     "vhost": "^3.0.2"

@@ -1,6 +1,8 @@
 import readline from 'readline'
 import path from 'path'
 import fs from 'fs-extra'
+import util from 'util'
+import prettier from 'prettier'
 
 const prompts = {
   isSinglePageApp: `\rAre you strapping a single page app? [y/n]:  `,
@@ -42,24 +44,27 @@ class ConfigGenerator {
     if (isSinglePageApp) {
       const splitFileName = bundle.path.split(path.sep)
       bundle.fileName = splitFileName.pop()
-      bundle.directory = splitFileName.join(path.sep)
+      bundle.directory = path.join(...splitFileName)
     }
-    let bundleMarkup = isSinglePageApp
-      ? (`\n  bundle: {webPath: '${bundle.path}', host: '${bundle.host}'},`)
-      : ''
-
-    let assetsMarkup = isSinglePageApp
-      ? (`\n  assets: [{ webPath: '/${bundle.fileName}', directory: '${bundle.directory}' }]`)
-      : '\n  assets: []'
-    let endpointsMarkup = `\n  endpoints: []\n`
-    return (`module.exports = {${bundleMarkup}${assetsMarkup}, ${endpointsMarkup}}`)
+    const config = {}
+    if (isSinglePageApp) {
+      config.bundle = {webPath: bundle.path, host: bundle.host}
+      config.assets = [{webPath: `/${bundle.fileName}`, directory: bundle.directory}]
+    }
+    if (!config.assets) {
+      config.assets = []
+    }
+    config.endpoints = []
+    return config
   }
 
-  static async writeConfigFile (configContents) {
+  static async writeConfigFile (configObject) {
+    const configContents = `module.exports = ${util.inspect(configObject, false, 2, false)}`
     const filePath = path.resolve(process.cwd(), './.appstrap/config.js')
     await fs.ensureFile(filePath)
     await fs.ensureDir(path.resolve(process.cwd(), './.appstrap/presets'))
-    await fs.writeFile(path.resolve(process.cwd(), './.appstrap/config.js'), configContents)
+
+    await fs.writeFile(path.resolve(process.cwd(), './.appstrap/config.js'), prettier.format(configContents))
   }
 
   static showGenerationSummary () {

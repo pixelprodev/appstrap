@@ -9,7 +9,7 @@ import Presets from '../presets'
 export class Loader {
   constructor () {
     this.configFileData = {bundle: {}, assets: [], endpoints: []}
-    this.configFilePath = '.appstrap' + path.sep + 'config.js'
+    this.configFilePath = path.join('.appstrap', 'config.js')
     this.reload = this.reload.bind(this)
   }
 
@@ -31,7 +31,7 @@ export class Loader {
   setConfigDirectory () {
     const splitPath = this.configFilePath.split(path.sep)
     splitPath.pop()
-    this.configDirectory = splitPath.join(path.sep)
+    this.configDirectory = path.join(...splitPath)
   }
 
   reload ({reloadFromFS = false} = {}) {
@@ -74,7 +74,7 @@ export class Loader {
 
   _getPackageInfo () {
     const projectRoot = locateProjectRoot()
-    const { name, version } = require(`${projectRoot}${path.sep}package.json`)
+    const { name, version } = require(path.join(projectRoot, 'package.json'))
     return { name, version }
   }
 

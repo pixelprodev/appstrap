@@ -4,6 +4,7 @@ import express from 'express'
 import { stub } from 'sinon'
 import Endpoint from './endpoints/Endpoint'
 import { locateProjectRoot } from './utilities'
+import path from 'path'
 
 describe('AppServer', () => {
   describe('configure', () => {
@@ -170,7 +171,7 @@ describe('AppServer', () => {
       expect(mockRouter.use.called).toBe(true)
       const assetWebPath = mockRouter.use.args[0][0]
       expect(assetWebPath).toEqual(configData.assets[0].webPath)
-      expect(staticStub.args[0][0]).toEqual(`${projectRoot}${configData.assets[0].directory}`)
+      expect(staticStub.args[0][0]).toEqual(path.normalize(`${projectRoot}${configData.assets[0].directory}`))
       staticStub.restore()
     })
   })

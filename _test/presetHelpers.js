@@ -2,10 +2,11 @@ import fs from 'fs-extra'
 import path from 'path'
 
 export function getPresets () {
-  const presetFiles = fs.readdirSync(path.resolve(`${__dirname}/_testConfig/presets`))
+  const presetFiles = fs.readdirSync(path.join(__dirname, '_testConfig', 'presets'))
   const presets = {}
   presetFiles.forEach(fileName => {
-    presets[fileName.replace('.js', '')] = require(`${__dirname}/_testConfig/presets/${fileName}`)
+    const fullPath = path.join(__dirname, '_testConfig', 'presets', fileName)
+    presets[fileName.replace('.js', '')] = require(fullPath)
   })
   return presets
 }
