@@ -55,15 +55,28 @@ export class Presets {
   }
 
   async loadPresets (presetNames) {
-    const presetDataCollection = await Promise.all(presetNames.map(async (name) => this.validateAndLoadPresetFile(name)))
+    const presetDataCollection = await Promise.all(
+      presetNames.map(async (name) =>
+        this.validateAndLoadPresetFile(name)
+      )
+    )
     const presets = this.combinePresets(presetDataCollection)
     this.addPresetsToInternalCollection(presets)
   }
 
+  /*
+  Takes an array of Preset objects and adds them to the internal collection.  If a preset already
+    exists in the internal collection for the path / method combo, it is overwritten.
+  */
   addPresetsToInternalCollection (presets) {
     presets.forEach(preset => {
-      let indexToOverwrite = this._presets.findIndex(row => row.path === preset.path && row.method === preset.method)
-      indexToOverwrite === -1 ? this._presets.push(preset) : this._presets[indexToOverwrite] = preset
+      let indexToOverwrite = this._presets.findIndex(row =>
+        (row.path === preset.path) &&
+        (row.method === preset.method)
+      )
+      indexToOverwrite === -1
+        ? this._presets.push(preset)
+        : this._presets[indexToOverwrite] = preset
     })
   }
 
