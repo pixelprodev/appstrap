@@ -1,7 +1,7 @@
 import Endpoint from './Endpoint'
 
 export class Endpoints {
-  constructor ({ configData }) {
+  constructor ({ configData } = {}) {
     this._endpoints = []
     this.setModifier = this.setModifier.bind(this)
     this.clearModifier = this.clearModifier.bind(this)
@@ -9,8 +9,9 @@ export class Endpoints {
     this.setCollection({ configData })
   }
 
-  setCollection ({ configData }) {
+  setCollection ({ configData } = {}) {
     this.clear()
+    if (!configData) { return }
     configData.endpoints.forEach(({path, ...methods}, indx) => {
       Object.keys(methods).forEach(method => {
         this.addOne({path, method, handler: configData.endpoints[indx][method]})

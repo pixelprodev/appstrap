@@ -1,5 +1,4 @@
 import path from 'path'
-import Config from '../config/loader'
 import fs from 'fs-extra'
 import { ErrPresetNotFound } from '../errors'
 import { locateProjectRoot } from '../utilities'
@@ -7,6 +6,7 @@ import Preset from './Preset'
 
 export class Presets {
   constructor ({ configDir, invokedFromCLI }) {
+    this.presetFolder = path.join(configDir, 'presets')
     this._presets = []
     this._availablePresets = []
     this._activePresetGroups = []
@@ -24,7 +24,7 @@ export class Presets {
     this._activePresetGroups = []
   }
 
-  fetch ({path, method}) {
+  fetch ({ path, method } = {}) {
     const presetIndex = this._presets.findIndex(preset => preset.method === method.toLowerCase() && preset.path === path.toLowerCase())
     return presetIndex === -1 ? presetIndex : this._presets[presetIndex]
   }
@@ -35,8 +35,8 @@ export class Presets {
     }
   }
 
-  _buildFilePath (fileName, configDirectory = Config.configDirectory) {
-    return path.join(configDirectory, 'presets', `${fileName}.js`)
+  _buildFilePath (fileName) {
+    return path.join(this.presetFolder, `${fileName}.js`)
   }
 
   _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)), name }) {

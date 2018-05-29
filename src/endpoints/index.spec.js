@@ -1,6 +1,6 @@
 import { Endpoints } from './index'
 
-describe('Endpoints', () => {
+xdescribe('Endpoints', () => {
   describe('addOne()', () => {
     test('Adds a new endpoint to the internal array', () => {
       const collection = new Endpoints()

@@ -2,7 +2,7 @@ import Endpoint from './Endpoint'
 import { ErrEndpointInvalid } from '../errors'
 import { Loader } from '../config/loader'
 
-describe('Endpoint', function () {
+xdescribe('Endpoint', function () {
   this.Loader = new Loader()
   this.config = this.Loader.load('./_test/_testConfig/config.js')
   describe('constructor', () => {

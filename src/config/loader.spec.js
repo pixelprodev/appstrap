@@ -8,7 +8,7 @@ import sinon from 'sinon'
 
 const projectRoot = locateProjectRoot()
 
-describe('config loader', () => {
+xdescribe('config loader', () => {
   describe('load()', () => {
     test('config data is loaded and returned with package information', () => {
       const configData = loadTestConfig()

@@ -5,16 +5,17 @@ import http from 'http'
 import util from 'util'
 import getPort from 'get-port'
 import Endpoints from './endpoints'
-import Config from './config/loader'
+import Config from './config'
 import managementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 import Presets from './presets'
 import path from 'path'
 
 export class Server {
-  constructor ({ endpoints, invokedFromCLI, port = 5000 }) {
+  constructor ({ endpoints, invokedFromCLI, port = 5000, presets }) {
     this.port = port
     this.endpoints = endpoints
+    this.presets = presets
 
     // Bind methods
     this.start = this.start.bind(this)
@@ -50,7 +51,16 @@ export class Server {
   reloadEndpoints () { return this.loadEndpoints() }
   loadEndpoints () {
     const Router = express.Router({})
-    Router.use('*', (req, res) => res.send('appstrap is running'))
+    const endpoints = this.endpoints._endpoints
+    endpoints.forEach(({handler, method, path}, indx) => {
+      Router[method](path,
+        this.modifierMiddleware(endpoints[indx]),
+        this.stateProviderMiddleware(),
+        this.preHandlerMiddleware(endpoints[indx]),
+        handler
+      )
+    })
+    this._router = Router
     return Router
     // this.internalState = initialState
     // const Router = express.Router({})
@@ -104,7 +114,7 @@ export class Server {
 
   stateProviderMiddleware () {
     return (req, res, next) => {
-      req.state = this.internalState
+      req.state = this.internalState || {}
       next()
     }
   }
@@ -117,7 +127,7 @@ export class Server {
     }
   }
 
-  interceptJsonResponse ({res, defaultResJSON, path, method, preset = Presets.fetch({path, method})}) {
+  interceptJsonResponse ({res, defaultResJSON, path, method, preset = this.presets.fetch({path, method})}) {
     return (data) => {
       if (preset !== -1) {
         data = preset.mode === 'merge' ? {...data, ...preset.data} : preset.data

@@ -6,7 +6,7 @@ import Endpoint from './endpoints/Endpoint'
 import { locateProjectRoot } from './utilities'
 import path from 'path'
 
-describe('AppServer', () => {
+xdescribe('AppServer', () => {
   describe('configure', () => {
     test('it sets server port', () => {
       const server = new AppServer()
