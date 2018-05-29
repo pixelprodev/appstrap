@@ -11,63 +11,66 @@ import { locateProjectRoot } from './utilities'
 import Presets from './presets'
 import path from 'path'
 
-export class AppServer {
-  constructor () {
-    this._app = express()
+export class Server {
+  constructor ({ endpoints, invokedFromCLI, port = 5000 }) {
+    this.port = port
+    this.endpoints = endpoints
 
+    // Bind methods
+    this.start = this.start.bind(this)
+    this.stop = this.stop.bind(this)
+
+    // Initialize express server
+    this._app = express()
     this._app.use(bodyParser.json())
     this._app.use(bodyParser.urlencoded({extended: true}))
 
-    this._loadDefaultRouter()
-    this.start = this.start.bind(this)
-    this.stop = this.stop.bind(this)
-  }
-
-  _loadDefaultRouter () {
-    const Router = express.Router({})
-    Router.get('*', (req, res) => res.send('Welcome to appstrap!'))
-    this._router = Router
-  }
-
-  configure ({port = 5000, isSPA = false, configData, endpoints, invokedFromCLI} = {}) {
-    this.port = port
-    this.isSPA = isSPA
-    if (invokedFromCLI) {
-      this.loadManagementInterface()
-    }
+    // Load Routes
+    this._router = this.loadEndpoints()
     this._app.use((req, res, next) => this._router(req, res, next))
-    this.loadEndpoints({endpoints})
+
     this.httpServer = http.createServer(this._app)
     this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
     this.httpServer.closeAsync = util.promisify(this.httpServer.close)
   }
 
-  reloadEndpoints (args) { this.loadEndpoints(args) }
-  loadEndpoints ({
-    endpoints = Endpoints.fetch(),
-    configData = Config.getConfigData(),
-    initialState = Config.initialState,
-    isSPA = this.isSPA
-  } = {}) {
-    this.internalState = initialState
+  // configure ({port = 5000, isSPA = false, configData, endpoints, invokedFromCLI} = {}) {
+  //   this.port = port
+  //   this.isSPA = isSPA
+  //   if (invokedFromCLI) {
+  //     this.loadManagementInterface()
+  //   }
+  //   this._app.use((req, res, next) => this._router(req, res, next))
+  //   this.loadEndpoints({endpoints})
+  //   this.httpServer = http.createServer(this._app)
+  //   this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
+  //   this.httpServer.closeAsync = util.promisify(this.httpServer.close)
+  // }
+
+  reloadEndpoints () { return this.loadEndpoints() }
+  loadEndpoints () {
     const Router = express.Router({})
-    const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
-    if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
-    endpoints.forEach(({handler, method, path}, indx) => {
-      Router[method](path,
-        this.modifierMiddleware(endpoints[indx]),
-        this.stateProviderMiddleware(),
-        this.preHandlerMiddleware(endpoints[indx]),
-        handler
-      )
-    })
-    if (endpoints.length === 0 && !isSPA) { this.generateNoEndpointCatch(Router) }
-    if (isSPA) {
-      const markup = this.getSpaHarnessMarkup(configData)
-      Router.get('*', (req, res) => res.send(markup))
-    }
-    this._router = Router
-    return this._router
+    Router.use('*', (req, res) => res.send('appstrap is running'))
+    return Router
+    // this.internalState = initialState
+    // const Router = express.Router({})
+    // const bundleIsDefined = (configData.bundle && Object.keys(configData.bundle).length > 0)
+    // if (configData.assets && bundleIsDefined) { this.generateAssetEndpoints(Router) }
+    // endpoints.forEach(({handler, method, path}, indx) => {
+    //   Router[method](path,
+    //     this.modifierMiddleware(endpoints[indx]),
+    //     this.stateProviderMiddleware(),
+    //     this.preHandlerMiddleware(endpoints[indx]),
+    //     handler
+    //   )
+    // })
+    // if (endpoints.length === 0 && !isSPA) { this.generateNoEndpointCatch(Router) }
+    // if (isSPA) {
+    //   const markup = this.getSpaHarnessMarkup(configData)
+    //   Router.get('*', (req, res) => res.send(markup))
+    // }
+    // this._router = Router
+    // return this._router
   }
 
   getSpaHarnessMarkup ({name, version, bundle: {host, webPath}} = Config.getConfigData()) {
@@ -157,5 +160,4 @@ export class AppServer {
   }
 }
 
-const singleton = new AppServer()
-export default singleton
+export default Server

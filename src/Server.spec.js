@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import { AppServer } from './AppServer'
+import AppServer from './AppServer'
 import express from 'express'
 import { stub } from 'sinon'
 import Endpoint from './endpoints/Endpoint'

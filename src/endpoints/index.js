@@ -1,10 +1,21 @@
 import Endpoint from './Endpoint'
 
 export class Endpoints {
-  constructor () {
+  constructor ({ configData }) {
     this._endpoints = []
     this.setModifier = this.setModifier.bind(this)
     this.clearModifier = this.clearModifier.bind(this)
+
+    this.setCollection({ configData })
+  }
+
+  setCollection ({ configData }) {
+    this.clear()
+    configData.endpoints.forEach(({path, ...methods}, indx) => {
+      Object.keys(methods).forEach(method => {
+        this.addOne({path, method, handler: configData.endpoints[indx][method]})
+      })
+    })
   }
 
   addOne ({path, method, handler}) {
@@ -43,5 +54,4 @@ export class Endpoints {
   }
 }
 
-const singleton = new Endpoints()
-export default singleton
+export default Endpoints

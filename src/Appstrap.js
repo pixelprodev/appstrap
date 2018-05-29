@@ -1,37 +1,31 @@
-import AppServer from './AppServer'
-import Endpoints from './endpoints'
-import Config from './config/loader'
+import Server from './Server'
+import Config from './config'
 import Presets from './presets'
 import path from 'path'
 
 export class Appstrap {
   constructor ({
     configPath,
-    port = 5000,
+    config = new Config({ configPath: path.normalize(configPath) }),
     invokedFromCLI = false,
-    endpoints,
-    config = Config.load(path.normalize(configPath))
+    port
   }) {
-    AppServer.configure({
-      port,
-      invokedFromCLI,
-      configData: config,
-      endpoints,
-      isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
-    })
-    this._app = AppServer._app
-    if (invokedFromCLI) {
-      Presets.preloadPresets()
-    }
+    this.config = config
+    this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
+    this.server = new Server({ endpoints: this.config.endpoints, invokedFromCLI, port })
+
+    // Directly expose server express app for use in middleware situations.
+    // Intentionally wrapped in function to propagate changes when configs are reloaded
+    this.middleware = (req, res, next) => this.server._app(req, res, next)
+
+    this.port = this.server.port
+    this.start = this.server.start
+    this.stop = this.server.stop
+    this.reset = this.config.reload
+    this.setModifier = this.config.endpoints.setModifier
+    this.clearModifier = this.config.endpoints.clearModifier
+    this.loadPreset = this.presets.loadPreset
   }
-  get port () { return AppServer.port }
-  get start () { return AppServer.start }
-  get stop () { return AppServer.stop }
-  get reset () { return Config.reload }
-  get setModifier () { return Endpoints.setModifier }
-  get clearModifier () { return Endpoints.clearModifier }
-  get loadPreset () { return Presets.loadPreset }
-  get loadPresets () { return Presets.loadPresets }
 }
 
 export default Appstrap

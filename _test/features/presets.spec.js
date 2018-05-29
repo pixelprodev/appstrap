@@ -16,6 +16,7 @@ describe('Presets feature', () => {
       this.server.reset()
     })
     test('active presets are removed', () => {
+      console.log(this.server)
       expect(Presets._presets).toHaveLength(0)
     })
     test('active preset groups are reset', () => {

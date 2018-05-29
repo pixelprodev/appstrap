@@ -19,14 +19,16 @@ describe('Appstrap', () => {
   describe('start', () => {
     test('Exposes AppServer.start', () => {
       const strap = new Appstrap({config: {}})
-      expect(strap.start.toString()).toEqual(AppServer.start.toString())
+      const appServer = new AppServer()
+      expect(strap.start.toString()).toEqual(appServer.start.toString())
     })
   })
 
   describe('stop', () => {
     test('Exposes AppServer.stop', () => {
       const strap = new Appstrap({config: {}})
-      expect(strap.stop.toString()).toEqual(AppServer.stop.toString())
+      const appServer = new AppServer()
+      expect(strap.stop.toString()).toEqual(appServer.stop.toString())
     })
   })
 

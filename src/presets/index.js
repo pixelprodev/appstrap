@@ -6,12 +6,17 @@ import { locateProjectRoot } from '../utilities'
 import Preset from './Preset'
 
 export class Presets {
-  constructor () {
+  constructor ({ configDir, invokedFromCLI }) {
     this._presets = []
     this._availablePresets = []
     this._activePresetGroups = []
     this.loadPreset = this.loadPreset.bind(this)
     this.loadPresets = this.loadPresets.bind(this)
+
+    // When invoking from cli, the management interface is also
+    //  initialized. That interface requires presets to be defined
+    //  before it can load.
+    if (invokedFromCLI) { this.preloadPresets({ configDir }) }
   }
 
   clear () {
@@ -25,7 +30,6 @@ export class Presets {
   }
 
   _ensureFileExists (configFilePath) {
-    console.log(configFilePath)
     if (!fs.existsSync(configFilePath)) {
       throw new ErrPresetNotFound()
     }
@@ -85,13 +89,13 @@ export class Presets {
     }, [])
   }
 
-  preloadPresets (configDirectory = Config.configDirectory) {
+  preloadPresets ({ configDir }) {
     const projectRoot = locateProjectRoot()
-    const presetFiles = fs.readdirSync(path.join(configDirectory, 'presets'))
+    const presetFiles = fs.readdirSync(path.join(configDir, 'presets'))
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
-      const fileData = require(path.resolve(`${projectRoot}/${configDirectory}/presets/${fileName}`))
+      const fileData = require(path.resolve(`${projectRoot}/${configDir}/presets/${fileName}`))
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this._availablePresets = presets
@@ -129,5 +133,4 @@ export class Presets {
   }
 }
 
-const singleton = new Presets()
-export default singleton
+export default Presets
