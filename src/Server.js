@@ -3,16 +3,17 @@ import bodyParser from 'body-parser'
 import sleep from 'sleep-promise'
 import http from 'http'
 import util from 'util'
-import getPort from 'get-port'
+import detectPort from 'detect-port'
 import ManagementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 import path from 'path'
 
 export class Server {
-  constructor ({ config, endpoints, invokedFromCLI, port = 5000, presets }) {
+  constructor ({ config, invokedFromCLI = false, port = 5000, presets }) {
     this.port = port
-    this.endpoints = endpoints
+    this.endpoints = config.endpoints
     this.presets = presets
+    this.enableManagementInterface = invokedFromCLI
 
     // Bind methods
     this.start = this.start.bind(this)
@@ -23,7 +24,7 @@ export class Server {
     this._app.use(bodyParser.json())
     this._app.use(bodyParser.urlencoded({extended: true}))
 
-    if (invokedFromCLI) {
+    if (this.enableManagementInterface) {
       const managementInterface = new ManagementInterface({ config, server: this, presets })
       this._app.use(managementInterface.middleware)
     }
@@ -43,7 +44,7 @@ export class Server {
     const endpoints = this.endpoints._endpoints
     const projectRoot = locateProjectRoot()
     config.fileData.assets.forEach(asset => {
-      Router.use(asset.webPath, express.static(path.normalize(`${projectRoot}${asset.directory}`)))
+      Router.use(asset.webPath, express.static(path.normalize(`${projectRoot}/${asset.directory}`)))
     })
     endpoints.forEach(({handler, method, path}, indx) => {
       Router[method](path,
@@ -54,10 +55,10 @@ export class Server {
       )
     })
     if (this.endpoints.enableClientSideRouting) {
-      this._router.use(this.endpoints.clientSideRoutingEndpoint)
+      Router.use(this.endpoints.clientSideRoutingEndpoint)
     } else {
       if (this.endpoints._endpoints.length === 0) {
-        this._router.get('*', (req, res) => res.send('no endpoints defined'))
+        Router.get('*', (req, res) => res.send('no endpoints defined'))
       }
     }
     this._router = Router
@@ -96,19 +97,32 @@ export class Server {
   }
 
   async start ({port = this.port} = {}) {
-    this.port = await getPort({port})
+    this.port = await detectPort(port)
     await this.httpServer.listenAsync(this.port)
-    console.log(`
-    ===============================================================
+
+    /*
+     If the server was invoked from CLI, we want to show a confirmation message when the server
+      is started.  We will also indicate the management interface port to make people more aware
+      that it exists.
+    */
+    if (this.enableManagementInterface) {
+      console.log(`
+    ==================================================================
       Appstrap loaded successfully.
       A server has been started for you at the following address: 
       http://localhost:${this.port}
-    ===============================================================
+
+      The management interface can be found at the following address:
+      http://appstrap.localhost:${this.port}
+    ==================================================================
     `)
+    }
   }
 
   async stop () {
-    await this.httpServer.closeAsync()
+    if (this.httpServer.address()) {
+      await this.httpServer.closeAsync()
+    }
   }
 }
 

@@ -3,6 +3,7 @@ module.exports = function (wallaby) {
     files: [
       {pattern: 'src/**/*.js'},
       {pattern: '_test/**/*.js'},
+      {pattern: '_test/**/config.js', instrument: false, load: false},
       {pattern: 'src/**/*.spec.js', ignore: true},
       {pattern: '_test/**/*.spec.js', ignore: true}
     ],

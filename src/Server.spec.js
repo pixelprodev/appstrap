@@ -1,206 +1,173 @@
-import fetch from 'isomorphic-fetch'
-import AppServer from './AppServer'
+import Config from './config'
 import express from 'express'
-import { stub } from 'sinon'
-import Endpoint from './endpoints/Endpoint'
-import { locateProjectRoot } from './utilities'
+import fetch from 'isomorphic-fetch'
 import path from 'path'
+import Presets from './presets'
+import Request from 'supertest'
+import Server from './Server'
 
-xdescribe('AppServer', () => {
-  describe('configure', () => {
-    test('it sets server port', () => {
-      const server = new AppServer()
-      const func = stub(server, 'loadEndpoints').callsFake(() => {})
-      server.configure({port: 5000, isSPA: true})
-      expect(server.port).toEqual(5000)
-      func.restore()
+const configPath = path.normalize('_test/_testConfig/config.js')
+const config = new Config({configPath})
+const presets = new Presets({ configDir: config.configDir })
+
+describe('Server', () => {
+  describe('constructor', () => {
+    test('assigns port 5000 when port not specified', () => {
+      const server = new Server({config})
+      expect(server.port).toBe(5000)
     })
-    test('it indicates whether or not to serve the spa endpoint', () => {
-      const server = new AppServer()
-      const func = stub(server, 'loadEndpoints').callsFake(() => {})
-      server.configure({port: 5000, isSPA: true})
-      expect(server.isSPA).toEqual(true)
-      server.configure({port: 5000, isSPA: false})
-      expect(server.isSPA).toEqual(false)
-      func.restore()
+    test('assigns port that is passed in', () => {
+      const server = new Server({config, port: 3280})
+      expect(server.port).toBe(3280)
     })
-    test('it attempts to load the endpoints', () => {
-      const server = new AppServer()
-      const func = stub(server, 'loadEndpoints').callsFake(() => {})
-      server.configure()
-      expect(func.called).toBe(true)
-      func.restore()
+    test('creates an internal express server named _app', () => {
+      const server = new Server({config})
+      expect(server._app).toBeDefined()
+      // Function names should match output from express constructor
+      const expressServer = express()
+      expect(server._app.name).toEqual(expressServer.name)
+    })
+    test('does not add management interface by default', async () => {
+      const server = new Server({config})
+      expect(server.enableManagementInterface).toBe(false)
+
+      await Request(server._app)
+        .get('/')
+        .set('Host', 'appstrap.localhost')
+        .expect(500)
+    })
+    test('adds managment interface when invokedFromCLI', async () => {
+      const server = new Server({config, invokedFromCLI: true})
+      expect(server.enableManagementInterface).toBe(true)
+
+      await Request(server._app)
+        .get('/')
+        .set('Host', 'appstrap.localhost')
+        .expect(200)
+    })
+    test('creates router based on config', () => {
+      const server = new Server({config})
+      expect(server._router.stack).toBeDefined()
+      expect(server._router.stack.length).toBeGreaterThan(0)
+    })
+
+    test('router implementation is swappable', async () => {
+      const server = new Server({config, presets})
+
+      const response = await Request(server._app).get('/')
+      expect(response.text).toEqual('{"message":"this is the root"}')
+
+      const newRouter = express.Router({})
+      newRouter.get('/', (req, res) => res.json({message: 'swapped'}))
+
+      server._router = newRouter
+
+      const updatedResponse = await Request(server._app).get('/')
+      expect(updatedResponse.text).toEqual('{"message":"swapped"}')
+    })
+
+    test('creates http server based on internal express app', () => {
+      const server = new Server({config})
+      expect(server.httpServer).toBeDefined()
+    })
+    test('created http server has listenAsync method that returns a promise', async () => {
+      const server = new Server({config})
+      expect(server.httpServer.listenAsync).toBeDefined()
+      expect(server.httpServer.listenAsync.toString()).toContain('return promise')
+    })
+    test('created http server has closeAsync method that returns a promise', () => {
+      const server = new Server({config})
+      expect(server.httpServer.closeAsync).toBeDefined()
+      expect(server.httpServer.closeAsync.toString()).toContain('return promise')
     })
   })
 
-  describe('loadEndpoints', function () {
-    beforeEach(() => {
-      this.server = new AppServer()
-      this.mockConfigData = {
-        name: 'test application',
-        version: '1.0.0',
-        bundle: {host: '#host', webPath: '/foo'}
-      }
+  describe('loadEndpoints', () => {
+    test('returns an express router instance', () => {
+      const server = new Server({config, presets})
+
+      const expressRouter = express.Router({})
+      const returnValue = server.loadEndpoints({config})
+
+      expect(expressRouter.name).toEqual(returnValue.name)
     })
-    test('add default route to router when no endpoints specified', () => {
-      const endpointCatchStub = stub(this.server, 'generateNoEndpointCatch')
-      this.server.loadEndpoints()
-      expect(endpointCatchStub.called).toBe(true)
-      endpointCatchStub.restore()
+
+    test('returns endpoints according to config file', async () => {
+      const server = new Server({config, presets})
+
+      const response = await Request(server._app).get('/')
+      expect(response.text).toEqual('{"message":"this is the root"}')
     })
-    test('does not add default route to router when isSPA and no endpoints specified', () => {
-      const endpointCatchStub = stub(this.server, 'generateNoEndpointCatch')
-      this.server.loadEndpoints({isSPA: true, configData: this.mockConfigData})
-      expect(endpointCatchStub.called).toBe(false)
-      endpointCatchStub.restore()
+
+    test('enables client side routing when set in endpoints', async () => {
+      const spaConfigPath = path.normalize('_test/_spaConfig/config.js')
+      const spaConfig = new Config({configPath: spaConfigPath})
+      expect(spaConfig.endpoints.enableClientSideRouting).toBe(true)
+      const server = new Server({config: spaConfig, presets})
+
+      const response = await Request(server._app).get('/')
+      expect(response.text).toContain('Appstrap Single Page Harness')
     })
-    test('adds spa markup when single page app', async () => {
-      const markupStub = stub(this.server, 'getSpaHarnessMarkup')
-      this.server.loadEndpoints({isSPA: true})
-      expect(markupStub.called).toBe(true)
-      markupStub.restore()
+
+    test('creates a catch all endpoint when no endpoints are defined', async () => {
+      const emptyConfigPath = path.normalize('_test/_emptyConfig/config.js')
+      const emptyConfig = new Config({configPath: emptyConfigPath})
+      const server = new Server({config: emptyConfig, presets})
+
+      const response = await Request(server._app).get('/')
+      expect(response.text).toEqual('no endpoints defined')
     })
-    test('adds asset routes when defined', () => {
-      const assetStub = stub(this.server, 'generateAssetEndpoints')
-      const assets = [{webPath: '/foo', directory: '/bar'}]
-      this.server.loadEndpoints({configData: {...this.mockConfigData, assets}})
-      expect(assetStub.called).toBe(true)
-      assetStub.restore()
-    })
-    test('omits asset routes when undefined', () => {
-      const assetStub = stub(this.server, 'generateAssetEndpoints')
-      this.server.loadEndpoints({configData: this.mockConfigData})
-      expect(assetStub.called).toBe(false)
-      assetStub.restore()
+
+    test('serves static assets when specified in config', async () => {
+      const spaConfigPath = path.normalize('_test/_spaConfig/config.js')
+      const spaConfig = new Config({configPath: spaConfigPath})
+      const server = new Server({config: spaConfig, presets})
+
+      const response = await Request(server._app).get('/assets/bundle.js')
+      expect(response.text).toContain('bundle loaded')
+      expect(response.text).not.toContain('Appstrap Single Page Harness')
     })
   })
 
-  describe('getSpaHarnessMockup()', function () {
-    beforeAll(() => {
-      this.server = new AppServer()
-      this.params = {name: 'test', version: '1.0.0', bundle: {host: '#test', webPath: '/foo/bar'}}
-    })
-    test('output title contains app name and version', () => {
-      const markup = this.server.getSpaHarnessMarkup(this.params)
-      expect(markup.includes(`Appstrap | ${this.params.name} - ${this.params.version}`)).toBe(true)
-    })
-    test('host div has id of X when host is #X', () => {
-      const markup = this.server.getSpaHarnessMarkup(this.params)
-      const host = this.params.bundle.host.replace('#', '')
-      expect(markup.includes(`<div id="${host}"></div>`)).toBe(true)
-    })
-    test('host div has class of X when host is .X', () => {
-      const params = Object.assign({}, this.params, {bundle: {host: '.test'}})
-      const markup = this.server.getSpaHarnessMarkup(params)
-      const host = params.bundle.host.replace('.', '')
-      expect(markup.includes(`<div class="${host}"></div>`)).toBe(true)
-    })
-    test('script tag src equals the bundle webpath', () => {
-      const markup = this.server.getSpaHarnessMarkup(this.params)
-      expect(markup.includes(`<script src="${this.params.bundle.webPath}" `)).toBe(true)
-    })
+  describe('middleware', () => {
+    describe('modifiers', () => {})
+    describe('state', () => {})
+    describe('pre-handler', () => {})
   })
 
-  describe('modifierMiddleware()', function () {
-    beforeAll(() => {
-      this.server = new AppServer()
-    })
-    test('returns 500 error when error is enabled', async () => {
-      const errorStub = stub()
-      const middleware = this.server.modifierMiddleware({error: true})
-      await middleware({}, {sendStatus: errorStub}, () => {})
-      expect(errorStub.calledOnceWith(500)).toBe(true)
-    })
-    test('returns custom error code when provided', async () => {
-      const errorStub = stub()
-      const middleware = this.server.modifierMiddleware({error: true, errorStatus: 400})
-      await middleware({}, {sendStatus: errorStub}, () => {})
-      expect(errorStub.calledOnceWith(500)).toBe(false)
-      expect(errorStub.calledOnceWith(400)).toBe(true)
-    })
-    test('waits X ms when latency is enabled', async () => {
-      const sleepStub = stub().usingPromise(Promise)
-      const middleware = this.server.modifierMiddleware({
-        latency: true, latencyMS: 3000, delay: sleepStub
-      })
-      await middleware({}, {}, () => {})
-      expect(sleepStub.calledOnceWith(3000)).toEqual(true)
-    })
-  })
-
-  describe('preHandlerMiddleware()', () => {
-    test('overrides res.json with middleware to account for presets')
-  })
-
-  describe('interceptJsonResponse()', function () {
-    beforeEach(() => {
-      this.AppServer = new AppServer()
-      this.jsonStub = stub()
-      this.fakeRouter = { res: {} }
-    })
-    test('returns the same data if no preset found', () => {
-      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset: -1})
-      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
-      func(data)
-      expect(this.jsonStub.lastCall.args[0]).toEqual(data)
-    })
-    test('merges preset data in with existing data if mode = merge', () => {
-      const preset = {mode: 'merge', data: { baz: 'pow' }}
-      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
-      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
-      func(data)
-      expect(this.jsonStub.lastCall.args[0]).toEqual({...data, ...preset.data})
-    })
-    test('replaces existing data with preset data if mode !== merge', () => {
-      const preset = { mode: 'replace', data: {zip: 'zap', zow: 'wow'} }
-      const func = this.AppServer.interceptJsonResponse({defaultResJSON: this.jsonStub, res: {}, preset})
-      const data = {foo: 'bar', baz: 'zip', zing: 'woo'}
-      func(data)
-      expect(this.jsonStub.lastCall.args[0]).toEqual({...preset.data})
-    })
-  })
-
-  describe('generateAssetEndpoints()', () => {
-    test('sets up express serve static with asset data', () => {
-      const server = new AppServer()
-      const configData = {assets: [{webPath: '/foo', directory: '/bar'}]}
-      const mockRouter = {use: stub()}
-      const staticStub = stub(express, 'static')
-      const projectRoot = locateProjectRoot()
-      server.generateAssetEndpoints(mockRouter, configData)
-      expect(mockRouter.use.called).toBe(true)
-      const assetWebPath = mockRouter.use.args[0][0]
-      expect(assetWebPath).toEqual(configData.assets[0].webPath)
-      expect(staticStub.args[0][0]).toEqual(path.normalize(`${projectRoot}${configData.assets[0].directory}`))
-      staticStub.restore()
-    })
-  })
-
-  describe('start/stop', () => {
-    xtest('starts and stops a server', async () => {
-      const dummyEndpoint = {path: '/', method: 'get', handler: (req, res) => res.send('ok')}
-      let server = new AppServer()
-      server.configure({endpoints: [new Endpoint(dummyEndpoint)]})
-      expect.assertions(3)
-      // Server should not respond by default
-      try {
-        await fetch(`http://localhost:${server.port}/`)
-      } catch (e) {
-        expect(e).toBeDefined()
-      }
-      // Server responds when started
+  describe('start', () => {
+    test('starts a server successfully', async () => {
+      const server = new Server({config, presets, port: 3100})
       await server.start()
-      let response = await fetch(`http://localhost:${server.port}/`)
-      let responseText = await response.text()
-      expect(responseText).toBe('ok')
-      await server.stop()
 
-      // Server no longer responds when stopped
-      try {
-        await fetch(`http://localhost:${server.port}`)
-      } catch (e) {
-        expect(e).toBeDefined()
-      }
+      const response = await fetch(`http://localhost:${server.port}`)
+      const text = await response.text()
+      expect(text).toEqual('{"message":"this is the root"}')
+      await server.stop()
     })
+    test('port automatically swapped when already taken', async () => {
+      const server1 = new Server({config, presets, port: 3002})
+      await server1.start()
+      expect(server1.port).toEqual(3002)
+
+      const server2 = new Server({config, presets, port: 3002})
+      await server2.start()
+      expect(server2.port).not.toEqual(3002)
+
+      // ensures we arent sharing the same port object
+      expect(server1.port).not.toBe(server2.port)
+
+      await server1.stop()
+      await server2.stop()
+    })
+
+    // TODO add this once we replace default console.log statements with another logger
+    //   reason: https://gyandeeps.com/console-stubbing/
+    test('no console output displayed when not invoked from CLI')
+    test('console output generated for user info when invoked from CLI')
+  })
+
+  describe('stop', () => {
+    test('stops server successfully')
   })
 })

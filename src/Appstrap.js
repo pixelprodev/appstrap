@@ -12,13 +12,7 @@ export class Appstrap {
   }) {
     this.config = config
     this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
-    this.server = new Server({
-      config: this.config,
-      endpoints: this.config.endpoints,
-      invokedFromCLI,
-      port,
-      presets: this.presets
-    })
+    this.server = new Server({ config, invokedFromCLI, port, presets: this.presets })
 
     // Directly expose server express app for use in middleware situations.
     // Intentionally wrapped in function to propagate changes when configs are reloaded

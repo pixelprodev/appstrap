@@ -71,7 +71,7 @@ export class Endpoints {
       <html lang="en">
       <head>
           <meta charset="UTF-8">
-          <title>Appstrap | ${name} - ${version}</title>
+          <title>Appstrap Single Page Harness | ${name} - ${version}</title>
       </head>
       <body>
         <div ${host.startsWith('#') ? 'id' : 'class'}="${host.substring(1, host.length)}"></div>
