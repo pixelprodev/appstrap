@@ -41,20 +41,6 @@ export class Config {
     return {...configData, ...{name, version}}
   }
 
-  // reload ({reloadFromFS = false} = {}) {
-  //   if (reloadFromFS) {
-  //     this.load()
-  //   } else {
-  //     this._generateEndpointsFromConfig(this.configFileData.endpoints)
-  //     this.AppServer.reloadEndpoints(Endpoints.fetch())
-  //   }
-  //   // Presets.clear()
-  // }
-
-  getConfigData () {
-    return this.configFileData
-  }
-
   _ensureFileIntegrity ({assets, endpoints}) {
     if (!assets || !endpoints) {
       throw new ErrConfigInvalid()

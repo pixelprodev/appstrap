@@ -13,6 +13,7 @@ export class Appstrap {
     this.config = config
     this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
     this.server = new Server({
+      config: this.config,
       endpoints: this.config.endpoints,
       invokedFromCLI,
       port,
