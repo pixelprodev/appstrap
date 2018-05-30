@@ -5,10 +5,13 @@ import fs from 'fs-extra'
 import path from 'path'
 
 export class Config {
-  constructor ({ configPath = path.join('.appstrap', 'config.js') }) {
+  constructor ({
+    configPath = path.join('.appstrap', 'config.js'),
+    configData = this.load({ configPath })
+  }) {
     this.configPath = configPath
     this.configDir = configPath.replace(/\/[^/]*$/, '')
-    this.fileData = this.load({ configPath: this.configPath })
+    this.fileData = configData
     this.endpoints = new Endpoints({configData: this.fileData})
   }
 
@@ -48,13 +51,13 @@ export class Config {
   }
 
   _generateEndpointsFromConfig (baseConfigEndpoints) {
-    Endpoints.clear()
+    this.endpoints.clear()
     baseConfigEndpoints.forEach(({path, ...methods}, indx) => {
       Object.keys(methods).forEach(method => {
-        Endpoints.addOne({path, method, handler: baseConfigEndpoints[indx][method]})
+        this.endpoints.addOne({path, method, handler: baseConfigEndpoints[indx][method]})
       })
     })
-    return Endpoints.fetch()
+    return this.endpoints.fetch()
   }
 
   _warnAboutCatchAllEndpoint () {

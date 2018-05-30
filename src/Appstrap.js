@@ -35,6 +35,7 @@ export class Appstrap {
 
   reset () {
     this.presets.clear()
+    this.config.endpoints.clear()
   }
 }
 

@@ -1,13 +1,13 @@
 import Endpoint from './Endpoint'
 import { ErrEndpointInvalid } from '../errors'
-import { Loader } from '../config/loader'
+import Config from '../config'
+import path from 'path'
 
-xdescribe('Endpoint', function () {
-  this.Loader = new Loader()
-  this.config = this.Loader.load('./_test/_testConfig/config.js')
+describe('Endpoint', () => {
   describe('constructor', () => {
     test('property contract', () => {
-      this.config.endpoints.forEach(endpoint => {
+      const config = new Config({configPath: path.normalize('_test/_testConfig/config.js')})
+      config.endpoints.fetch().forEach(endpoint => {
         expect(endpoint).toBeInstanceOf(Endpoint)
         expect(typeof endpoint.path).toBe('string')
         expect(endpoint.method).toBeDefined()
