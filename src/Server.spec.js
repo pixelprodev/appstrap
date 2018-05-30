@@ -1,3 +1,4 @@
+import { fake } from 'sinon'
 import Config from './config'
 import express from 'express'
 import fetch from 'isomorphic-fetch'
@@ -130,8 +131,71 @@ describe('Server', () => {
   })
 
   describe('middleware', () => {
-    describe('modifiers', () => {})
-    describe('state', () => {})
+    describe('modifiers', () => {
+      test('returns next without calling delay if default args', async () => {
+        const server = new Server({config, presets})
+        const delay = fake.resolves()
+        const next = fake.returns()
+        await server.modifierMiddleware({delay})({}, {}, next)
+        expect(delay.called).not.toBe(true)
+        expect(next.called).toBe(true)
+      })
+      test('delays response with default delay when not specified', async () => {
+        const server = new Server({config, presets})
+        const delay = fake.resolves()
+        const next = fake.returns()
+        await server.modifierMiddleware({latency: true, delay})({}, {}, next)
+
+        // Delay should be called with default delay of 0 ms
+        expect(delay.called).toBe(true)
+        expect(delay.calledWith(0)).toBe(true)
+
+        expect(next.called).toBe(true)
+      })
+      test('delays response with specified delay when latency is true', async () => {
+        const server = new Server({config, presets})
+        const delay = fake.resolves()
+        const next = fake.returns()
+        await server.modifierMiddleware({latency: true, latencyMS: 3000, delay})({}, {}, next)
+
+        // Delay should be called with default delay of 0 ms
+        expect(delay.called).toBe(true)
+        expect(delay.calledWith(0)).toBe(false)
+        expect(delay.calledWith(3000)).toBe(true)
+
+        expect(next.called).toBe(true)
+      })
+      test('returns default error when not specified', async () => {
+        const server = new Server({config, presets})
+        const delay = fake.resolves()
+        const next = fake.returns()
+        const sendStatus = fake.returns()
+        await server.modifierMiddleware({error: true, delay})({}, {sendStatus}, next)
+
+        expect(sendStatus.called).toBe(true)
+        expect(sendStatus.calledWith(500)).toBe(true)
+        expect(next.called).toBe(false)
+      })
+      test('returns specified custom error when error is true', async () => {
+        const server = new Server({config, presets})
+        const delay = fake.resolves()
+        const next = fake.returns()
+        const sendStatus = fake.returns()
+        await server.modifierMiddleware({error: true, errorStatus: 401, delay})({}, {sendStatus}, next)
+
+        expect(sendStatus.called).toBe(true)
+        expect(sendStatus.calledWith(401)).toBe(true)
+        expect(next.called).toBe(false)
+      })
+    })
+    describe('state', () => {
+      test('adds `state` property to req object', () => {
+        const server = new Server({config, presets})
+        const fakeReq = {}
+        server.stateProviderMiddleware()(fakeReq, {}, fake)
+        expect(fakeReq.state).toBeDefined()
+      })
+    })
     describe('pre-handler', () => {})
   })
 
@@ -168,6 +232,12 @@ describe('Server', () => {
   })
 
   describe('stop', () => {
-    test('stops server successfully')
+    test('stops server successfully', async () => {
+      const server = new Server({config, presets})
+      await server.start()
+      expect(server.httpServer.address()).toBeTruthy()
+      await server.stop()
+      expect(server.httpServer.address()).toBeFalsy()
+    })
   })
 })

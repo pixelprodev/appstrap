@@ -58,7 +58,7 @@ export class Server {
       Router.use(this.endpoints.clientSideRoutingEndpoint)
     } else {
       if (this.endpoints._endpoints.length === 0) {
-        Router.get('*', (req, res) => res.send('no endpoints defined'))
+        Router.all('*', (req, res) => res.send('no endpoints defined'))
       }
     }
     this._router = Router
