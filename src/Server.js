@@ -7,6 +7,7 @@ import detectPort from 'detect-port'
 import ManagementInterface from '@pixelprodotco/appstrap-management-interface'
 import { locateProjectRoot } from './utilities'
 import path from 'path'
+import State from './State'
 
 export class Server {
   constructor ({ config, invokedFromCLI = false, port = 5000, presets }) {
@@ -14,6 +15,7 @@ export class Server {
     this.endpoints = config.endpoints
     this.presets = presets
     this.enableManagementInterface = invokedFromCLI
+    this.state = new State({initialState: config.fileData.initialState})
 
     // Bind methods
     this.start = this.start.bind(this)
@@ -74,7 +76,8 @@ export class Server {
 
   stateProviderMiddleware () {
     return (req, res, next) => {
-      req.state = this.internalState || {}
+      req.state = res.state = this.state.getState()
+      req.setState = res.setState = this.state.setState
       next()
     }
   }

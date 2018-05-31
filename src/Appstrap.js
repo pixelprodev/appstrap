@@ -5,8 +5,8 @@ import path from 'path'
 
 export class Appstrap {
   constructor ({
-    configPath,
-    config = new Config({ configPath: path.normalize(configPath) }),
+    configPath = path.normalize('.appstrap/config.js'),
+    config = new Config({ configPath }),
     invokedFromCLI = false,
     port
   }) {
