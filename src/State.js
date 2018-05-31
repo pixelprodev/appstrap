@@ -10,7 +10,7 @@ class State {
   }
 
   setState (data) {
-    this.state = mergeDeep({}, this._state, data)
+    this._state = mergeDeep({}, this._state, data)
   }
 }
 

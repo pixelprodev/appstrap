@@ -9,7 +9,7 @@ export class Appstrap {
     config = new Config({ configPath }),
     invokedFromCLI = false,
     port
-  }) {
+  } = {}) {
     this.config = config
     this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
     this.server = new Server({ config, invokedFromCLI, port, presets: this.presets })
@@ -34,3 +34,4 @@ export class Appstrap {
 }
 
 export default Appstrap
+module.exports = Appstrap

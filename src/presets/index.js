@@ -1,7 +1,7 @@
+import { require } from 'webpack-node-utils'
 import path from 'path'
 import fs from 'fs-extra'
 import { ErrPresetNotFound } from '../errors'
-import { locateProjectRoot } from '../utilities'
 import Preset from './Preset'
 
 export class Presets {
@@ -39,7 +39,7 @@ export class Presets {
     return path.join(this.presetFolder, `${fileName}.js`)
   }
 
-  _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)), name }) {
+  _getPresetFileData ({ filePath, fileData = require(filePath), name }) {
     const presets = []
     fileData.forEach(({path, mode, ...methods}) => {
       Object.keys(methods).forEach(method => {
@@ -103,12 +103,11 @@ export class Presets {
   }
 
   preloadPresets ({ configDir }) {
-    const projectRoot = locateProjectRoot()
     const presetFiles = fs.readdirSync(path.join(configDir, 'presets'))
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
-      const fileData = require(path.resolve(`${projectRoot}/${configDir}/presets/${fileName}`))
+      const fileData = require(`${configDir}/presets/${fileName}`)
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this._availablePresets = presets

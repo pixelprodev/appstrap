@@ -1,5 +1,5 @@
+import { require } from 'webpack-node-utils'
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
-import { locateProjectRoot } from '../utilities'
 import Endpoints from '../endpoints'
 import fs from 'fs-extra'
 import path from 'path'
@@ -38,12 +38,10 @@ export class Config {
     }
   }
 
-  _getConfigFileData ({configPath, configData = require(path.resolve(configPath))}) {
+  _getConfigFileData ({configPath, configData = require(configPath)}) {
     this._ensureFileIntegrity(configData)
 
-    // Load name and version from package.json
-    const projectRoot = locateProjectRoot()
-    const { name, version } = require(path.join(projectRoot, 'package.json'))
+    const { name, version } = require('package.json')
 
     return {...configData, ...{name, version}}
   }
