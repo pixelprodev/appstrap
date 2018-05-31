@@ -1,37 +1,37 @@
-import AppServer from './AppServer'
-import Endpoints from './endpoints'
-import Config from './config/loader'
+import Server from './Server'
+import Config from './config'
 import Presets from './presets'
 import path from 'path'
 
 export class Appstrap {
   constructor ({
-    configPath,
-    port = 5000,
+    configPath = path.normalize('.appstrap/config.js'),
+    config = new Config({ configPath }),
     invokedFromCLI = false,
-    endpoints,
-    config = Config.load(path.normalize(configPath))
-  }) {
-    AppServer.configure({
-      port,
-      invokedFromCLI,
-      configData: config,
-      endpoints,
-      isSPA: (config.bundle && Object.keys(config.bundle).length > 0)
-    })
-    this._app = AppServer._app
-    if (invokedFromCLI) {
-      Presets.preloadPresets()
-    }
+    port
+  } = {}) {
+    this.config = config
+    this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
+    this.server = new Server({ config, invokedFromCLI, port, presets: this.presets })
+
+    // Directly expose server express app for use in middleware situations.
+    // Intentionally wrapped in function to propagate changes when configs are reloaded
+    this.middleware = (req, res, next) => this.server._app(req, res, next)
+
+    this.port = this.server.port
+    this.start = this.server.start
+    this.stop = this.server.stop
+    this.setModifier = this.config.endpoints.setModifier
+    this.clearModifier = this.config.endpoints.clearModifier
+    this.loadPreset = this.presets.loadPreset
+    this.loadPresets = this.presets.loadPresets
   }
-  get port () { return AppServer.port }
-  get start () { return AppServer.start }
-  get stop () { return AppServer.stop }
-  get reset () { return Config.reload }
-  get setModifier () { return Endpoints.setModifier }
-  get clearModifier () { return Endpoints.clearModifier }
-  get loadPreset () { return Presets.loadPreset }
-  get loadPresets () { return Presets.loadPresets }
+
+  reset () {
+    this.presets.clear()
+    this.config.endpoints.clear()
+  }
 }
 
 export default Appstrap
+module.exports = Appstrap

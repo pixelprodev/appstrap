@@ -1,5 +1,7 @@
 .idea
+.vscode
 node_modules
 .appstrap
 interface/dist/interface.js
 dist
+.DS_Store

@@ -1,10 +1,33 @@
 import Endpoint from './Endpoint'
 
 export class Endpoints {
-  constructor () {
+  constructor ({ configData } = {}) {
+    this.enableClientSideRouting = false
     this._endpoints = []
     this.setModifier = this.setModifier.bind(this)
     this.clearModifier = this.clearModifier.bind(this)
+
+    // Populate endpoint collection
+    this.setCollection({ configData })
+
+    /*
+    If config includes a bundle - indicating a single page application - we will enable client side routing
+      by adding a catch-all endpoint that serves the basic html for a single page application.
+    */
+    if (configData.bundle && Object.keys(configData.bundle).length > 0) {
+      this.enableClientSideRouting = true
+      this.clientSideRoutingEndpoint = (req, res, next) => res.send(this.getSpaHarnessMarkup(configData))
+    }
+  }
+
+  setCollection ({ configData } = {}) {
+    this.clear()
+    if (!configData) { return }
+    configData.endpoints.forEach(({path, ...methods}, indx) => {
+      Object.keys(methods).forEach(method => {
+        this.addOne({path, method, handler: configData.endpoints[indx][method]})
+      })
+    })
   }
 
   addOne ({path, method, handler}) {
@@ -41,7 +64,22 @@ export class Endpoints {
       return endpoint.path === path && endpoint.method === method
     })
   }
+
+  getSpaHarnessMarkup ({name, version, bundle: {host, webPath}} = this.config) {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <title>Appstrap Single Page Harness | ${name} - ${version}</title>
+      </head>
+      <body>
+        <div ${host.startsWith('#') ? 'id' : 'class'}="${host.substring(1, host.length)}"></div>
+        <script src="${webPath}" type="text/javascript"></script>
+      </body>
+      </html>
+    `
+  }
 }
 
-const singleton = new Endpoints()
-export default singleton
+export default Endpoints

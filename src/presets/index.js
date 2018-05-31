@@ -1,17 +1,22 @@
+import { require } from 'webpack-node-utils'
 import path from 'path'
-import Config from '../config/loader'
 import fs from 'fs-extra'
 import { ErrPresetNotFound } from '../errors'
-import { locateProjectRoot } from '../utilities'
 import Preset from './Preset'
 
 export class Presets {
-  constructor () {
+  constructor ({ configDir, invokedFromCLI }) {
+    this.presetFolder = path.join(configDir, 'presets')
     this._presets = []
     this._availablePresets = []
     this._activePresetGroups = []
     this.loadPreset = this.loadPreset.bind(this)
     this.loadPresets = this.loadPresets.bind(this)
+
+    // When invoking from cli, the management interface is also
+    //  initialized. That interface requires presets to be defined
+    //  before it can load.
+    if (invokedFromCLI) { this.preloadPresets({ configDir }) }
   }
 
   clear () {
@@ -19,23 +24,22 @@ export class Presets {
     this._activePresetGroups = []
   }
 
-  fetch ({path, method}) {
+  fetch ({ path, method } = {}) {
     const presetIndex = this._presets.findIndex(preset => preset.method === method.toLowerCase() && preset.path === path.toLowerCase())
     return presetIndex === -1 ? presetIndex : this._presets[presetIndex]
   }
 
   _ensureFileExists (configFilePath) {
-    console.log(configFilePath)
     if (!fs.existsSync(configFilePath)) {
       throw new ErrPresetNotFound()
     }
   }
 
-  _buildFilePath (fileName, configDirectory = Config.configDirectory) {
-    return path.join(configDirectory, 'presets', `${fileName}.js`)
+  _buildFilePath (fileName) {
+    return path.join(this.presetFolder, `${fileName}.js`)
   }
 
-  _getPresetFileData ({ filePath, fileData = require(path.resolve(filePath)), name }) {
+  _getPresetFileData ({ filePath, fileData = require(filePath), name }) {
     const presets = []
     fileData.forEach(({path, mode, ...methods}) => {
       Object.keys(methods).forEach(method => {
@@ -51,15 +55,28 @@ export class Presets {
   }
 
   async loadPresets (presetNames) {
-    const presetDataCollection = await Promise.all(presetNames.map(async (name) => this.validateAndLoadPresetFile(name)))
+    const presetDataCollection = await Promise.all(
+      presetNames.map(async (name) =>
+        this.validateAndLoadPresetFile(name)
+      )
+    )
     const presets = this.combinePresets(presetDataCollection)
     this.addPresetsToInternalCollection(presets)
   }
 
+  /*
+  Takes an array of Preset objects and adds them to the internal collection.  If a preset already
+    exists in the internal collection for the path / method combo, it is overwritten.
+  */
   addPresetsToInternalCollection (presets) {
     presets.forEach(preset => {
-      let indexToOverwrite = this._presets.findIndex(row => row.path === preset.path && row.method === preset.method)
-      indexToOverwrite === -1 ? this._presets.push(preset) : this._presets[indexToOverwrite] = preset
+      let indexToOverwrite = this._presets.findIndex(row =>
+        (row.path === preset.path) &&
+        (row.method === preset.method)
+      )
+      indexToOverwrite === -1
+        ? this._presets.push(preset)
+        : this._presets[indexToOverwrite] = preset
     })
   }
 
@@ -85,13 +102,12 @@ export class Presets {
     }, [])
   }
 
-  preloadPresets (configDirectory = Config.configDirectory) {
-    const projectRoot = locateProjectRoot()
-    const presetFiles = fs.readdirSync(path.join(configDirectory, 'presets'))
+  preloadPresets ({ configDir }) {
+    const presetFiles = fs.readdirSync(path.join(configDir, 'presets'))
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
-      const fileData = require(path.resolve(`${projectRoot}/${configDirectory}/presets/${fileName}`))
+      const fileData = require(`${configDir}/presets/${fileName}`)
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this._availablePresets = presets
@@ -129,5 +145,4 @@ export class Presets {
   }
 }
 
-const singleton = new Presets()
-export default singleton
+export default Presets
