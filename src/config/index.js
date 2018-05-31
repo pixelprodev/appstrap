@@ -7,12 +7,23 @@ import path from 'path'
 export class Config {
   constructor ({
     configPath = path.join('.appstrap', 'config.js'),
-    configData = this.load({ configPath })
+    configData = this.load({ configPath }),
+    warnAboutCatchAllEndpoint = this._warnAboutCatchAllEndpoint
   }) {
     this.configPath = configPath
     this.configDir = configPath.replace(/\/[^/]*$/, '')
     this.fileData = configData
-    this.endpoints = new Endpoints({configData: this.fileData})
+    this.endpoints = new Endpoints({configData})
+
+    /*
+    If a config file is set up to be a single page app, it will contain a bundle declaration
+     for those circumstances, we usually want to control the catch all route so it responds with the
+     html file that calls the bundle.  If the user wants to override that, they can, but we should warn
+     them not to
+    */
+    if (configData.bundle && this.endpoints._endpoints.findIndex(e => e.path === '*') > -1) {
+      warnAboutCatchAllEndpoint()
+    }
   }
 
   reload () {}
@@ -29,13 +40,6 @@ export class Config {
 
   _getConfigFileData ({configPath, configData = require(path.resolve(configPath))}) {
     this._ensureFileIntegrity(configData)
-    /* If a config file is set up to be a single page app, it will contain a bundle declaration
-     * for those circumstances, we usually want to control the catch all route so it responds with the
-     * html file that calls the bundle.  If the user wants to override that, they can, but we should warn
-     * them not to. */
-    if (configData.bundle && configData.endpoints.findIndex(e => e.path === '*') > -1) {
-      this._warnAboutCatchAllEndpoint()
-    }
 
     // Load name and version from package.json
     const projectRoot = locateProjectRoot()

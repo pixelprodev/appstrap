@@ -18,7 +18,7 @@ module.exports = function (wallaby) {
     },
     filesWithNoCoverageCalculated: [
       'src/cli.js',
-      '_test/**/config.js'
+      '_test/**/*.js'
     ],
     compilers: {
       'src/**/*.js': wallaby.compilers.babel(),

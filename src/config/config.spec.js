@@ -1,4 +1,5 @@
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
+import { fake } from 'sinon'
 import Config from './index'
 import Endpoint from '../endpoints/Endpoint'
 import path from 'path'
@@ -28,6 +29,27 @@ describe('config loader', () => {
         const configData = { bundle: {foo: 'bar'}, assets: {foo: 'bar'}, endpoints: [] }
         const config = new Config({configData})
         expect(() => config._ensureFileIntegrity(configData)).not.toThrow()
+      })
+    })
+
+    describe('config with catch-all endpoint defined', () => {
+      test('warns when using catch-all when bundle defined', () => {
+        const fakeWarn = fake.returns()
+        const config = new Config({
+          configPath: path.normalize('_test/_catchAllConfig/catch-all-spa.js'),
+          warnAboutCatchAllEndpoint: fakeWarn
+        })
+        expect(config.configDir).toEqual('_test/_catchAllConfig')
+        expect(fakeWarn.called).toBe(true)
+      })
+      test('does not warn when using catch all when bundle not defined', () => {
+        const fakeWarn = fake.returns()
+        const config = new Config({
+          configPath: path.normalize('_test/_catchAllConfig/catch-all-non-spa.js'),
+          warnAboutCatchAllEndpoint: fakeWarn
+        })
+        expect(config.configDir).toEqual('_test/_catchAllConfig')
+        expect(fakeWarn.called).toBe(false)
       })
     })
 
