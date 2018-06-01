@@ -6,8 +6,12 @@ module.exports = {
       get: (req, res) => res.json({message: 'this is the root'})
     },
     {
+      path: 'updated-14',
+      get: (req, res) => res.send('ok')
+    },
+    {
       path: '/test',
-      get: (req, res) => res.json({test: 'test'}),
+      get: (req, res) => res.json({test: 'updated 456'}),
       post: (req, res) => res.sendStatus(200)
     },
     {

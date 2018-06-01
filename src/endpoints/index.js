@@ -20,6 +20,10 @@ export class Endpoints {
     }
   }
 
+  update ({ fileData }) {
+    this.setCollection({ configData: fileData })
+  }
+
   setCollection ({ configData } = {}) {
     this.clear()
     if (!configData) { return }

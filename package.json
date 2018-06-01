@@ -11,7 +11,6 @@
     "deploy": "npm run lint && npm test && npm run deploy:ui && npm run deploy:core",
     "deploy:ui": "webpack --config webpack/interface.webpack.config.js --mode production",
     "deploy:core": "webpack --config webpack/core.webpack.config.js --mode production",
-    "dev": "stmux -- [ \"npm run dev:core\" .. \"npm run dev:ui\" ]",
     "dev:ui": "webpack --config webpack/interface.webpack.config.js --mode development --watch --progress --colors",
     "dev:core": "webpack --config webpack/core.webpack.config.js --mode development --watch --progress --colors",
     "lint": "standard",
@@ -21,9 +20,11 @@
   },
   "dependencies": {
     "body-parser": "1.17.2",
+    "chokidar": "^2.0.3",
     "commander": "^2.14.1",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
+    "no-cache-loader": "^1.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.12.1",
     "require-all": "^2.2.0",
@@ -58,14 +59,11 @@
     "shebang-loader": "0.0.1",
     "sinon": "^5.0.10",
     "standard": "^11.0.1",
-    "stmux": "^1.5.4",
     "supertest": "^3.0.0",
     "vhost": "^3.0.2",
     "webpack": "^4.10.2",
     "webpack-cli": "^2.1.4",
-    "webpack-node-externals": "^1.7.2",
-    "webpack-node-utils": "^3.0.0",
-    "webpack-runtime-require": "^0.3.0"
+    "webpack-node-externals": "^1.7.2"
   },
   "standard": {
     "envs": [
@@ -76,5 +74,13 @@
   "pre-commit": [
     "lint",
     "test"
-  ]
+  ],
+  "jest": {
+    "globals": {
+      "__DEV__": true
+    },
+    "moduleNameMapper": {
+      "webpack-dynamic-require": "<rootDir>/webpack-dynamic-require.js"
+    }
+  }
 }

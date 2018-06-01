@@ -1,4 +1,4 @@
-import { require } from 'webpack-node-utils'
+import dynamicRequire from 'webpack-dynamic-require'
 import path from 'path'
 import fs from 'fs-extra'
 import { ErrPresetNotFound } from '../errors'
@@ -16,7 +16,12 @@ export class Presets {
     // When invoking from cli, the management interface is also
     //  initialized. That interface requires presets to be defined
     //  before it can load.
-    if (invokedFromCLI) { this.preloadPresets({ configDir }) }
+    if (invokedFromCLI) { this.preloadPresets() }
+  }
+
+  update () {
+    this.preloadPresets()
+    this.groupPresetsAndSetInternal()
   }
 
   clear () {
@@ -39,7 +44,7 @@ export class Presets {
     return path.join(this.presetFolder, `${fileName}.js`)
   }
 
-  _getPresetFileData ({ filePath, fileData = require(filePath), name }) {
+  _getPresetFileData ({ filePath, fileData = dynamicRequire(filePath, {useCache: false}), name }) {
     const presets = []
     fileData.forEach(({path, mode, ...methods}) => {
       Object.keys(methods).forEach(method => {
@@ -102,12 +107,12 @@ export class Presets {
     }, [])
   }
 
-  preloadPresets ({ configDir }) {
-    const presetFiles = fs.readdirSync(path.join(configDir, 'presets'))
+  preloadPresets () {
+    const presetFiles = fs.readdirSync(this.presetFolder)
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
-      const fileData = require(`${configDir}/presets/${fileName}`)
+      const fileData = dynamicRequire(path.join(this.presetFolder, fileName), {useCache: false})
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this._availablePresets = presets

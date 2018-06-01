@@ -2,6 +2,7 @@ import Server from './Server'
 import Config from './config'
 import Presets from './presets'
 import path from 'path'
+import chokidar from 'chokidar'
 
 export class Appstrap {
   constructor ({
@@ -10,6 +11,7 @@ export class Appstrap {
     invokedFromCLI = false,
     port
   } = {}) {
+    this.invokedFromCLI = invokedFromCLI
     this.config = config
     this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
     this.server = new Server({ config, invokedFromCLI, port, presets: this.presets })
@@ -25,6 +27,20 @@ export class Appstrap {
     this.clearModifier = this.config.endpoints.clearModifier
     this.loadPreset = this.presets.loadPreset
     this.loadPresets = this.presets.loadPresets
+
+    if (!__DEV__) { /* eslint-disable-line no-undef  */
+      this.fileWatcher = chokidar.watch(configPath)
+      const updateModules = this.updateModules.bind(this)
+      setTimeout(() => { this.fileWatcher.on('all', updateModules) }, 3500)
+    }
+  }
+
+  updateModules () {
+    this.config.update()
+    if (this.invokedFromCLI) {
+      this.presets.update()
+    }
+    this.server.reloadEndpoints({ config: this.config })
   }
 
   reset () {
