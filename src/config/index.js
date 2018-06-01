@@ -1,8 +1,8 @@
-import { require } from 'webpack-node-utils'
 import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
 import Endpoints from '../endpoints'
 import fs from 'fs-extra'
 import path from 'path'
+import dynamicRequire from 'webpack-dynamic-require'
 
 export class Config {
   constructor ({
@@ -26,7 +26,11 @@ export class Config {
     }
   }
 
-  reload () {}
+  update () {
+    this.fileData = this.load({ configPath: this.configPath })
+    this.endpoints.update({ fileData: this.fileData })
+  }
+
   load ({ configPath }) {
     this._ensureFileExists(configPath)
     return this._getConfigFileData({configPath})
@@ -38,10 +42,13 @@ export class Config {
     }
   }
 
-  _getConfigFileData ({configPath, configData = require(configPath)}) {
+  _getConfigFileData ({
+    configPath,
+    configData = dynamicRequire(configPath, {useCache: false})
+  }) {
     this._ensureFileIntegrity(configData)
 
-    const { name, version } = require('package.json')
+    const { name, version } = dynamicRequire('package.json')
 
     return {...configData, ...{name, version}}
   }

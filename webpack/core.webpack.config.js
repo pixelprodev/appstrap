@@ -13,7 +13,12 @@ module.exports = {
     __filename: true,
     __dirname: true
   },
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals(),
+    {
+      'webpack-dynamic-require': '../webpack-dynamic-require.js'
+    }
+  ],
   output: {
     filename: '[name].js',
     libraryTarget: 'umd',
