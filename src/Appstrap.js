@@ -28,7 +28,7 @@ export class Appstrap {
     this.loadPreset = this.presets.loadPreset
     this.loadPresets = this.presets.loadPresets
 
-    if (!__DEV__) { /* eslint-disable-line no-undef  */
+    if (!__TEST__) { /* eslint-disable-line no-undef  */
       this.fileWatcher = chokidar.watch(configPath)
       const updateModules = this.updateModules.bind(this)
       setTimeout(() => { this.fileWatcher.on('all', updateModules) }, 3500)

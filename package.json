@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./dist/Appstrap.js",
   "bin": "./dist/cli.js",
@@ -77,7 +77,7 @@
   ],
   "jest": {
     "globals": {
-      "__DEV__": true
+      "__TEST__": true
     },
     "moduleNameMapper": {
       "webpack-dynamic-require": "<rootDir>/webpack-dynamic-require.js"
