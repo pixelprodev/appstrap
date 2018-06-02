@@ -9,7 +9,8 @@ export class Appstrap {
     configPath = path.normalize('.appstrap/config.js'),
     config = new Config({ configPath }),
     invokedFromCLI = false,
-    port
+    port,
+    preserve = true
   } = {}) {
     this.invokedFromCLI = invokedFromCLI
     this.config = config
@@ -29,18 +30,28 @@ export class Appstrap {
     this.loadPresets = this.presets.loadPresets
 
     if (!__TEST__) { /* eslint-disable-line no-undef  */
-      this.fileWatcher = chokidar.watch(configPath)
-      const updateModules = this.updateModules.bind(this)
+      this.fileWatcher = chokidar.watch(this.config.configDir)
+      const updateModules = this.updateModules.bind(this, preserve)
       setTimeout(() => { this.fileWatcher.on('all', updateModules) }, 3500)
     }
   }
 
-  updateModules () {
-    this.config.update()
-    if (this.invokedFromCLI) {
-      this.presets.update()
+  updateModules (preserve) {
+    try {
+      this.config.update()
+      if (this.invokedFromCLI) {
+        this.presets.update()
+      }
+      if (preserve !== true) {
+        this.server.state.reset({ initialState: this.config.fileData.initialState })
+      }
+      this.server.reloadEndpoints({ config: this.config })
+    } catch (e) {
+      console.error('******************************************************************************')
+      console.error('Attempt to reload configuration failed!')
+      console.error(e.stack)
+      console.error('******************************************************************************')
     }
-    this.server.reloadEndpoints({ config: this.config })
   }
 
   reset () {
