@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./dist/Appstrap.js",
   "bin": "./dist/cli.js",
@@ -16,12 +16,13 @@
     "lint": "standard",
     "test": "jest",
     "test-config-generate": "node dist/cli.js init",
-    "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js"
+    "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js --preserve false"
   },
   "dependencies": {
     "body-parser": "1.17.2",
     "chokidar": "^2.0.3",
     "commander": "^2.14.1",
+    "decache": "^4.4.0",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
     "no-cache-loader": "^1.0.0",
@@ -77,7 +78,7 @@
   ],
   "jest": {
     "globals": {
-      "__DEV__": true
+      "__TEST__": true
     },
     "moduleNameMapper": {
       "webpack-dynamic-require": "<rootDir>/webpack-dynamic-require.js"
