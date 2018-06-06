@@ -15,7 +15,6 @@
     "dev:core": "webpack --config webpack/core.webpack.config.js --mode development --watch --progress --colors",
     "init": "npm run deploy && node dist/cli.js init",
     "start": "node dist/cli.js start",
-    "generate": "node dist/cli.js init",
     "lint": "standard",
     "test": "jest",
     "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js --preserve false"
