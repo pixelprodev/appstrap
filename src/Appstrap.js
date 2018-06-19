@@ -21,7 +21,6 @@ export class Appstrap {
     // Intentionally wrapped in function to propagate changes when configs are reloaded
     this.middleware = (req, res, next) => this.server._app(req, res, next)
 
-    this.port = this.server.port
     this.start = this.server.start
     this.stop = this.server.stop
     this.setModifier = this.config.endpoints.setModifier
@@ -36,10 +35,12 @@ export class Appstrap {
     }
   }
 
+  get port () { return this.server.port }
+
   updateModules (preserve) {
     try {
       this.config.update()
-      if (this.invokedFromCLI) {
+      if (this.invokedFromCLI && this.config.fileData.initialState) {
         this.presets.update()
       }
       if (preserve !== true) {

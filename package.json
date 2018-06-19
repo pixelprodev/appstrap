@@ -23,13 +23,15 @@
     "chokidar": "^2.0.3",
     "commander": "^2.14.1",
     "decache": "^4.4.0",
+    "detect-port": "^1.2.3",
     "express": "^4.15.3",
     "fs-extra": "^5.0.0",
     "no-cache-loader": "^1.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.12.1",
     "require-all": "^2.2.0",
-    "sleep-promise": "2.0.0"
+    "sleep-promise": "2.0.0",
+    "vhost": "^3.0.2"
   },
   "devDependencies": {
     "@storybook/react": "^4.0.0-alpha.4",
@@ -41,7 +43,6 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "detect-port": "^1.2.3",
     "glamor": "^2.20.40",
     "glamorous": "^4.13.0",
     "isomorphic-fetch": "^2.2.1",
@@ -61,7 +62,6 @@
     "sinon": "^5.0.10",
     "standard": "^11.0.1",
     "supertest": "^3.0.0",
-    "vhost": "^3.0.2",
     "webpack": "^4.10.2",
     "webpack-cli": "^2.1.4",
     "webpack-node-externals": "^1.7.2"
