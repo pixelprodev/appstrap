@@ -76,11 +76,6 @@ describe('Server', () => {
       expect(server.httpServer.listenAsync).toBeDefined()
       expect(server.httpServer.listenAsync.toString()).toContain('return promise')
     })
-    test('created http server has closeAsync method that returns a promise', () => {
-      const server = new Server({config})
-      expect(server.httpServer.closeAsync).toBeDefined()
-      expect(server.httpServer.closeAsync.toString()).toContain('return promise')
-    })
   })
 
   describe('loadEndpoints', () => {

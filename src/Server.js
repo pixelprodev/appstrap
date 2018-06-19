@@ -37,7 +37,6 @@ export class Server {
 
     this.httpServer = http.createServer(this._app)
     this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
-    this.httpServer.closeAsync = util.promisify(this.httpServer.close)
   }
 
   reloadEndpoints ({config}) { return this.loadEndpoints({config}) }
@@ -100,9 +99,9 @@ export class Server {
   }
 
   async start ({port = this.port} = {}) {
-    this.port = await detectPort(port)
+    const checkedPort = await detectPort(port)
+    this.port = checkedPort
     await this.httpServer.listenAsync(this.port)
-
     /*
      If the server was invoked from CLI, we want to show a confirmation message when the server
       is started.  We will also indicate the management interface port to make people more aware
@@ -122,10 +121,12 @@ export class Server {
     }
   }
 
-  async stop () {
-    if (this.httpServer.address()) {
-      await this.httpServer.closeAsync()
-    }
+  stop () {
+    return new Promise((resolve) => {
+      this.httpServer.listening
+        ? this.httpServer.close(() => resolve())
+        : resolve()
+    })
   }
 }
 
