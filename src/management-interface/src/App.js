@@ -14,8 +14,7 @@ const PageContainer = glamorous.section({
   background: '#EFF3F6',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  overflowY: 'scroll'
+  justifyContent: 'center'
 })
 const AppContainer = glamorous.div({
   padding: '1rem',
