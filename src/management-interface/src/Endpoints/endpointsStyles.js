@@ -5,7 +5,7 @@ import { tabsTotalHeight } from '../Tabs/tabStyles'
 
 export const EndpointsContainer = glamorous.section({
   display: 'flex',
-  height: `calc(100vh - ${headerTotalHeight + tabsTotalHeight}px)`,
+  height: `calc(100vh - ${headerTotalHeight + tabsTotalHeight}px - 2rem)`,
   width: '100%',
   border: `1px solid ${colors.borderColor}`,
   ' aside': {
