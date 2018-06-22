@@ -24,7 +24,7 @@ class Presets extends React.Component {
       <PresetContainer>
         <MessageContainer>
           <p>
-            Presets, commonly referred to as "Fixtures" allow you to snapshot your app to a specific point in time.  Presets are composable, meaning you can activate as many or as few as needed to achieve your goal.  Active presets in the list below with the same endpoint/method combinations are merged from top to bottom.  More information can be found (here).
+            Presets, commonly referred to as "Fixtures" allow you to snapshot your app to a specific point in time.  Presets are composable, meaning you can activate as many or as few as needed to achieve your goal.  Active presets in the list below with the same endpoint/method combinations are merged from top to bottom.  More information can be found <a href="https://github.com/pixelprodotco/appstrap/blob/master/docs/presets.md#presets" target="_blank">here</a>.
           </p>
         </MessageContainer>
         <ActivePresets />
