@@ -81,8 +81,8 @@ class ConfigGenerator {
             |- config.js}
 
       For more information visit the following links:
-      Getting started: {blue https://some-getting-started-link-here}
-      Documentation: {blue https://appstrap-documentation-link-here}
+      Getting started: {blue https://github.com/pixelprodotco/appstrap#getting-started}
+      Documentation: {blue https://github.com/pixelprodotco/appstrap/blob/master/docs/api.md#appstrap-api}
     ===============================================================
     `)
   }
