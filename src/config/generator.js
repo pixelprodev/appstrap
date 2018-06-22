@@ -3,18 +3,21 @@ import path from 'path'
 import fs from 'fs-extra'
 import util from 'util'
 import prettier from 'prettier'
+import chalk from 'chalk'
 
 const prompts = {
-  isSinglePageApp: `\rAre you strapping a single page app? [y/n]:  `,
-  bundlePath: `  Please provide the path to your bundle file [relative to current dir]:  `,
-  bundleHost: `  Please specify the html container your bundle expects [i.e. #container or .host]:  `
+  isSinglePageApp: chalk`      Are you strapping a single page app? {blue [y/n]}:  `,
+  bundlePath: chalk`      Please provide the path to your bundle file {blue [relative to current dir]}:  `,
+  bundleHost: chalk`      Please specify the html container your bundle expects {blue [i.e. #container or .host]}:  `
 }
 
 class ConfigGenerator {
   static async generate () {
     const {stdin, stdout} = process
-    console.log('=================================================')
-    console.log('         Appstrap config file generator          ')
+    console.log(chalk`
+    ===============================================================
+      {yellow.bold Appstrap} config file generator
+    `)
     this.rl = readline.createInterface({ input: stdin, output: stdout })
 
     const spaPromptAnswer = await this.promptUser(prompts.isSinglePageApp)
@@ -68,17 +71,20 @@ class ConfigGenerator {
   }
 
   static showGenerationSummary () {
-    console.log('=================================================')
-    console.log('         Config generated successfully!          ')
-    console.log('=================================================')
-    console.log(`Root Directory : ${process.cwd()}`)
-    console.log('   |- .appstrap')
-    console.log('      |- presets/')
-    console.log('      |- config.js')
-    console.log('')
-    console.log('For more information visit the following links:')
-    console.log('Getting started: https://some-getting-started-link-here')
-    console.log('Documentation: https://appstrap-documentation-link-here')
+    console.log(chalk`
+    ===============================================================
+      {yellow.bold Appstrap} Config generated {green.bold successfully!} 
+    
+      Root Directory : ${process.cwd()} {cyan
+         |- .appstrap
+            |- presets/
+            |- config.js}
+
+      For more information visit the following links:
+      Getting started: {blue https://github.com/pixelprodotco/appstrap#getting-started}
+      Documentation: {blue https://github.com/pixelprodotco/appstrap/blob/master/docs/api.md#appstrap-api}
+    ===============================================================
+    `)
   }
 }
 

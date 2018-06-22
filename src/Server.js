@@ -7,6 +7,7 @@ import detectPort from 'detect-port'
 import ManagementInterface from './management-interface/index.js'
 import { locateProjectRoot } from './utilities'
 import path from 'path'
+import chalk from 'chalk'
 import State from './State'
 
 export class Server {
@@ -108,15 +109,15 @@ export class Server {
       that it exists.
     */
     if (this.enableManagementInterface) {
-      console.log(`
-    ==================================================================
-      Appstrap loaded successfully.
-      A server has been started for you at the following address: 
-      http://localhost:${this.port}
+      console.log(chalk`
+      ===============================================================
+        {yellow.bold Appstrap} loaded {green successfully}.
+        A server has been started for you at the following address: 
+        {blue http://localhost:${this.port}}
 
-      The management interface can be found at the following address:
-      http://appstrap.localhost:${this.port}
-    ==================================================================
+        The management interface can be found at the following address:
+        {blue http://appstrap.localhost:${this.port}}
+      ===============================================================
     `)
     }
   }
