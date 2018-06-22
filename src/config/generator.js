@@ -6,9 +6,9 @@ import prettier from 'prettier'
 import chalk from 'chalk'
 
 const prompts = {
-  isSinglePageApp: `      Are you strapping a single page app? ${chalk.blue('[y/n]')}:  `,
-  bundlePath: `      Please provide the path to your bundle file ${chalk.blue('[relative to current dir]')}:  `,
-  bundleHost: `      Please specify the html container your bundle expects ${chalk.blue('[i.e. #container or .host]')}:  `
+  isSinglePageApp: chalk`      Are you strapping a single page app? {blue [y/n]}:  `,
+  bundlePath: chalk`      Please provide the path to your bundle file {blue [relative to current dir]}:  `,
+  bundleHost: chalk`      Please specify the html container your bundle expects {blue [i.e. #container or .host]}:  `
 }
 
 class ConfigGenerator {
