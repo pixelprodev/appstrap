@@ -2,15 +2,16 @@ const { ErrConfigInvalid, ErrConfigNotFound } = require('../errors')
 const Endpoints = require('../endpoints')
 const fs = require('fs-extra')
 const path = require('path')
+const { locateProjectRoot } = require('../utilities')
 
 class Config {
   constructor ({
-    configPath = path.join('.appstrap', 'config.js'),
-    configData = this.load({ configPath }),
+    configPath = path.resolve(path.join('.appstrap', 'config.js')),
+    configData = this.load({ configPath: path.resolve(configPath) }),
     warnAboutCatchAllEndpoint = this._warnAboutCatchAllEndpoint
   }) {
-    this.configPath = configPath
-    this.configDir = configPath.replace(/\/[^/]*$/, '')
+    this.configPath = path.resolve(configPath)
+    this.configDir = this.configPath.replace(/\/[^/]*$/, '')
     this.fileData = configData
     this.endpoints = new Endpoints({configData})
 
@@ -47,7 +48,7 @@ class Config {
   }) {
     this._ensureFileIntegrity(configData)
 
-    const { name, version } = require('package.json')
+    const { name, version } = require(path.join(locateProjectRoot(), 'package.json'))
 
     return {...configData, ...{name, version}}
   }

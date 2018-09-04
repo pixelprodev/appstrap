@@ -1,8 +1,8 @@
 const Endpoints = require('./')
-const Config = require('./Config')
+const Config = require('../config')
 const path = require('path')
 
-const configPath = path.normalize('_test/_testConfig/config.js')
+const configPath = path.resolve('_test/_testConfig/config.js')
 
 describe('Endpoints', () => {
   describe('addOne()', () => {

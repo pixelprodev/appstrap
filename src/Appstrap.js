@@ -6,7 +6,7 @@ const chokidar = require('chokidar')
 
 class Appstrap {
   constructor ({
-    configPath = path.normalize('.appstrap/config.js'),
+    configPath = path.resolve(path.normalize('.appstrap/config.js')),
     config = new Config({ configPath }),
     invokedFromCLI = false,
     port,
