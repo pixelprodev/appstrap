@@ -4,7 +4,6 @@ module.exports = function (wallaby) {
       {pattern: 'src/**/*.js'},
       {pattern: '!src/management-interface/src/**/*'},
       {pattern: '_test/**/*.js'},
-      {pattern: './webpack-dynamic-require.js'},
       {pattern: '_test/**/config.js', instrument: false, load: false},
       {pattern: 'src/**/*.spec.js', ignore: true},
       {pattern: '_test/**/*.spec.js', ignore: true}
