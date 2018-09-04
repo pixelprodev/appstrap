@@ -1,10 +1,10 @@
-import Server from './Server'
-import Config from './config'
-import Presets from './presets'
-import path from 'path'
-import chokidar from 'chokidar'
+const Server = require('./Server')
+const Config = require('./Config')
+const Presets = require('./presets')
+const path = require('path')
+const chokidar = require('chokidar')
 
-export class Appstrap {
+class Appstrap {
   constructor ({
     configPath = path.normalize('.appstrap/config.js'),
     config = new Config({ configPath }),
@@ -61,5 +61,4 @@ export class Appstrap {
   }
 }
 
-export default Appstrap
 module.exports = Appstrap

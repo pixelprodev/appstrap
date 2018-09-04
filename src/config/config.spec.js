@@ -1,8 +1,8 @@
-import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
-import { fake } from 'sinon'
-import Config from './index'
-import Endpoint from '../endpoints/Endpoint'
-import path from 'path'
+const { ErrConfigInvalid, ErrConfigNotFound } = require('../errors')
+const { fake } = require('sinon')
+const Config = require('./')
+const Endpoint = require('../endpoints/Endpoint')
+const path = require('path')
 
 const configPath = path.normalize('_test/_testConfig/config.js')
 

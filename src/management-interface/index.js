@@ -1,8 +1,8 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import vHost from 'vhost'
-import path from 'path'
-import { locateProjectRoot } from '../utilities'
+const express = require('express')
+const bodyParser = require('body-parser')
+const vHost = require('vhost')
+const path = require('path')
+const { locateProjectRoot } = require('../utilities')
 
 class ManagementInterface {
   constructor ({ server, config, presets }) {
@@ -63,4 +63,4 @@ class ManagementInterface {
   }
 }
 
-export default ManagementInterface
+module.exports = ManagementInterface

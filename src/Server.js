@@ -1,16 +1,16 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import sleep from 'sleep-promise'
-import http from 'http'
-import util from 'util'
-import detectPort from 'detect-port'
-import ManagementInterface from './management-interface/index.js'
-import { locateProjectRoot } from './utilities'
-import path from 'path'
-import chalk from 'chalk'
-import State from './State'
+const express = require('express')
+const bodyParser = require('body-parser')
+const sleep = require('sleep-promise')
+const http = require('http')
+const util = require('util')
+const detectPort = require('detect-port')
+const ManagementInterface = require('./management-interface')
+const { locateProjectRoot } = require('./utilities')
+const path = require('path')
+const chalk = require('chalk')
+const State = require('./State')
 
-export class Server {
+class Server {
   constructor ({ config, invokedFromCLI = false, port = 5000, presets }) {
     this.port = port
     this.endpoints = config.endpoints
@@ -131,4 +131,4 @@ export class Server {
   }
 }
 
-export default Server
+module.exports = Server

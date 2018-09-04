@@ -1,10 +1,9 @@
-import dynamicRequire from 'webpack-dynamic-require'
-import path from 'path'
-import fs from 'fs-extra'
-import { ErrPresetNotFound } from '../errors'
-import Preset from './Preset'
+const path = require('path')
+const fs = require('fs-extra')
+const { ErrPresetNotFound } = require('../errors')
+const Preset = require('./Preset')
 
-export class Presets {
+class Presets {
   constructor ({ configDir, invokedFromCLI }) {
     this.presetFolder = path.join(configDir, 'presets')
     this._presets = []
@@ -44,7 +43,7 @@ export class Presets {
     return path.join(this.presetFolder, `${fileName}.js`)
   }
 
-  _getPresetFileData ({ filePath, fileData = dynamicRequire(filePath, {useCache: false}), name }) {
+  _getPresetFileData ({ filePath, fileData = require(filePath, {useCache: false}), name }) {
     const presets = []
     fileData.forEach(({path, mode, ...methods}) => {
       Object.keys(methods).forEach(method => {
@@ -112,7 +111,7 @@ export class Presets {
     let presets = []
     presetFiles.forEach(fileName => {
       const name = fileName.replace('.js', '')
-      const fileData = dynamicRequire(path.join(this.presetFolder, fileName), {useCache: false})
+      const fileData = require(path.join(this.presetFolder, fileName), {useCache: false})
       presets = [...presets, ...this._getPresetFileData({fileData, name})]
     })
     this._availablePresets = presets
@@ -150,4 +149,4 @@ export class Presets {
   }
 }
 
-export default Presets
+module.exports = Presets

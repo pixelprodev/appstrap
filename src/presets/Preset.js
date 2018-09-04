@@ -9,4 +9,4 @@ class Preset {
   }
 }
 
-export default Preset
+module.exports = Preset

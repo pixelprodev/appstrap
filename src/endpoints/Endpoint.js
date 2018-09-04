@@ -28,4 +28,4 @@ class Endpoint {
   }
 }
 
-export default Endpoint
+module.exports = Endpoint

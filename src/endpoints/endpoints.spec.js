@@ -1,6 +1,6 @@
-import Endpoints from './index'
-import Config from '../config'
-import path from 'path'
+const Endpoints = require('./')
+const Config = require('./Config')
+const path = require('path')
 
 const configPath = path.normalize('_test/_testConfig/config.js')
 

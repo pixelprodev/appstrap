@@ -1,10 +1,9 @@
-import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
-import Endpoints from '../endpoints'
-import fs from 'fs-extra'
-import path from 'path'
-import dynamicRequire from 'webpack-dynamic-require'
+const { ErrConfigInvalid, ErrConfigNotFound } = require('../errors')
+const Endpoints = require('../endpoints')
+const fs = require('fs-extra')
+const path = require('path')
 
-export class Config {
+class Config {
   constructor ({
     configPath = path.join('.appstrap', 'config.js'),
     configData = this.load({ configPath }),
@@ -44,11 +43,11 @@ export class Config {
 
   _getConfigFileData ({
     configPath,
-    configData = dynamicRequire(configPath, {useCache: false})
+    configData = require(configPath, {useCache: false})
   }) {
     this._ensureFileIntegrity(configData)
 
-    const { name, version } = dynamicRequire('package.json')
+    const { name, version } = require('package.json')
 
     return {...configData, ...{name, version}}
   }
@@ -77,4 +76,4 @@ export class Config {
   }
 }
 
-export default Config
+module.exports = Config

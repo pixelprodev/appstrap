@@ -1,6 +1,6 @@
-import Endpoint from './Endpoint'
+const Endpoint = require('./Endpoint')
 
-export class Endpoints {
+class Endpoints {
   constructor ({ configData } = {}) {
     this.enableClientSideRouting = false
     this._endpoints = []
@@ -86,4 +86,4 @@ export class Endpoints {
   }
 }
 
-export default Endpoints
+module.exports = Endpoints
