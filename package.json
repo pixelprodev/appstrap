@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./src/Appstrap.js",
   "bin": "./src/cli.js",
@@ -8,7 +8,7 @@
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
   "scripts": {
-    "deploy": "npm run lint && npm test && npm run deploy:ui && npm run deploy:core",
+    "deploy": "npm run lint && npm test",
     "deploy:ui": "webpack --config webpack/interface.webpack.config.js --mode production",
     "deploy:core": "webpack --config webpack/core.webpack.config.js --mode production",
     "dev:ui": "webpack --config webpack/interface.webpack.config.js --mode development --watch --progress --colors",
