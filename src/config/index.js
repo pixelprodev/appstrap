@@ -1,17 +1,17 @@
-import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
-import Endpoints from '../endpoints'
-import fs from 'fs-extra'
-import path from 'path'
-import dynamicRequire from 'webpack-dynamic-require'
+const { ErrConfigInvalid, ErrConfigNotFound } = require('../errors')
+const Endpoints = require('../endpoints')
+const fs = require('fs-extra')
+const path = require('path')
+const { locateProjectRoot } = require('../utilities')
 
-export class Config {
+class Config {
   constructor ({
-    configPath = path.join('.appstrap', 'config.js'),
-    configData = this.load({ configPath }),
+    configPath = path.resolve(path.join('.appstrap', 'config.js')),
+    configData = this.load({ configPath: path.resolve(configPath) }),
     warnAboutCatchAllEndpoint = this._warnAboutCatchAllEndpoint
   }) {
-    this.configPath = configPath
-    this.configDir = configPath.replace(/\/[^/]*$/, '')
+    this.configPath = path.resolve(configPath)
+    this.configDir = this.configPath.replace(/\/[^/]*$/, '')
     this.fileData = configData
     this.endpoints = new Endpoints({configData})
 
@@ -44,11 +44,11 @@ export class Config {
 
   _getConfigFileData ({
     configPath,
-    configData = dynamicRequire(configPath, {useCache: false})
+    configData = require(configPath, {useCache: false})
   }) {
     this._ensureFileIntegrity(configData)
 
-    const { name, version } = dynamicRequire('package.json')
+    const { name, version } = require(path.join(locateProjectRoot(), 'package.json'))
 
     return {...configData, ...{name, version}}
   }
@@ -77,4 +77,4 @@ export class Config {
   }
 }
 
-export default Config
+module.exports = Config

@@ -1,8 +1,8 @@
-import Endpoints from './index'
-import Config from '../config'
-import path from 'path'
+const Endpoints = require('./')
+const Config = require('../config')
+const path = require('path')
 
-const configPath = path.normalize('_test/_testConfig/config.js')
+const configPath = path.resolve('_test/_testConfig/config.js')
 
 describe('Endpoints', () => {
   describe('addOne()', () => {

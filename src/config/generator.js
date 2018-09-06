@@ -1,9 +1,9 @@
-import readline from 'readline'
-import path from 'path'
-import fs from 'fs-extra'
-import util from 'util'
-import prettier from 'prettier'
-import chalk from 'chalk'
+const readline = require('readline')
+const path = require('path')
+const fs = require('fs-extra')
+const util = require('util')
+const prettier = require('prettier')
+const chalk = require('chalk')
 
 const prompts = {
   isSinglePageApp: chalk`      Are you strapping a single page app? {blue [y/n]}:  `,
@@ -88,4 +88,4 @@ class ConfigGenerator {
   }
 }
 
-export default ConfigGenerator
+module.exports = ConfigGenerator

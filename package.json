@@ -2,8 +2,8 @@
   "name": "@pixelprodotco/appstrap",
   "version": "0.3.6",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
-  "main": "./dist/Appstrap.js",
-  "bin": "./dist/cli.js",
+  "main": "./src/Appstrap.js",
+  "bin": "./src/cli.js",
   "author": "",
   "license": "ISC",
   "repository": "https://github.com/pixelprodotco/appstrap",
@@ -19,6 +19,8 @@
     "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js --preserve false"
   },
   "dependencies": {
+    "async-retry": "^1.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "body-parser": "1.17.2",
     "chokidar": "^2.0.3",
     "commander": "^2.14.1",

@@ -1,4 +1,4 @@
-export class ErrConfigNotFound extends Error {
+class ErrConfigNotFound extends Error {
   constructor (message, configFilePath) {
     super(`
       Unable to load config file at ${configFilePath}
@@ -8,7 +8,7 @@ export class ErrConfigNotFound extends Error {
   }
 }
 
-export class ErrPresetNotFound extends Error {
+class ErrPresetNotFound extends Error {
   constructor (message, presetFilePath) {
     super(`
       Unable to load preset file at ${presetFilePath}
@@ -17,7 +17,7 @@ export class ErrPresetNotFound extends Error {
   }
 }
 
-export class ErrConfigInvalid extends Error {
+class ErrConfigInvalid extends Error {
   constructor () {
     super(`
       You are missing crucial config data.  
@@ -27,11 +27,18 @@ export class ErrConfigInvalid extends Error {
   }
 }
 
-export class ErrEndpointInvalid extends Error {
+class ErrEndpointInvalid extends Error {
   constructor () {
     super(`
       Endpoint supplied without path, handler, or method.  Please check and try again.
     `, 500)
     Error.captureStackTrace(this, this.constructor)
   }
+}
+
+module.exports = {
+  ErrConfigInvalid,
+  ErrConfigNotFound,
+  ErrEndpointInvalid,
+  ErrPresetNotFound
 }

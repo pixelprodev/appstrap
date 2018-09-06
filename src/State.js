@@ -1,5 +1,5 @@
-import mergeDeep from 'lodash.merge'
-import util from 'util'
+const mergeDeep = require('lodash.merge')
+const util = require('util')
 
 class State {
   constructor ({initialState = {}} = {}) {
@@ -20,4 +20,4 @@ class State {
   }
 }
 
-export default State
+module.exports = State

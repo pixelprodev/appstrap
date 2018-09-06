@@ -1,6 +1,6 @@
 /* eslint no-eval: 0 */
-import ConfigGenerator from './generator'
-import path from 'path'
+const ConfigGenerator = require('./generator')
+const path = require('path')
 
 describe('ConfigGenerator', () => {
   describe('generateConfigContents', () => {

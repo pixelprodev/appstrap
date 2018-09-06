@@ -1,13 +1,13 @@
-import { fake } from 'sinon'
-import Config from './config'
-import express from 'express'
-import fetch from 'isomorphic-fetch'
-import path from 'path'
-import Presets from './presets'
-import Request from 'supertest'
-import Server from './Server'
+const { fake } = require('sinon')
+const Config = require('./config')
+const express = require('express')
+const fetch = require('isomorphic-fetch')
+const path = require('path')
+const Presets = require('./presets')
+const Request = require('supertest')
+const Server = require('./Server')
 
-const configPath = path.normalize('_test/_testConfig/config.js')
+const configPath = path.resolve('_test/_testConfig/config.js')
 const config = new Config({configPath})
 const presets = new Presets({ configDir: config.configDir })
 
@@ -70,11 +70,6 @@ describe('Server', () => {
     test('creates http server based on internal express app', () => {
       const server = new Server({config})
       expect(server.httpServer).toBeDefined()
-    })
-    test('created http server has listenAsync method that returns a promise', async () => {
-      const server = new Server({config})
-      expect(server.httpServer.listenAsync).toBeDefined()
-      expect(server.httpServer.listenAsync.toString()).toContain('return promise')
     })
   })
 

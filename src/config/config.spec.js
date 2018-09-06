@@ -1,8 +1,8 @@
-import { ErrConfigInvalid, ErrConfigNotFound } from '../errors'
-import { fake } from 'sinon'
-import Config from './index'
-import Endpoint from '../endpoints/Endpoint'
-import path from 'path'
+const { ErrConfigInvalid, ErrConfigNotFound } = require('../errors')
+const { fake } = require('sinon')
+const Config = require('./')
+const Endpoint = require('../endpoints/Endpoint')
+const path = require('path')
 
 const configPath = path.normalize('_test/_testConfig/config.js')
 
@@ -36,19 +36,19 @@ describe('config loader', () => {
       test('warns when using catch-all when bundle defined', () => {
         const fakeWarn = fake.returns()
         const config = new Config({
-          configPath: path.normalize('_test/_catchAllConfig/catch-all-spa.js'),
+          configPath: path.resolve('_test/_catchAllConfig/catch-all-spa.js'),
           warnAboutCatchAllEndpoint: fakeWarn
         })
-        expect(config.configDir).toEqual('_test/_catchAllConfig')
+        expect(config.configDir.endsWith('_test/_catchAllConfig')).toBe(true)
         expect(fakeWarn.called).toBe(true)
       })
       test('does not warn when using catch all when bundle not defined', () => {
         const fakeWarn = fake.returns()
         const config = new Config({
-          configPath: path.normalize('_test/_catchAllConfig/catch-all-non-spa.js'),
+          configPath: path.resolve('_test/_catchAllConfig/catch-all-non-spa.js'),
           warnAboutCatchAllEndpoint: fakeWarn
         })
-        expect(config.configDir).toEqual('_test/_catchAllConfig')
+        expect(config.configDir.endsWith('_test/_catchAllConfig')).toBe(true)
         expect(fakeWarn.called).toBe(false)
       })
     })

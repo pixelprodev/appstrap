@@ -1,11 +1,11 @@
-import { ErrPresetNotFound } from '../errors'
-import { Presets } from './'
-import { getPresetData } from './presetHelpers'
-import { stub } from 'sinon'
-import path from 'path'
-import Preset from './Preset'
-import Appstrap from '../Appstrap'
-import Request from 'supertest'
+const { ErrPresetNotFound } = require('../errors')
+const Presets = require('./')
+const { getPresetData } = require('./presetHelpers')
+const { stub } = require('sinon')
+const path = require('path')
+const Preset = require('./Preset')
+const Appstrap = require('../Appstrap')
+const Request = require('supertest')
 
 const configDir = path.normalize('_test/_testConfig')
 const configPath = path.normalize('_test/_testConfig/config.js')

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { version } from '../package.json'
-import Appstrap from './Appstrap'
-import program from 'commander'
-import ConfigGenerator from './config/generator'
+const { version } = require('../package.json')
+const Appstrap = require('./Appstrap')
+const program = require('commander')
+const ConfigGenerator = require('./config/generator')
 
 program
   .name('appstrap')

@@ -1,16 +1,16 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import sleep from 'sleep-promise'
-import http from 'http'
-import util from 'util'
-import detectPort from 'detect-port'
-import ManagementInterface from './management-interface/index.js'
-import { locateProjectRoot } from './utilities'
-import path from 'path'
-import chalk from 'chalk'
-import State from './State'
+const express = require('express')
+const bodyParser = require('body-parser')
+const sleep = require('sleep-promise')
+const http = require('http')
+const detectPort = require('detect-port')
+const ManagementInterface = require('./management-interface')
+const { locateProjectRoot } = require('./utilities')
+const path = require('path')
+const chalk = require('chalk')
+const State = require('./State')
+const retry = require('async-retry')
 
-export class Server {
+class Server {
   constructor ({ config, invokedFromCLI = false, port = 5000, presets }) {
     this.port = port
     this.endpoints = config.endpoints
@@ -37,9 +37,7 @@ export class Server {
     this._app.use((req, res, next) => this._router(req, res, next))
 
     this.httpServer = http.createServer(this._app)
-    this.httpServer.listenAsync = util.promisify(this.httpServer.listen)
   }
-
   reloadEndpoints ({config}) { return this.loadEndpoints({config}) }
   loadEndpoints ({config}) {
     const Router = express.Router({})
@@ -98,11 +96,22 @@ export class Server {
       defaultResJSON.call(res, data)
     }
   }
-
+  listenOnPort (port) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.httpServer.listen(port)
+        resolve()
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
   async start ({port = this.port} = {}) {
-    const checkedPort = await detectPort(port)
-    this.port = checkedPort
-    await this.httpServer.listenAsync(this.port)
+    await retry(async () => {
+      const checkedPort = await detectPort(port)
+      this.port = checkedPort
+      await this.listenOnPort(this.port)
+    }, { retries: 5 })
     /*
      If the server was invoked from CLI, we want to show a confirmation message when the server
       is started.  We will also indicate the management interface port to make people more aware
@@ -131,4 +140,4 @@ export class Server {
   }
 }
 
-export default Server
+module.exports = Server

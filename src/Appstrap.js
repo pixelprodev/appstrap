@@ -1,12 +1,12 @@
-import Server from './Server'
-import Config from './config'
-import Presets from './presets'
-import path from 'path'
-import chokidar from 'chokidar'
+const Server = require('./Server')
+const Config = require('./Config')
+const Presets = require('./presets')
+const path = require('path')
+const chokidar = require('chokidar')
 
-export class Appstrap {
+class Appstrap {
   constructor ({
-    configPath = path.normalize('.appstrap/config.js'),
+    configPath = path.resolve(path.normalize('.appstrap/config.js')),
     config = new Config({ configPath }),
     invokedFromCLI = false,
     port,
@@ -28,7 +28,7 @@ export class Appstrap {
     this.loadPreset = this.presets.loadPreset
     this.loadPresets = this.presets.loadPresets
 
-    if (!__TEST__) { /* eslint-disable-line no-undef  */
+    if (typeof __TEST__ !== 'boolean') { /* eslint-disable-line no-undef  */
       this.fileWatcher = chokidar.watch(this.config.configDir)
       const updateModules = this.updateModules.bind(this, preserve)
       setTimeout(() => { this.fileWatcher.on('all', updateModules) }, 3500)
@@ -61,5 +61,4 @@ export class Appstrap {
   }
 }
 
-export default Appstrap
 module.exports = Appstrap

@@ -1,7 +1,7 @@
-import Endpoint from './Endpoint'
-import { ErrEndpointInvalid } from '../errors'
-import Config from '../config'
-import path from 'path'
+const Endpoint = require('./Endpoint')
+const { ErrEndpointInvalid } = require('../errors')
+const Config = require('../config')
+const path = require('path')
 
 describe('Endpoint', () => {
   describe('constructor', () => {
