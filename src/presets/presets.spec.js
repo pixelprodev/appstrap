@@ -189,13 +189,13 @@ describe('Presets', () => {
     })
   })
 
-  describe('groupPresetsAndSetInternal()', function () {
-    test('array returned does not have object references to availablePresets')
-  })
-
-  describe('case insensitive paths', function () {
-    test('lower case route still matches preset with upper case letters')
-  })
+  // describe('groupPresetsAndSetInternal()', function () {
+  //   test('array returned does not have object references to availablePresets')
+  // })
+  //
+  // describe('case insensitive paths', function () {
+  //   test('lower case route still matches preset with upper case letters')
+  // })
 
   /*
   Demonstrates expected results when a user calls Appstrap.reset when it comes to presets.

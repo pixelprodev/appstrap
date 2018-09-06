@@ -217,8 +217,8 @@ describe('Server', () => {
 
     // TODO add this once we replace default console.log statements with another logger
     //   reason: https://gyandeeps.com/console-stubbing/
-    test('no console output displayed when not invoked from CLI')
-    test('console output generated for user info when invoked from CLI')
+    // test('no console output displayed when not invoked from CLI')
+    // test('console output generated for user info when invoked from CLI')
   })
 
   describe('stop', () => {
