@@ -1,6 +1,6 @@
 {
   "name": "@pixelprodotco/appstrap",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Uber-configurable mock server for bootstrapping single page apps",
   "main": "./src/Appstrap.js",
   "bin": "./src/cli.js",
