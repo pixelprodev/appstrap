@@ -19,6 +19,8 @@
     "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js --preserve false"
   },
   "dependencies": {
+    "async-retry": "^1.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "body-parser": "1.17.2",
     "chokidar": "^2.0.3",
     "commander": "^2.14.1",
