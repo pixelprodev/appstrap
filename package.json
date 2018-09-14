@@ -10,13 +10,11 @@
   "scripts": {
     "deploy": "npm run lint && npm test && npm run deploy:ui",
     "deploy:ui": "webpack --config webpack/interface.webpack.config.js --mode production",
-    "deploy:core": "webpack --config webpack/core.webpack.config.js --mode production",
     "dev:ui": "webpack --config webpack/interface.webpack.config.js --mode development --watch --progress --colors",
-    "dev:core": "webpack --config webpack/core.webpack.config.js --mode development --watch --progress --colors",
     "lint": "standard",
     "test": "jest",
-    "test-config-generate": "node dist/cli.js init",
-    "test-config": "node dist/cli.js start -c ./_test/_testConfig/config.js --preserve false"
+    "test-config-generate": "node src/cli.js init",
+    "test-config": "node src/cli.js start -c ./_test/_testConfig/config.js --preserve false"
   },
   "dependencies": {
     "async-retry": "^1.2.1",

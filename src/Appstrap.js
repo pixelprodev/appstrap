@@ -1,5 +1,5 @@
 const Server = require('./Server')
-const Config = require('./Config')
+const Config = require('./config')
 const Presets = require('./presets')
 const path = require('path')
 const chokidar = require('chokidar')
