@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-function locateProjectRoot (level = process.cwd()) {
+function locateProjectRoot (level = __dirname) {
   if (fs.existsSync(path.resolve(level, 'package.json'))) {
     return level
   } else {

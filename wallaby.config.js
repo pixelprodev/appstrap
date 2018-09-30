@@ -1,4 +1,4 @@
-module.exports = function (wallaby) {
+module.exports = function () {
   return {
     files: [
       {pattern: 'src/**/*.js'},
@@ -20,10 +20,6 @@ module.exports = function (wallaby) {
     filesWithNoCoverageCalculated: [
       'src/cli.js',
       '_test/**/*.js'
-    ],
-    compilers: {
-      'src/**/*.js': wallaby.compilers.babel(),
-      '_test/**/*.js': wallaby.compilers.babel()
-    }
+    ]
   }
 }

@@ -29,7 +29,9 @@ class Presets {
   }
 
   fetch ({ path, method } = {}) {
-    const presetIndex = this._presets.findIndex(preset => preset.method === method.toLowerCase() && preset.path === path.toLowerCase())
+    const presetIndex = this._presets.findIndex(preset =>
+      preset.method === method.toLowerCase() && preset.path === path.toLowerCase()
+    )
     return presetIndex === -1 ? presetIndex : this._presets[presetIndex]
   }
 
@@ -39,19 +41,19 @@ class Presets {
     }
   }
 
-  _buildFilePath (fileName) {
-    return path.join(this.presetFolder, `${fileName}.js`)
-  }
-
-  _getPresetFileData ({ filePath, fileData = require(filePath, {useCache: false}), name }) {
-    const presets = []
-    fileData.forEach(({path, mode, ...methods}) => {
-      Object.keys(methods).forEach(method => {
-        presets.push(new Preset({ name, path, mode, method, data: methods[method] }))
-      })
-    })
-    return presets
-  }
+  // _buildFilePath (fileName) {
+  //   return path.join(this.presetFolder, `${fileName}.js`)
+  // }
+  //
+  // _getPresetFileData ({ filePath, fileData = require(filePath, {useCache: false}), name }) {
+  //   const presets = []
+  //   fileData.forEach(({path, mode, ...methods}) => {
+  //     Object.keys(methods).forEach(method => {
+  //       presets.push(new Preset({ name, path, mode, method, data: methods[method] }))
+  //     })
+  //   })
+  //   return presets
+  // }
 
   async loadPreset (presetName) {
     const presets = await this.validateAndLoadPresetFile(presetName)
@@ -84,11 +86,11 @@ class Presets {
     })
   }
 
-  async validateAndLoadPresetFile (presetName) {
-    let filePath = this._buildFilePath(presetName)
-    await this._ensureFileExists(filePath)
-    return this._getPresetFileData({filePath, name: presetName})
-  }
+  // async validateAndLoadPresetFile (presetName) {
+  //   let filePath = this._buildFilePath(presetName)
+  //   await this._ensureFileExists(filePath)
+  //   return this._getPresetFileData({filePath, name: presetName})
+  // }
 
   combinePresets (presetDataCollection) {
     return presetDataCollection.reduce((acc, presetFile) => {
@@ -106,16 +108,16 @@ class Presets {
     }, [])
   }
 
-  preloadPresets () {
-    const presetFiles = fs.readdirSync(this.presetFolder)
-    let presets = []
-    presetFiles.forEach(fileName => {
-      const name = fileName.replace('.js', '')
-      const fileData = require(path.join(this.presetFolder, fileName), {useCache: false})
-      presets = [...presets, ...this._getPresetFileData({fileData, name})]
-    })
-    this._availablePresets = presets
-  }
+  // preloadPresets () {
+  //   const presetFiles = fs.readdirSync(this.presetFolder)
+  //   let presets = []
+  //   presetFiles.forEach(fileName => {
+  //     const name = fileName.replace('.js', '')
+  //     const fileData = require(path.join(this.presetFolder, fileName), {useCache: false})
+  //     presets = [...presets, ...this._getPresetFileData({fileData, name})]
+  //   })
+  //   this._availablePresets = presets
+  // }
 
   getStatus () {
     return {
