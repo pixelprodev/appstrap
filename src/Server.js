@@ -9,7 +9,7 @@ const mergeDeep = require('lodash.merge')
 
 class Server {
   constructor ({ cli, config }) {
-    this.memoryState = new MemoryState()
+    this.memoryState = new MemoryState({initialState: config.data.initialState})
     this.configure({ cli, config })
     this.httpServer = http.createServer(this._app)
     this.middleware = this.middleware.bind(this)
@@ -32,9 +32,16 @@ class Server {
     const Router = express.Router({})
     this.serveStaticAssets({ Router, config })
     config.endpoints.collection.forEach(endpoint => {
-      const { handler, method, path } = endpoint
-      Router[method](path, ...this.middleware(endpoint, config), handler)
+      const { handler, method, path, key } = endpoint
+      Router[method](path, ...this.middleware(key, config), handler)
     })
+    if (config.endpoints.enableClientSideRouting) {
+      Router.use(config.endpoints.clientSideRoutingEndpoint)
+    } else {
+      if (config.endpoints.collection.length === 0) {
+        Router.all('*', (req, res) => res.send('no endpoints defined'))
+      }
+    }
     return Router
   }
 
@@ -49,10 +56,16 @@ class Server {
     }
   }
 
-  middleware ({ path, method, latency, latencyMS, error, errorStatus }, config) {
-    const state = this.memoryState
+  middleware (endpointKey, config) {
+    const state = this.memoryState._state
     function endpointModifiers () {
       return async (req, res, next) => {
+        const {
+          error,
+          errorStatus,
+          latency,
+          latencyMS
+        } = config.endpoints.collection.find(e => e.key === endpointKey)
         if (latency) { await sleep(latencyMS) }
         return error ? res.sendStatus(errorStatus) : next()
       }
@@ -69,7 +82,7 @@ class Server {
       return (req, res, next) => {
         const defaultResJSON = res.json
         const presetMap = config.presets.activePresetMap
-        const presetMapKey = `${method}:::${path}`
+        const presetMapKey = endpointKey
         res.json = (data) => {
           if (presetMap.has(presetMapKey)) {
             let preset = presetMap.get(presetMapKey)
