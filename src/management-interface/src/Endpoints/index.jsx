@@ -23,6 +23,13 @@ const TitleBox = styled.div(({ theme }) => ({
   }
 }))
 
+const EndpointScrollContainer = styled.div(({theme}) => ({
+  marginRight: `-${theme.spacing.standard}`,
+  marginLeft: `-${theme.spacing.standard}`,
+  height: 'calc(100vh - 250px)',
+  overflowY: 'auto'
+}))
+
 @managementContext
 class Endpoints extends React.Component {
   render () {
@@ -33,7 +40,9 @@ class Endpoints extends React.Component {
           <h1>Endpoints</h1>
           <EndpointFilter />
         </TitleBox>
-        {getUniqueEndpoints().map(endpoint => <Endpoint key={endpoint} path={endpoint} />)}
+        <EndpointScrollContainer>
+          {getUniqueEndpoints().map(endpoint => <Endpoint key={endpoint} path={endpoint} />)}
+        </EndpointScrollContainer>
       </Container>
     )
   }

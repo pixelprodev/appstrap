@@ -6,9 +6,6 @@ import managementContext from '../context'
 const Container = styled.div(({theme}) => ({
   display: 'flex',
   flexDirection: 'column',
-  marginTop: 0,
-  marginRight: `-${theme.spacing.standard}`,
-  marginLeft: `-${theme.spacing.standard}`,
   marginBottom: theme.spacing.standard
 }))
 

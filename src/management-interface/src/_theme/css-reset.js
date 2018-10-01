@@ -20,7 +20,7 @@ injectGlobal`
   }
   
   html {
-    padding: ${theme.spacing.standard};
+    padding: 0;
   }
 
   body {

@@ -8,6 +8,8 @@ const Container = styled.header(({ theme }) => ({
   padding: `0 ${theme.spacing.standard}`,
   height: 70,
   width: '100%',
+  flexShrink: 0,
+  marginTop: theme.spacing.standard,
   borderBottom: `${theme.border.width} solid ${theme.border.color}`
 }))
 
