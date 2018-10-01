@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs')
 const mergeDeep = require('lodash.merge')
 
 class Preset {
@@ -14,7 +14,7 @@ class Preset {
 }
 
 class Presets {
-  constructor ({directory}) {
+  constructor ({ directory }) {
     const presetsFolder = path.join(directory, 'presets')
     this.sequence = []
     this._collection = fs.existsSync(presetsFolder)
@@ -31,12 +31,19 @@ class Presets {
       .reduce(this.combineGroups, activeMap)
   }
 
+  get state () {
+    return ({
+      sequence: this.sequence,
+      collection: this._collection
+    })
+  }
+
   mapGroups (groupName) {
     return this._collection.filter(preset => preset.group === groupName)
   }
 
   combineGroups (presetMap, groupCollection) {
-    groupCollection.forEach(({method, path, mode, data}) => {
+    groupCollection.forEach(({ method, path, mode, data }) => {
       const mapKey = `${method}:::${path}`
       if (presetMap.has(mapKey)) {
         const existing = presetMap.get(mapKey)
@@ -44,10 +51,10 @@ class Presets {
           mode,
           data: mode === 'replace' ? data : mode === 'mergeDeep'
             ? mergeDeep(existing.data, data)
-            : {...existing.data, ...data}
+            : { ...existing.data, ...data }
         })
       } else {
-        presetMap.set(mapKey, {mode, data})
+        presetMap.set(mapKey, { mode, data })
       }
     })
     return presetMap
@@ -58,21 +65,20 @@ class Presets {
     return presetFiles.map(fileName => {
       const group = fileName.replace('.js', '')
       const collection = require(path.join(folder, fileName))
-      return collection.reduce((acc, {path, mode, ...methods}) =>
+      return collection.reduce((acc, { path, mode, ...methods }) =>
         acc.concat(Object.keys(methods).map(method =>
           new Preset({ group, path, mode, method, data: methods[method] })
         ))
-        , [])
+      , [])
     }).reduce((acc, group) => acc.concat(group))
   }
 
-  activatePreset (presetName) { this.activatePresets([presetName]) }
-  activatePresets (collection) { this.sequence.concat(collection) }
-  deactivatePreset (presetName) { this.deactivatePresets([presetName]) }
+  activatePreset (presetName) { this.sequence.push(presetName) }
+  activatePresets (collection) { collection.forEach(presetName => this.activatePreset(presetName)) }
+  deactivatePreset (presetName) { return this.deactivatePresets([presetName]) }
   deactivatePresets (collection) {
     this.sequence = collection.reduce((acc, groupToRemove) =>
-      acc.filter(sequenceEntry => sequenceEntry !== groupToRemove)
-      , this.sequence)
+      acc.filter(sequenceEntry => sequenceEntry !== groupToRemove), this.sequence)
   }
 }
 

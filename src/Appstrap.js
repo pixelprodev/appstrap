@@ -7,11 +7,11 @@ class Appstrap {
   constructor ({ cli = false } = {}) {
     this.cli = cli
     this.config = new Config()
-    this.server = new Server({config: this.config})
+    this.server = new Server({ cli, config: this.config })
   }
 
   get address () {
-    const {port} = this.server.httpServer.address()
+    const { port } = this.server.httpServer.address()
     return `http://localhost:${port}`
   }
 
@@ -51,7 +51,6 @@ class Appstrap {
 
   // expose endpoint methods
   get setModifier () { return this.config.endpoints.setModifier }
-  get clearModifier () { return this.config.endpoints.clearmodifier }
 }
 
 module.exports = Appstrap

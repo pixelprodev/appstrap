@@ -6,15 +6,16 @@ const Presets = require('./Presets')
 class Config {
   constructor () {
     this.directory = this.detectConfig()
+    this.package = require(path.join(this.directory, '..', 'package.json'))
     this.data = require(path.join(this.directory, 'config.js'))
     this.validateData()
-    this.endpoints = new Endpoints({data: this.data})
-    this.presets = new Presets({directory: this.directory})
+    this.endpoints = new Endpoints({ data: this.data })
+    this.presets = new Presets({ directory: this.directory })
   }
 
   detectConfig (dir = process.cwd()) {
-    const packageJsonExists = fs.existsSync(path.resolve(dir, 'package.json'))
-    const appstrapFolderExists = fs.existsSync(path.resolve(dir, '.appstrap'))
+    const packageJsonExists = fs.existsSync(path.join(dir, 'package.json'))
+    const appstrapFolderExists = fs.existsSync(path.join(dir, '.appstrap'))
     if (appstrapFolderExists) {
       return path.join(dir, '.appstrap')
     } else if (packageJsonExists || dir === '') {

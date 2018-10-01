@@ -1,5 +1,5 @@
 module.exports = {
-  bundle: {webPath: '/foo', host: '#bar'},
+  bundle: { webPath: '/foo', host: '#bar' },
   assets: [],
   endpoints: [
     {

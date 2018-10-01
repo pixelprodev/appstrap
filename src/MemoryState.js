@@ -1,7 +1,7 @@
 const mergeDeep = require('lodash.merge')
 
 class MemoryState {
-  constructor ({initialState = {}} = {}) {
+  constructor ({ initialState = {} } = {}) {
     this._state = initialState
   }
 
