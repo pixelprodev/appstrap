@@ -37,7 +37,7 @@ class ManagementVhost {
     this._app.put('/endpoint', (req, res) => {
       const { key, ...data } = req.body
       config.endpoints.setModifier({ endpointKey: key, ...data })
-      res.send(200)
+      res.sendStatus(200)
     })
     this._app.all('*', (req, res) => res.send(this.generateSpaHarness(config.package)))
   }
