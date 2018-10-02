@@ -9,7 +9,7 @@ const mergeDeep = require('lodash.merge')
 
 class Server {
   constructor ({ enableManagementInterface, config }) {
-    this.memoryState = new MemoryState({initialState: config.data.initialState})
+    this.memoryState = new MemoryState({ initialState: config.data.initialState })
     this.configure({ enableManagementInterface, config })
     this.httpServer = http.createServer(this._app)
     this.middleware = this.middleware.bind(this)
@@ -19,11 +19,9 @@ class Server {
     this._app = express()
     this._app.use(bodyParser.json())
     this._app.use(bodyParser.urlencoded({ extended: true }))
-
     if (enableManagementInterface) {
       this._app.use(new ManagementVhost({ config }).middleware)
     }
-
     const router = this.configureRouter({ config })
     this._app.use((req, res, next) => router(req, res, next))
   }

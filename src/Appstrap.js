@@ -17,7 +17,7 @@ class Appstrap {
       config: this.config
     })
     if (watch) {
-      fileWatcher.initialize({config: this.config, server: this.server})
+      fileWatcher.initialize({ config: this.config, server: this.server })
     }
   }
 

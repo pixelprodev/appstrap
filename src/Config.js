@@ -6,13 +6,13 @@ const Presets = require('./Presets')
 class Config {
   constructor () {
     this.directory = this.detectConfig()
-    this.load({directory: this.directory})
+    this.load({ directory: this.directory })
     this.validateData()
     this.endpoints = new Endpoints({ data: this.data })
     this.presets = new Presets({ directory: this.directory })
   }
 
-  load ({directory}) {
+  load ({ directory }) {
     this.package = require(path.join(directory, '..', 'package.json'))
     this.data = require(path.join(this.directory, 'config.js'))
   }
