@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const mergeDeep = require('lodash.merge')
+const decache = require('decache')
 
 class Preset {
   constructor ({ group, path, method, data, mode = 'replace' }) {
@@ -64,7 +65,10 @@ class Presets {
     const presetFiles = fs.readdirSync(folder)
     return presetFiles.map(fileName => {
       const group = fileName.replace('.js', '')
-      const collection = require(path.join(folder, fileName))
+      const filePath = path.join(folder, fileName)
+      decache(filePath)
+      const collection = require(filePath)
+      if (!Array.isArray(collection)) { return [] }
       return collection.reduce((acc, { path, mode, ...methods }) =>
         acc.concat(Object.keys(methods).map(method =>
           new Preset({ group, path, mode, method, data: methods[method] })

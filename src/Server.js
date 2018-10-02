@@ -8,19 +8,19 @@ const MemoryState = require('./MemoryState')
 const mergeDeep = require('lodash.merge')
 
 class Server {
-  constructor ({ cli, config }) {
+  constructor ({ enableManagementInterface, config }) {
     this.memoryState = new MemoryState({initialState: config.data.initialState})
-    this.configure({ cli, config })
+    this.configure({ enableManagementInterface, config })
     this.httpServer = http.createServer(this._app)
     this.middleware = this.middleware.bind(this)
   }
 
-  configure ({ cli, config }) {
+  configure ({ enableManagementInterface, config }) {
     this._app = express()
     this._app.use(bodyParser.json())
     this._app.use(bodyParser.urlencoded({ extended: true }))
 
-    if (cli) {
+    if (enableManagementInterface) {
       this._app.use(new ManagementVhost({ config }).middleware)
     }
 
@@ -32,8 +32,13 @@ class Server {
     const Router = express.Router({})
     this.serveStaticAssets({ Router, config })
     config.endpoints.collection.forEach(endpoint => {
-      const { handler, method, path, key } = endpoint
-      Router[method](path, ...this.middleware(key, config), handler)
+      const { method, path, key } = endpoint
+      Router[method](path,
+        ...this.middleware(key, config),
+        (req, res, next) => {
+          const endpoint = config.endpoints.collection.find(e => e.key === key)
+          endpoint.handler.call(null, req, res, next)
+        })
     })
     if (config.endpoints.enableClientSideRouting) {
       Router.use(config.endpoints.clientSideRoutingEndpoint)

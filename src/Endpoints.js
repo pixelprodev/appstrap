@@ -37,6 +37,10 @@ class Endpoint {
     })
     return this
   }
+
+  updateHandler (handler) {
+    this.handler = handler
+  }
 }
 
 class Endpoints {
@@ -63,12 +67,22 @@ class Endpoints {
 
   load ({ data } = {}) {
     if (!data) { return }
-    this._endpoints = data.endpoints.map(endpoint => {
+    const endpointsFromData = data.endpoints.map(endpoint => {
       const { path, ...methods } = endpoint
       return Object.keys(methods).map(method =>
         new Endpoint({ path, method, handler: endpoint[method] })
       )
     }).reduce((acc, endpoint) => acc.concat(endpoint))
+    if (this._endpoints.length === 0) {
+      this._endpoints = endpointsFromData
+    } else {
+      endpointsFromData.forEach(newEndpoint => {
+        const existingEndpoint = this._endpoints.find(e => e.key === newEndpoint.key)
+        existingEndpoint
+          ? existingEndpoint.updateHandler(newEndpoint.handler)
+          : this._endpoints.push(newEndpoint)
+      })
+    }
   }
 
   setModifier ({ path, method, endpointKey = `${method}:::${path}`, ...setData }) {

@@ -17,7 +17,11 @@ program
   .command('start')
   .action(async () => {
     try {
-      const Instance = new Appstrap({ cli: true })
+      const Instance = new Appstrap({
+        cli: true,
+        watch: true,
+        enableManagementInterface: true
+      })
       await Instance.start()
     } catch (e) { throw (e) }
   })

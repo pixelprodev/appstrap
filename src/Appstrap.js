@@ -2,12 +2,23 @@ const Config = require('./Config')
 const Server = require('./Server')
 const chalk = require('chalk')
 const opn = require('opn')
+const fileWatcher = require('./fileWatcher')
 
 class Appstrap {
-  constructor ({ cli = false } = {}) {
+  constructor ({
+    cli = false,
+    watch = false,
+    enableManagementInterface = (cli || false)
+  } = {}) {
     this.cli = cli
     this.config = new Config()
-    this.server = new Server({ cli, config: this.config })
+    this.server = new Server({
+      enableManagementInterface,
+      config: this.config
+    })
+    if (watch) {
+      fileWatcher.initialize({config: this.config, server: this.server})
+    }
   }
 
   get address () {
