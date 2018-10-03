@@ -36,17 +36,17 @@ class ManagementVhost {
       config.endpoints.setModifier({ endpointKey: key, ...data })
       res.sendStatus(200)
     })
-    this._app.all('*', (req, res) => res.send(this.generateSpaHarness(config.package)))
+    this._app.all('*', (req, res) => res.send(this.generateSpaHarness()))
   }
 
-  generateSpaHarness ({ name, version }) {
+  generateSpaHarness () {
     return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
           <meta charset="UTF-8">
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
-          <title>Appstrap Management Interface | ${name} - ${version}</title>
+          <title>Appstrap Management Interface</title>
       </head>
       <body>
         <div id="host"></div>

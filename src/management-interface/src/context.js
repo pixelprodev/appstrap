@@ -10,12 +10,10 @@ export class ManagementContextProvider extends React.Component {
   }
 
   async initialize () {
-    let { version, presets, name, endpoints } = await callService('GET', 'state')
+    let { presets, endpoints } = await callService('GET', 'state')
     const presetGroups = Array.from(new Set(presets.collection.map(p => p.group)))
     this.setState({
       initialized: true,
-      version,
-      name,
       endpoints,
       endpointFilter: '',
       presetFilter: '',

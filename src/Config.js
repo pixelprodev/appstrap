@@ -8,7 +8,6 @@ class Config {
     this.directory = useDirectory
     this.load({ directory: this.directory })
     this.validateData()
-    console.log(this.directory)
     this.endpoints = new Endpoints({ data: this.data })
     this.presets = new Presets({ directory: this.directory })
   }
