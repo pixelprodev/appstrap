@@ -2,6 +2,5 @@
 .vscode
 node_modules
 .appstrap
-interface/dist/interface.js
-dist
+src/management-interface/dist
 .DS_Store

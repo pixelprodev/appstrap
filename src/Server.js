@@ -1,134 +1,124 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const sleep = require('sleep-promise')
+const ManagementVhost = require('./ManagementVhost')
 const http = require('http')
-const detectPort = require('detect-port')
-const ManagementInterface = require('./management-interface')
-const { locateProjectRoot } = require('./utilities')
 const path = require('path')
-const chalk = require('chalk')
-const State = require('./State')
-const retry = require('async-retry')
+const sleep = require('sleep-promise')
+const MemoryState = require('./MemoryState')
+const mergeDeep = require('lodash.merge')
 
 class Server {
-  constructor ({ config, invokedFromCLI = false, port = 5000, presets }) {
-    this.port = port
-    this.endpoints = config.endpoints
-    this.presets = presets
-    this.enableManagementInterface = invokedFromCLI
-    this.state = new State({initialState: config.fileData.initialState})
-
-    // Bind methods
+  constructor ({ useInterface, config }) {
+    this.memoryState = new MemoryState({ initialState: config.data.initialState })
+    this.configure({ useInterface, config })
+    this.httpServer = http.createServer(this._app)
+    this.middleware = this.middleware.bind(this)
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
+  }
 
-    // Initialize express server
+  configure ({ useInterface, config }) {
     this._app = express()
     this._app.use(bodyParser.json())
-    this._app.use(bodyParser.urlencoded({extended: true}))
-
-    if (this.enableManagementInterface) {
-      const managementInterface = new ManagementInterface({ config, server: this, presets })
-      this._app.use(managementInterface.middleware)
+    this._app.use(bodyParser.urlencoded({ extended: true }))
+    if (useInterface) {
+      this._app.use(new ManagementVhost({ config }).middleware)
     }
-
-    // Load Routes
-    this._router = this.loadEndpoints({config})
-    this._app.use((req, res, next) => this._router(req, res, next))
-
-    this.httpServer = http.createServer(this._app)
+    const router = this.configureRouter({ config })
+    this._app.use((req, res, next) => router(req, res, next))
   }
-  reloadEndpoints ({config}) { return this.loadEndpoints({config}) }
-  loadEndpoints ({config}) {
+
+  configureRouter ({ config }) {
     const Router = express.Router({})
-    const endpoints = this.endpoints._endpoints
-    const projectRoot = locateProjectRoot()
-    config.fileData.assets.forEach(asset => {
-      Router.use(asset.webPath, express.static(path.normalize(`${projectRoot}/${asset.directory}`)))
-    })
-    endpoints.forEach(({handler, method, path}, indx) => {
+    this.serveStaticAssets({ Router, config })
+    config.endpoints.collection.forEach(endpoint => {
+      const { method, path, key } = endpoint
       Router[method](path,
-        this.modifierMiddleware(endpoints[indx]),
-        this.stateProviderMiddleware(),
-        this.preHandlerMiddleware(endpoints[indx]),
-        handler
-      )
+        ...this.middleware(key, config),
+        (req, res, next) => {
+          const endpoint = config.endpoints.collection.find(e => e.key === key)
+          endpoint.handler.call(null, req, res, next)
+        })
     })
-    if (this.endpoints.enableClientSideRouting) {
-      Router.use(this.endpoints.clientSideRoutingEndpoint)
+    if (config.endpoints.enableClientSideRouting) {
+      Router.use(config.endpoints.clientSideRoutingEndpoint)
     } else {
-      if (this.endpoints._endpoints.length === 0) {
+      if (config.endpoints.collection.length === 0) {
         Router.all('*', (req, res) => res.send('no endpoints defined'))
       }
     }
-    this._router = Router
     return Router
   }
 
-  modifierMiddleware ({ latency = false, latencyMS = 0, error = false, errorStatus = 500, delay = sleep }) {
-    return async (req, res, next) => {
-      if (latency) { await delay(latencyMS) }
-      return error ? res.sendStatus(errorStatus) : next()
+  serveStaticAssets ({ Router, config }) {
+    if (config.data.assets && config.data.assets.length > 0) {
+      config.data.assets.map(assetMapping => {
+        Router.use(
+          assetMapping.webPath,
+          express.static(path.join(config.directory, assetMapping.directory))
+        )
+      })
     }
   }
 
-  stateProviderMiddleware () {
-    return (req, res, next) => {
-      req.state = res.state = this.state.getState()
-      req.setState = res.setState = this.state.setState
-      next()
-    }
-  }
-
-  preHandlerMiddleware ({ path, method }) {
-    return (req, res, next) => {
-      const defaultResJSON = res.json
-      res.json = this.interceptJsonResponse({res, path, method, defaultResJSON})
-      next()
-    }
-  }
-
-  interceptJsonResponse ({res, defaultResJSON, path, method, preset = this.presets.fetch({path, method})}) {
-    return (data) => {
-      if (preset !== -1) {
-        data = preset.mode === 'merge' ? {...data, ...preset.data} : preset.data
+  middleware (endpointKey, config) {
+    const state = this.memoryState._state
+    function endpointModifiers () {
+      return async (req, res, next) => {
+        const {
+          error,
+          errorStatus,
+          latency,
+          latencyMS
+        } = config.endpoints.collection.find(e => e.key === endpointKey)
+        if (latency) { await sleep(latencyMS) }
+        return error ? res.sendStatus(errorStatus) : next()
       }
-      defaultResJSON.call(res, data)
     }
+
+    function memoryState () {
+      return (req, res, next) => {
+        req.state = res.state = state
+        next()
+      }
+    }
+
+    function presetInterceptor () {
+      return (req, res, next) => {
+        const defaultResJSON = res.json
+        const presetMap = config.presets.activePresetMap
+        const presetMapKey = endpointKey
+        res.json = (data) => {
+          if (presetMap.has(presetMapKey)) {
+            let preset = presetMap.get(presetMapKey)
+            data = preset.mode === 'replace'
+              ? preset.data
+              : preset.mode === 'mergeDeep'
+                ? mergeDeep(data, preset.data)
+                : { ...data, ...preset.data }
+          }
+          defaultResJSON.call(res, data)
+        }
+        next()
+      }
+    }
+
+    return [
+      endpointModifiers(),
+      memoryState(),
+      presetInterceptor()
+    ]
   }
-  listenOnPort (port) {
+
+  start () {
     return new Promise((resolve, reject) => {
-      try {
-        this.httpServer.listen(port)
-        resolve()
-      } catch (e) {
-        reject(e)
-      }
-    })
-  }
-  async start ({port = this.port} = {}) {
-    await retry(async () => {
-      const checkedPort = await detectPort(port)
-      this.port = checkedPort
-      await this.listenOnPort(this.port)
-    }, { retries: 5 })
-    /*
-     If the server was invoked from CLI, we want to show a confirmation message when the server
-      is started.  We will also indicate the management interface port to make people more aware
-      that it exists.
-    */
-    if (this.enableManagementInterface) {
-      console.log(chalk`
-      ===============================================================
-        {yellow.bold Appstrap} loaded {green successfully}.
-        A server has been started for you at the following address: 
-        {blue http://localhost:${this.port}}
+      this.httpServer.on('error', reject)
 
-        The management interface can be found at the following address:
-        {blue http://appstrap.localhost:${this.port}}
-      ===============================================================
-    `)
-    }
+      this.httpServer.listen(() => {
+        const { port } = this.httpServer.address()
+        resolve(`localhost:${port}`)
+      })
+    })
   }
 
   stop () {

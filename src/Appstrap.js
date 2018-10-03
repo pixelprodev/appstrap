@@ -1,64 +1,69 @@
+const Config = require('./Config')
 const Server = require('./Server')
-const Config = require('./config')
-const Presets = require('./presets')
-const path = require('path')
-const chokidar = require('chokidar')
+const chalk = require('chalk')
+const opn = require('opn')
+const fileWatcher = require('./fileWatcher')
 
 class Appstrap {
   constructor ({
-    configPath = path.resolve(path.normalize('.appstrap/config.js')),
-    config = new Config({ configPath }),
-    invokedFromCLI = false,
-    port,
-    preserve = true
+    cli = false,
+    watch = false,
+    useInterface = (cli || false),
+    useDirectory
   } = {}) {
-    this.invokedFromCLI = invokedFromCLI
-    this.config = config
-    this.presets = new Presets({ configDir: this.config.configDir, invokedFromCLI })
-    this.server = new Server({ config, invokedFromCLI, port, presets: this.presets })
-
-    // Directly expose server express app for use in middleware situations.
-    // Intentionally wrapped in function to propagate changes when configs are reloaded
-    this.middleware = (req, res, next) => this.server._app(req, res, next)
-
-    this.start = this.server.start
-    this.stop = this.server.stop
-    this.setModifier = this.config.endpoints.setModifier
-    this.clearModifier = this.config.endpoints.clearModifier
-    this.loadPreset = this.presets.loadPreset
-    this.loadPresets = this.presets.loadPresets
-
-    if (typeof __TEST__ !== 'boolean') { /* eslint-disable-line no-undef  */
-      this.fileWatcher = chokidar.watch(this.config.configDir)
-      const updateModules = this.updateModules.bind(this, preserve)
-      setTimeout(() => { this.fileWatcher.on('all', updateModules) }, 3500)
+    this.cli = cli
+    this.config = new Config({ useDirectory })
+    this.server = new Server({ useInterface, config: this.config })
+    if (watch) {
+      fileWatcher.initialize({ config: this.config, server: this.server })
     }
   }
 
-  get port () { return this.server.port }
+  get address () {
+    const { port } = this.server.httpServer.address()
+    return `http://localhost:${port}`
+  }
 
-  updateModules (preserve) {
-    try {
-      this.config.update()
-      if (this.invokedFromCLI && this.config.fileData.initialState) {
-        this.presets.update()
-      }
-      if (preserve !== true) {
-        this.server.state.reset({ initialState: this.config.fileData.initialState })
-      }
-      this.server.reloadEndpoints({ config: this.config })
-    } catch (e) {
-      console.error('******************************************************************************')
-      console.error('Attempt to reload configuration failed!')
-      console.error(e.stack)
-      console.error('******************************************************************************')
-    }
+  get middleware () {
+    return this.server._app
   }
 
   reset () {
-    this.presets.clear()
-    this.config.endpoints.clear()
+
   }
+
+  // expose server methods
+  async start () {
+    try {
+      const endpoint = await this.server.start()
+      if (this.cli) {
+        console.log(chalk`
+          ===============================================================
+            {yellow.bold Appstrap} loaded {green successfully}.
+            A server has been started for you at the following address: 
+            {blue http://${endpoint}}
+    
+            The management interface can be found at the following address:
+            {blue http://appstrap.${endpoint}}
+          ===============================================================
+        `)
+        opn(`http://${endpoint}`)
+      }
+      return endpoint
+    } catch (e) {
+      throw e
+    }
+  }
+  stop () { return this.server.stop() }
+
+  // expose preset methods
+  get activatePreset () { return this.config.presets.activatePreset }
+  get activatePresets () { return this.config.presets.activatePresets }
+  get deactivatePreset () { return this.config.presets.deactivatePreset }
+  get deactivatePresets () { return this.config.presets.deactivatePresets }
+
+  // expose endpoint methods
+  get setModifier () { return this.config.endpoints.setModifier }
 }
 
 module.exports = Appstrap
