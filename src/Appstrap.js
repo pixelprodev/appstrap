@@ -26,6 +26,10 @@ class Appstrap {
     return `http://localhost:${port}`
   }
 
+  get middleware () {
+    return this.server._app
+  }
+
   reset () {
 
   }

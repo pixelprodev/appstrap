@@ -62,6 +62,7 @@ class Presets {
   }
 
   load (folder) {
+    if (!fs.existsSync(folder)) { return [] }
     const presetFiles = fs.readdirSync(folder)
     return presetFiles.map(fileName => {
       const group = fileName.replace('.js', '')

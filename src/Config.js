@@ -5,9 +5,12 @@ const Presets = require('./Presets')
 
 class Config {
   constructor () {
+    console.log('initializing directory')
     this.directory = this.detectConfig()
+    console.log('config found at ' + this.directory)
     this.load({ directory: this.directory })
     this.validateData()
+    console.log(this.data)
     this.endpoints = new Endpoints({ data: this.data })
     this.presets = new Presets({ directory: this.directory })
   }
