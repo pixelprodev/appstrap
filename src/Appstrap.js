@@ -8,14 +8,12 @@ class Appstrap {
   constructor ({
     cli = false,
     watch = false,
-    enableManagementInterface = (cli || false)
+    useInterface = (cli || false),
+    useDirectory
   } = {}) {
     this.cli = cli
-    this.config = new Config()
-    this.server = new Server({
-      enableManagementInterface,
-      config: this.config
-    })
+    this.config = new Config({ useDirectory })
+    this.server = new Server({ useInterface, config: this.config })
     if (watch) {
       fileWatcher.initialize({ config: this.config, server: this.server })
     }
@@ -56,7 +54,7 @@ class Appstrap {
       throw e
     }
   }
-  stop () { return this.server.stop }
+  stop () { return this.server.stop() }
 
   // expose preset methods
   get activatePreset () { return this.config.presets.activatePreset }

@@ -22,6 +22,10 @@ class Presets {
       ? this.load(presetsFolder)
       : []
     this.mapGroups = this.mapGroups.bind(this)
+    this.activatePreset = this.activatePreset.bind(this)
+    this.activatePresets = this.activatePresets.bind(this)
+    this.deactivatePreset = this.deactivatePreset.bind(this)
+    this.deactivatePresets = this.deactivatePresets.bind(this)
   }
 
   get activePresetMap () {
@@ -67,7 +71,7 @@ class Presets {
     return presetFiles.map(fileName => {
       const group = fileName.replace('.js', '')
       const filePath = path.join(folder, fileName)
-      decache(filePath)
+      try { decache(filePath) } catch (e) {}
       const collection = require(filePath)
       if (!Array.isArray(collection)) { return [] }
       return collection.reduce((acc, { path, mode, ...methods }) =>

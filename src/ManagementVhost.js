@@ -18,10 +18,7 @@ class ManagementVhost {
     this._app.use('/appstrap-assets', express.static(assetPath))
 
     this._app.get('/state', (req, res) => {
-      const { name, version } = config.package
       res.json({
-        name,
-        version,
         presets: config.presets.state,
         endpoints: config.endpoints.collection
       })

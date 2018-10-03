@@ -4,19 +4,16 @@ const Endpoints = require('./Endpoints')
 const Presets = require('./Presets')
 
 class Config {
-  constructor () {
-    console.log('initializing directory')
-    this.directory = this.detectConfig()
-    console.log('config found at ' + this.directory)
+  constructor ({ useDirectory = this.detectConfig() } = {}) {
+    this.directory = useDirectory
     this.load({ directory: this.directory })
     this.validateData()
-    console.log(this.data)
+    console.log(this.directory)
     this.endpoints = new Endpoints({ data: this.data })
     this.presets = new Presets({ directory: this.directory })
   }
 
-  load ({ directory }) {
-    this.package = require(path.join(directory, '..', 'package.json'))
+  load () {
     this.data = require(path.join(this.directory, 'config.js'))
   }
 
