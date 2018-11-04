@@ -86,8 +86,15 @@ class Server {
     function presetInterceptor () {
       return (req, res, next) => {
         const defaultResJSON = res.json
+        const defaultResSendStatus = res.sendStatus
         res.json = (data) => {
           defaultResJSON.call(res, config.presets.applyPresets(req, data))
+        }
+        res.sendStatus = (status) => {
+          const presetOverride = config.presets.applyPresets(req, {})
+          Object.keys(presetOverride).length > 0
+            ? defaultResJSON.call(presetOverride)
+            : defaultResSendStatus.call(status)
         }
         next()
       }
