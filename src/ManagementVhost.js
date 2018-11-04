@@ -25,7 +25,7 @@ class ManagementVhost {
     })
     this._app.put('/preset', (req, res) => {
       const { groupName } = req.body
-      config.presets.sequence.includes(groupName)
+      config.presets.activeGroups.has(groupName)
         ? config.presets.deactivatePreset(groupName)
         : config.presets.activatePreset(groupName)
 
