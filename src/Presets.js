@@ -58,8 +58,9 @@ class Presets {
   applyPresets (req, data) {
     const key = `${req.method.toLowerCase()}:::${req.path.toLowerCase()}`
     Array.from(this.activeGroups).forEach(groupName => {
-      this.collection.forEach(preset => console.log(preset.key))
-      const matchingPreset = this.collection.find(preset => (preset.group === groupName && preset.key === key))
+      const matchingPreset = this.collection.find(preset =>
+        (preset.group === groupName && preset.key === key)
+      )
       if (matchingPreset) {
         data = matchingPreset.mode === 'replace'
           ? matchingPreset.data
