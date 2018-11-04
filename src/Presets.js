@@ -41,7 +41,7 @@ class Presets {
     if (!fs.existsSync(folder)) { return [] }
     const presetFiles = fs.readdirSync(folder)
     return presetFiles.map(fileName => {
-      const group = fileName.replace('.js', '').toUpperCase()
+      const group = fileName.replace('.js', '')
       this.groups.add(group.toLowerCase())
       const filePath = path.join(folder, fileName)
       try { decache(filePath) } catch (e) {}
