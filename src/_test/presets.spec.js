@@ -1,5 +1,5 @@
 const Appstrap = require('../Appstrap')
-const callService = require('./callService')
+const listen = require('supertest')
 const path = require('path')
 const furiousFrog = require('./_testConfig/presets/furious-frog')
 const laughingLeopard = require('./_testConfig/presets/laughing-leopard')
@@ -12,50 +12,59 @@ describe('Preset influenced responses', () => {
 
     test('combined combos with m + m + m end up as m<-m<-m', async () => {
       const srv = new Appstrap({ useDirectory: path.join(__dirname, '_testConfig') })
-      await srv.start()
-      const baseResponse = await callService('GET', `${srv.address}`)
+      const baseResponse = await listen(srv.middleware).get('/')
       srv.activatePresets(['furious-frog', 'laughing-leopard', 'curious-coyote'])
 
       const desiredPath = '/'
-      const furiousFrogPayload = furiousFrog.find(endpoint => endpoint.path = desiredPath).get
-      const laughingLeopardPayload = laughingLeopard.find(endpoint => endpoint.path = desiredPath).get
-      const curiousCoyotePayload = curiousCoyote.find(endpoint => endpoint.path = desiredPath).get
+      const furiousFrogPayload = furiousFrog.find(endpoint => endpoint.path === desiredPath).get
+      const laughingLeopardPayload = laughingLeopard.find(endpoint => endpoint.path === desiredPath).get
+      const curiousCoyotePayload = curiousCoyote.find(endpoint => endpoint.path === desiredPath).get
 
-      const result = await callService('GET', `${srv.address}`)
-      expect(result).toEqual(
-        Object.assign({}, baseResponse, furiousFrogPayload, laughingLeopardPayload, curiousCoyotePayload)
+      const result = await listen(srv.middleware).get('/')
+      expect(result.body).toEqual(
+        { ...baseResponse.body, ...furiousFrogPayload, ...laughingLeopardPayload, ...curiousCoyotePayload }
       )
-      await srv.stop()
     })
 
     test('combined combos with m + r + m end up as r<-m', async () => {
       const srv = new Appstrap({ useDirectory: path.join(__dirname, '_testConfig') })
-      await srv.start()
-      const baseResponse = await callService('GET', `${srv.address}`)
       srv.activatePresets(['furious-frog', 'leaping-dolphin', 'curious-coyote'])
 
       const desiredPath = '/'
-      const leapingDolphinPayload = leapingDolphin.find(endpoint => endpoint.path = desiredPath).get
-      const curiousCoyotePayload = curiousCoyote.find(endpoint => endpoint.path = desiredPath).get
+      const leapingDolphinPayload = leapingDolphin.find(endpoint => endpoint.path === desiredPath).get
+      const curiousCoyotePayload = curiousCoyote.find(endpoint => endpoint.path === desiredPath).get
 
-      const result = await callService('GET', `${srv.address}`)
-      expect(result).toEqual(
-        Object.assign({}, baseResponse, leapingDolphinPayload, curiousCoyotePayload)
+      const result = await listen(srv.middleware).get('/')
+      expect(result.body).toEqual(
+        { ...leapingDolphinPayload, ...curiousCoyotePayload }
       )
-      await srv.stop()
+    })
+
+    test('combined combos with m + r + end up as r<-m set individually', async () => {
+      const srv = new Appstrap({ useDirectory: path.join(__dirname, '_testConfig') })
+      srv.activatePreset('furious-frog')
+      srv.activatePreset('leaping-dolphin')
+      srv.activatePreset('curious-coyote')
+
+      const desiredPath = '/'
+      const leapingDolphinPayload = leapingDolphin.find(endpoint => endpoint.path === desiredPath).get
+      const curiousCoyotePayload = curiousCoyote.find(endpoint => endpoint.path === desiredPath).get
+
+      const result = await listen(srv.middleware).get('/')
+      expect(result.body).toEqual(
+        { ...leapingDolphinPayload, ...curiousCoyotePayload }
+      )
     })
 
     test('combined combos with m + m + r end up as r', async () => {
       const srv = new Appstrap({ useDirectory: path.join(__dirname, '_testConfig') })
-      await srv.start()
       srv.activatePresets(['furious-frog', 'curious-coyote', 'leaping-dolphin'])
 
       const desiredPath = '/'
-      const leapingDolphinPayload = leapingDolphin.find(endpoint => endpoint.path = desiredPath).get
+      const leapingDolphinPayload = leapingDolphin.find(endpoint => endpoint.path === desiredPath).get
 
-      const result = await callService('GET', `${srv.address}`)
-      expect(result).toEqual(leapingDolphinPayload)
-      await srv.stop()
+      const result = await listen(srv.middleware).get('/')
+      expect(result.body).toEqual(leapingDolphinPayload)
     })
   })
 })

@@ -27,7 +27,6 @@
     "opn": "^5.4.0",
     "prettier": "^1.12.1",
     "sleep-promise": "2.0.0",
-    "supertest": "^3.3.0",
     "vhost": "^3.0.2"
   },
   "devDependencies": {
@@ -40,30 +39,28 @@
     "babel-preset-react": "^6.24.1",
     "emotion": "^9.2.10",
     "emotion-theming": "^9.2.9",
+    "expect": "^23.6.0",
     "isomorphic-fetch": "^2.2.1",
-    "jest": "^23.5.0",
+    "mocha": "^5.2.0",
     "pre-commit": "^1.2.2",
     "react": "^16.4.0",
     "react-debounce-input": "^3.2.0",
     "react-dom": "^16.4.0",
     "react-emotion": "^9.2.10",
     "standard": "^12.0.1",
+    "supertest": "^3.3.0",
     "webpack": "^4.17.2",
     "webpack-cli": "^2.1.4"
   },
   "standard": {
     "envs": [
       "jest",
+      "mocha",
       "browser"
     ]
   },
   "pre-commit": [
     "lint",
     "test"
-  ],
-  "jest": {
-    "globals": {
-      "__TEST__": true
-    }
-  }
+  ]
 }

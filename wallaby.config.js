@@ -7,13 +7,17 @@ module.exports = function () {
     tests: [
       { pattern: 'src/**/*.spec.js' }
     ],
-    testFramework: 'jest',
+    testFramework: 'mocha',
     env: {
       type: 'node',
       runner: 'node'
     },
     filesWithNoCoverageCalculated: [
       'src/cli.js'
-    ]
+    ],
+    setup: function (wallaby) {
+      global.expect = require('expect')
+      wallaby.testFramework.ui('tdd')
+    }
   }
 }

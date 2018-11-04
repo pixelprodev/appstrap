@@ -5,8 +5,8 @@ const decache = require('decache')
 
 class Preset {
   constructor ({ group, path, method, data, mode = 'replace' }) {
-    this.key = `${method}:::${path}`
-    this.group = group
+    this.key = `${method.toLowerCase()}:::${path.toLowerCase()}`
+    this.group = group.toLowerCase()
     this.path = path
     this.method = method
     this.data = data
@@ -17,59 +17,32 @@ class Preset {
 class Presets {
   constructor ({ directory }) {
     const presetsFolder = path.join(directory, 'presets')
-    this.sequence = []
-    this._collection = fs.existsSync(presetsFolder)
+    this.groups = new Set()
+    this.activeGroups = new Set()
+    this.collection = fs.existsSync(presetsFolder)
       ? this.load(presetsFolder)
       : []
-    this.mapGroups = this.mapGroups.bind(this)
+
+    this.applyPresets = this.applyPresets.bind(this)
     this.activatePreset = this.activatePreset.bind(this)
     this.activatePresets = this.activatePresets.bind(this)
     this.deactivatePreset = this.deactivatePreset.bind(this)
     this.deactivatePresets = this.deactivatePresets.bind(this)
   }
 
-  get activePresetMap () {
-    const activeMap = new Map()
-    if (this.sequence.length === 0) { return activeMap }
-    return this.sequence
-      .map(this.mapGroups)
-      .reduce(this.combineGroups, activeMap)
-  }
-
   get state () {
     return ({
-      sequence: this.sequence,
-      collection: this._collection
+      sequence: Array.from(this.activeGroups),
+      collection: this.collection
     })
-  }
-
-  mapGroups (groupName) {
-    return this._collection.filter(preset => preset.group === groupName)
-  }
-
-  combineGroups (presetMap, groupCollection) {
-    groupCollection.forEach(({ method, path, mode, data }) => {
-      const mapKey = `${method}:::${path}`
-      if (presetMap.has(mapKey)) {
-        const existing = presetMap.get(mapKey)
-        presetMap.set(mapKey, {
-          mode,
-          data: mode === 'replace' ? data : mode === 'mergeDeep'
-            ? mergeDeep(existing.data, data)
-            : { ...existing.data, ...data }
-        })
-      } else {
-        presetMap.set(mapKey, { mode, data })
-      }
-    })
-    return presetMap
   }
 
   load (folder) {
     if (!fs.existsSync(folder)) { return [] }
     const presetFiles = fs.readdirSync(folder)
     return presetFiles.map(fileName => {
-      const group = fileName.replace('.js', '')
+      const group = fileName.replace('.js', '').toUpperCase()
+      this.groups.add(group.toLowerCase())
       const filePath = path.join(folder, fileName)
       try { decache(filePath) } catch (e) {}
       const collection = require(filePath)
@@ -82,13 +55,26 @@ class Presets {
     }).reduce((acc, group) => acc.concat(group))
   }
 
-  activatePreset (presetName) { this.sequence.push(presetName) }
-  activatePresets (collection) { collection.forEach(presetName => this.activatePreset(presetName)) }
-  deactivatePreset (presetName) { return this.deactivatePresets([presetName]) }
-  deactivatePresets (collection) {
-    this.sequence = collection.reduce((acc, groupToRemove) =>
-      acc.filter(sequenceEntry => sequenceEntry !== groupToRemove), this.sequence)
+  applyPresets (req, data) {
+    const key = `${req.method.toLowerCase()}:::${req.path.toLowerCase()}`
+    Array.from(this.activeGroups).forEach(groupName => {
+      this.collection.forEach(preset => console.log(preset.key))
+      const matchingPreset = this.collection.find(preset => (preset.group === groupName && preset.key === key))
+      if (matchingPreset) {
+        data = matchingPreset.mode === 'replace'
+          ? matchingPreset.data
+          : matchingPreset.mode === 'mergeDeep'
+            ? mergeDeep(data, matchingPreset.data)
+            : { ...data, ...matchingPreset.data }
+      }
+    })
+    return data
   }
+
+  activatePreset (presetName) { this.activeGroups.add(presetName) }
+  activatePresets (collection) { collection.forEach(presetName => this.activatePreset(presetName)) }
+  deactivatePreset (presetName) { this.activeGroups.delete(presetName) }
+  deactivatePresets (collection) { collection.forEach(presetName => this.deactivatePreset(presetName)) }
 }
 
 module.exports = Presets

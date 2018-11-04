@@ -86,18 +86,8 @@ class Server {
     function presetInterceptor () {
       return (req, res, next) => {
         const defaultResJSON = res.json
-        const presetMap = config.presets.activePresetMap
-        const presetMapKey = endpointKey
         res.json = (data) => {
-          if (presetMap.has(presetMapKey)) {
-            let preset = presetMap.get(presetMapKey)
-            data = preset.mode === 'replace'
-              ? preset.data
-              : preset.mode === 'mergeDeep'
-                ? mergeDeep(data, preset.data)
-                : { ...data, ...preset.data }
-          }
-          defaultResJSON.call(res, data)
+          defaultResJSON.call(res, config.presets.applyPresets(req, data))
         }
         next()
       }
