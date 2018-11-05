@@ -17,7 +17,9 @@ class Appstrap {
     if (watch) {
       fileWatcher.initialize({ config: this.config, server: this.server })
     }
+    this.reset = this.reset.bind(this)
   }
+
 
   get address () {
     const { port } = this.server.httpServer.address()
@@ -29,7 +31,7 @@ class Appstrap {
   }
 
   reset () {
-
+    this.config.presets.clearPresets()
   }
 
   // expose server methods

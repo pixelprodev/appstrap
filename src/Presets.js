@@ -28,6 +28,7 @@ class Presets {
     this.activatePresets = this.activatePresets.bind(this)
     this.deactivatePreset = this.deactivatePreset.bind(this)
     this.deactivatePresets = this.deactivatePresets.bind(this)
+    this.clearPresets = this.clearPresets.bind(this)
   }
 
   get state () {
@@ -76,6 +77,7 @@ class Presets {
   activatePresets (collection) { collection.forEach(presetName => this.activatePreset(presetName)) }
   deactivatePreset (presetName) { this.activeGroups.delete(presetName) }
   deactivatePresets (collection) { collection.forEach(presetName => this.deactivatePreset(presetName)) }
+  clearPresets () { this.activeGroups.clear() }
 }
 
 module.exports = Presets
