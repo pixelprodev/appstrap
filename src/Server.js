@@ -93,8 +93,8 @@ class Server {
         res.sendStatus = (status) => {
           const presetOverride = config.presets.applyPresets(req, {})
           Object.keys(presetOverride).length > 0
-            ? defaultResJSON.call(presetOverride)
-            : defaultResSendStatus.call(status)
+            ? defaultResJSON.call(res, presetOverride)
+            : defaultResSendStatus.call(res, status)
         }
         next()
       }
