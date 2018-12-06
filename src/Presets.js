@@ -15,14 +15,16 @@ class Preset {
 }
 
 class Presets {
-  constructor ({ directory }) {
+  constructor ({ directory, memoryState }) {
     const presetsFolder = path.join(directory, 'presets')
     this.groups = new Set()
     this.activeGroups = new Set()
+    this.stateInjectors = new Map()
     this.collection = fs.existsSync(presetsFolder)
       ? this.load(presetsFolder)
       : []
 
+    this.memoryState = memoryState
     this.applyPresets = this.applyPresets.bind(this)
     this.activatePreset = this.activatePreset.bind(this)
     this.activatePresets = this.activatePresets.bind(this)
@@ -46,13 +48,19 @@ class Presets {
       this.groups.add(group.toLowerCase())
       const filePath = path.join(folder, fileName)
       try { decache(filePath) } catch (e) {}
-      const collection = require(filePath)
-      if (!Array.isArray(collection)) { return [] }
-      return collection.reduce((acc, { path, mode, ...methods }) =>
-        acc.concat(Object.keys(methods).map(method =>
-          new Preset({ group, path, mode, method, data: methods[method] })
-        ))
-      , [])
+      const presetDefinition = require(filePath)
+      if (presetDefinition.hasOwnProperty('injectState')) {
+        this.stateInjectors.set(group.toLowerCase(), presetDefinition.injectState)
+      }
+      if (presetDefinition.hasOwnProperty('endpoints')) {
+        return presetDefinition.endpoints.reduce((acc, { path, mode, ...methods }) =>
+            acc.concat(Object.keys(methods).map(method =>
+              new Preset({ group, path, mode, method, data: methods[method] })
+            ))
+          , [])
+      } else {
+        throw new Error(`Preset invalid: ${fileName}.  No endpoints specified.`)
+      }
     }).reduce((acc, group) => acc.concat(group))
   }
 
@@ -73,7 +81,14 @@ class Presets {
     return data
   }
 
-  activatePreset (presetName) { this.activeGroups.add(presetName) }
+  activatePreset (presetName) {
+    const preset = presetName.toLowerCase()
+    if (this.stateInjectors.has(preset)) {
+      const injectorFn = this.stateInjectors.get(preset)
+      this.memoryState.state = injectorFn(this.memoryState.state)
+    }
+    this.activeGroups.add(presetName)
+  }
   activatePresets (collection) { collection.forEach(presetName => this.activatePreset(presetName)) }
   deactivatePreset (presetName) { this.activeGroups.delete(presetName) }
   deactivatePresets (collection) { collection.forEach(presetName => this.deactivatePreset(presetName)) }

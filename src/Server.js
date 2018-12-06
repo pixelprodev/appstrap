@@ -5,7 +5,6 @@ const http = require('http')
 const path = require('path')
 const sleep = require('sleep-promise')
 const MemoryState = require('./MemoryState')
-const mergeDeep = require('lodash.merge')
 
 class Server {
   constructor ({ useInterface, config }) {
@@ -62,7 +61,6 @@ class Server {
   }
 
   middleware (endpointKey, config) {
-    const state = this.memoryState._state
     function endpointModifiers () {
       return async (req, res, next) => {
         const {
@@ -78,7 +76,7 @@ class Server {
 
     function memoryState () {
       return (req, res, next) => {
-        req.state = res.state = state
+        req.state = res.state = config.memoryState.state
         next()
       }
     }
