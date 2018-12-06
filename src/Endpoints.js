@@ -45,6 +45,7 @@ class Endpoint {
 
 class Endpoints {
   constructor ({ data } = {}) {
+    this.configData = data
     this.enableClientSideRouting = false
     this._endpoints = []
     this.setModifier = this.setModifier.bind(this)
@@ -59,6 +60,11 @@ class Endpoints {
       this.clientSideRoutingEndpoint = (req, res) =>
         res.send(this.getSpaHarnessMarkup(data))
     }
+    this.reset = this.reset.bind(this)
+  }
+
+  reset () {
+    this.load({ data: this.configData })
   }
 
   get collection () {

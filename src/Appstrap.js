@@ -31,7 +31,9 @@ class Appstrap {
   }
 
   reset () {
-    this.config.presets.clearPresets()
+    this.config.endpoints.reset()
+    this.config.presets.reset()
+    this.config.memoryState.reset()
   }
 
   // expose server methods
