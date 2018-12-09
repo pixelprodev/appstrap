@@ -1,9 +1,10 @@
 const mergeDeep = require('lodash.merge')
+const deepCopy = require('lodash.clonedeep')
 
 class MemoryState {
   constructor ({ initialState = {} } = {}) {
     this.initialState = initialState
-    this._state = initialState
+    this._state = deepCopy(initialState)
     this.reset = this.reset.bind(this)
   }
 
@@ -16,7 +17,7 @@ class MemoryState {
   }
 
   reset () {
-    this._state = this.initialState
+    this._state = deepCopy(this.initialState)
   }
 }
 

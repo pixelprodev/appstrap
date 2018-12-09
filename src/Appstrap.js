@@ -20,7 +20,6 @@ class Appstrap {
     this.reset = this.reset.bind(this)
   }
 
-
   get address () {
     const { port } = this.server.httpServer.address()
     return `http://localhost:${port}`
