@@ -2,10 +2,19 @@ const chokidar = require('chokidar')
 const decache = require('decache')
 const path = require('path')
 
-function initialize ({ config, server }) {
-  chokidar.watch(config.directory, { ignoreInitial: true }).on('all', () => {
-    try {
-      decache(path.join(config.directory, 'config.js'))
+module.exports = function fileWatcher ({ config, server }) {
+  let modulePaths = getModules()
+  chokidar.watch(modulePaths)
+    .on('all', (event, filePath) => { reloadModule(filePath) })
+
+  function getModules () {
+    return Object.keys(require.cache)
+      .filter((path) => !path.includes('node_modules') && path.startsWith(process.cwd()))
+  }
+
+  function reloadModule (filePath) {
+    decache(filePath)
+    if (filePath.includes(config.directory)) {
       config.load({ directory: config.directory })
       config.endpoints.load({ data: config.data })
       const presetDirectory = path.join(config.directory, 'presets')
@@ -14,10 +23,6 @@ function initialize ({ config, server }) {
       if (config.data.initialState) {
         server.memoryState.state = config.data.initialState
       }
-    } catch (e) {} // swallow error for now until we can add more checks
-  })
-}
-
-module.exports = {
-  initialize
+    }
+  }
 }

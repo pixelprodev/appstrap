@@ -8,23 +8,27 @@ const MemoryState = require('./MemoryState')
 
 class Server {
   constructor ({ useInterface, config }) {
+    this.useInterface = useInterface
     this.memoryState = new MemoryState({ initialState: config.data.initialState })
-    this.configure({ useInterface, config })
+    this._app = this.configure({ config })
     this.httpServer = http.createServer(this._app)
     this.middleware = this.middleware.bind(this)
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
   }
 
-  configure ({ useInterface, config }) {
-    this._app = express()
-    this._app.use(bodyParser.json())
-    this._app.use(bodyParser.urlencoded({ extended: true }))
-    if (useInterface) {
-      this._app.use(new ManagementVhost({ config }).middleware)
+  configure ({ config }) {
+    const app = express()
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: true }))
+    if (this.useInterface) {
+      app.use(new ManagementVhost({ config }).middleware)
     }
-    const router = this.configureRouter({ config })
-    this._app.use((req, res, next) => router(req, res, next))
+    this._router = this.configureRouter({ config })
+    app.use((req, res, next) => {
+      this._router(req, res, next)
+    })
+    return app
   }
 
   configureRouter ({ config }) {
@@ -36,7 +40,9 @@ class Server {
         ...this.middleware(key, config),
         (req, res, next) => {
           const endpoint = config.endpoints.collection.find(e => e.key === key)
-          endpoint.handler.call(null, req, res, next)
+          endpoint
+            ? endpoint.handler.call(null, req, res, next)
+            : next()
         })
     })
     if (config.endpoints.enableClientSideRouting) {
@@ -63,12 +69,9 @@ class Server {
   middleware (endpointKey, config) {
     function endpointModifiers () {
       return async (req, res, next) => {
-        const {
-          error,
-          errorStatus,
-          latency,
-          latencyMS
-        } = config.endpoints.collection.find(e => e.key === endpointKey)
+        const endpoint = config.endpoints.collection.find(e => e.key === endpointKey)
+        if (!endpoint) { return next() }
+        const { error, errorStatus, latency, latencyMS } = endpoint
         if (latency) { await sleep(latencyMS) }
         return error ? res.sendStatus(errorStatus) : next()
       }

@@ -15,7 +15,7 @@ class Appstrap {
     this.config = new Config({ useDirectory })
     this.server = new Server({ useInterface, config: this.config })
     if (watch) {
-      fileWatcher.initialize({ config: this.config, server: this.server })
+      fileWatcher({ config: this.config, server: this.server })
     }
     this.reset = this.reset.bind(this)
   }

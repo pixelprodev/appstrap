@@ -72,6 +72,7 @@ class Endpoints {
   }
 
   load ({ data } = {}) {
+    this._endpoints = []
     if (!data) { return }
     const endpointsFromData = data.endpoints.map(endpoint => {
       const { path, ...methods } = endpoint
