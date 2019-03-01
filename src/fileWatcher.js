@@ -4,8 +4,11 @@ const path = require('path')
 
 module.exports = function fileWatcher ({ config, server }) {
   let modulePaths = getModules()
-  chokidar.watch(modulePaths)
-    .on('all', (event, filePath) => { reloadModule(filePath) })
+  const watcher = chokidar.watch(modulePaths, {ignoreInitial: true})
+    .on('all', (event, filePath) => {
+      reloadModule(filePath)
+      updateWatcher()
+    })
 
   function getModules () {
     return Object.keys(require.cache)
@@ -23,6 +26,19 @@ module.exports = function fileWatcher ({ config, server }) {
       if (config.data.initialState) {
         server.memoryState.state = config.data.initialState
       }
+    }
+  }
+
+  function updateWatcher () {
+    const watched = watcher.getWatched()
+    const currentlyWatchedModules = [].concat(...Object.keys(watched).map(module => {
+      return watched[module].map(fileName => path.join(module, fileName))
+    }))
+
+    const allModules = getModules()
+    const pathsToAdd = allModules.filter(modulePath => !currentlyWatchedModules.includes(modulePath))
+    if (pathsToAdd.length > 0) {
+      watcher.add(pathsToAdd)
     }
   }
 }
