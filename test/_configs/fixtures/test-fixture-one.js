@@ -1,16 +1,10 @@
 module.exports = {
   routes: [
     {
-      path: 'foo',
-      get: {
-        pog: 'u'
-      }
-    },
-    {
-      path: 'bar',
+      path: 'fixture-intercept',
       mode: 'replace',
-      post: {
-        fixture: true
+      get: {
+        intercepted: true
       }
     }
   ]
