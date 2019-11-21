@@ -1,4 +1,6 @@
 module.exports = {
   assets: [],
-  endpoints: []
+  endpoints: [
+    { path: '/foo', get: (req, res) => res.send('foo route intercepted') }
+  ]
 }
