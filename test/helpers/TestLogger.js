@@ -1,7 +1,7 @@
 const Logger = require('../../lib/Logger')
 const { spy } = require('sinon')
 
-module.exports = new Logger({
+exports = module.exports = new Logger({
   info: spy(),
   trace: spy(),
   warn: spy(),

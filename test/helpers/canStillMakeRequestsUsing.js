@@ -6,7 +6,7 @@ app.get('/test', (req, res) => {
   res.send('standard route hit').status(200)
 })
 
-module.exports = async function useStrapAsMiddleware (strap) {
+exports = module.exports = async function useStrapAsMiddleware (strap) {
   app.use(strap)
   const response = await request(app).get('/test')
   expect(response.status).toEqual(200)
