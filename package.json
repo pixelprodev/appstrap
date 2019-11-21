@@ -1,5 +1,5 @@
 {
-  "name": "@pixelprodev/appstrap",
+  "name": "@appstrap/core",
   "version": "1.0.0",
   "main": "index.js",
   "author": "James LeClair <james@pixelpro.dev>",
