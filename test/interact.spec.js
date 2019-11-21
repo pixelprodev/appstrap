@@ -34,14 +34,15 @@ describe('Interacting with handlers', () => {
 
   it('allows for setting error response on an endpoint via interactor setModifier', async () => {
     const strap = strapDefault()
-    strap.interactor.setModifier({ path: 'foo', method: 'get', error: true, status: 400 })
+    strap.interactor.setModifier({ path: 'foo', method: 'get', error: true, errorCode: 400 })
+    console.log(strap.handlers.pick('/foo', 'get'))
     const response = await request(strap).get('/foo')
     expect(response.status).toEqual(400)
   })
 
   it('allows for setting error response on an endpoint over REST', async () => {
     const strap = strapDefault()
-    const setResponse = await request(strap).post('/__interactor/setModifier').send({ path: 'foo', method: 'get', error: true, status: 400 })
+    const setResponse = await request(strap).post('/__interactor/setModifier').send({ path: 'foo', method: 'get', error: true, errorCode: 400 })
     expect(setResponse.status).toEqual(200)
     const response = await request(strap).get('/foo')
     expect(response.status).toEqual(400)
