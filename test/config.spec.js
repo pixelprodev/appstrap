@@ -1,5 +1,6 @@
 const Appstrap = require('../')
 const testLogger = require('./helpers/TestLogger')
+const canStillMakeRequestsUsing = require('./helpers/canStillMakeRequestsUsing')
 
 describe('Configuration', () => {
   describe('loading', () => {
@@ -14,13 +15,16 @@ describe('Configuration', () => {
       expect(strap.config.source.endsWith('test/_configs/defaultConfig.js')).toBe(true)
       expect(testLogger.error.called).toBe(false)
     })
-    it('outputs error when file not found', () => {
+    it('outputs error when file not found', async () => {
       const strap = new Appstrap({ config: './some/unknown/path', logger: testLogger })
-      expect(strap).toBeDefined() // should still output an empty express object and be valid for middleware insertion
       expect(testLogger.error.called).toBe(true)
+      expect(await canStillMakeRequestsUsing(strap)).toBe(true)
     })
     describe('file validation', () => {
       it('outputs warning when file is missing required endpoints - returns no handlers')
+      it('outputs warning when endpoints in file has no length', () => {
+
+      })
     })
   })
   describe('static assets', () => {
