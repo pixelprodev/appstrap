@@ -1,20 +1,76 @@
 const strapDefault = require('./helpers/strapDefault')
 const request = require('supertest')
 
-it('activate fixture X')
-it('activate compound fixture (individual) X <- Y')
-it('activate compound fixture (individual) X <- Y <- Z')
-it('activate compound fixture (grouped) X <- Y')
-it('activate compound fixture (grouped) X <- Y <- Z')
-it('deactivate single fixture X')
-it('deactivate fixture X from X <- Y')
-it('deactivate fixture Y from X <- Y')
-it('deactivate fixture Y from X <- Y <- Z')
-it('deactivate all fixtures on reset')
-it('performs a shallow merge by default when no mode is specified')
-it('performs a shallow merge when mode === merge')
-it('performs a deep merge when mode === deepMerge')
-it('performs a deep merge when mdoe === mergeDeep')
+it('activate fixture X', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixture('X')
+
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true, x: true })
+})
+it('activate compound fixture (individual) X <- Y', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixture('X')
+  strap.interactor.activateFixture('Y')
+
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true, x: true, y: { deep: true } })
+})
+it('activate compound fixture (individual) X <- Y <- Z', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixture('X')
+  strap.interactor.activateFixture('Y')
+  strap.interactor.activateFixture('Z')
+
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ z: true })
+})
+it('activate compound fixture (grouped) X <- Y', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixtures(['X', 'Y'])
+
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true, x: true, y: { deep: true } })
+})
+it('activate compound fixture (grouped) X <- Y <- Z', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixtures(['X', 'Y', 'Z'])
+
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ z: true })
+})
+it('deactivate single fixture X', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixture('X')
+
+  strap.interactor.deactivateFixture('X')
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true })
+})
+it('deactivate fixture X from X <- Y', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixtures(['X', 'Y'])
+
+  strap.interactor.deactivateFixture('X')
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true, y: { deep: true } })
+})
+it('deactivate fixture Y from X <- Y', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixtures(['X', 'Y'])
+
+  strap.interactor.deactivateFixture('Y')
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ default: true, x: true })
+})
+it('deactivate fixture Y from X <- Y <- Z', async () => {
+  const strap = strapDefault()
+  strap.interactor.activateFixtures(['X', 'Y', 'Z'])
+
+  strap.interactor.deactivateFixture('Y')
+  const response = await request(strap).get('/fixture-intercept')
+  expect(response.body).toEqual({ z: true })
+})
 it('replaces the entire response when mode === replace', async () => {
   const strap = strapDefault()
   strap.interactor.activateFixture('Z')
