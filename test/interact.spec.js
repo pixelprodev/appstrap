@@ -99,7 +99,7 @@ it('returns app status from interactor.getStatus method', () => {
 
 it('returns app status from interactor.getStatus REST call', async () => {
   const strap = strapDefault()
-  const { body } = await request(strap).post('/__interactor/getStatus')
+  const { body } = await request(strap).get('/__interactor/getStatus')
   expect(body.state).toBeDefined()
   expect(body.fixtures).toBeDefined()
   expect(body.handlers).toBeDefined()
