@@ -4,5 +4,8 @@
   "main": "index.js",
   "author": "James LeClair <james@pixelpro.dev>",
   "license": "ISC",
-  "repository": "https://github.com/pixelprodev/appstrap"
+  "repository": "https://github.com/pixelprodev/appstrap",
+  "devDependencies": {
+    "standard": "^14.3.1"
+  }
 }
