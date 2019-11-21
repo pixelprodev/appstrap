@@ -4,7 +4,7 @@ module.exports = {
     bar: 'bang',
     baz: 'zip'
   },
-  endpoints: [
+  routes: [
     {
       path: 'echo-state',
       get: (req, res, next, state) => { res.json(state) }

@@ -1,6 +1,8 @@
 const Appstrap = require('../')
 const testLogger = require('./helpers/TestLogger')
 const canStillMakeRequestsUsing = require('./helpers/canStillMakeRequestsUsing')
+const strapDefault = require('./helpers/strapDefault')
+const request = require('supertest')
 
 describe('Configuration', () => {
   describe('loading', () => {
@@ -21,22 +23,22 @@ describe('Configuration', () => {
       expect(await canStillMakeRequestsUsing(strap)).toBe(true)
     })
     describe('file validation', () => {
-      it('outputs warning when file is missing required endpoints', async () => {
-        const strap = new Appstrap({ config: './test/_configs/noEndpointsConfig.js', logger: testLogger })
-        expect(testLogger.warn.called).toBe(true)
-        expect(await canStillMakeRequestsUsing(strap)).toBe(true)
-      })
-      it('outputs warning when endpoints in file has no length', async () => {
-        const strap = new Appstrap({ config: './test/_configs/emptyEndpointsConfig.js', logger: testLogger })
+      it('outputs warning when routes in file has no length', async () => {
+        const strap = new Appstrap({ config: './test/_configs/emptyRoutesConfig.js', logger: testLogger })
         expect(testLogger.warn.called).toBe(true)
         expect(await canStillMakeRequestsUsing(strap)).toBe(true)
       })
     })
   })
   describe('static assets', () => {
-
+    it('allows for the retrieval of static assets', async () => {
+      const strap = strapDefault()
+      const response = await request(strap).get('/images/appstrap-logo.png')
+      expect(response.headers['content-type']).toEqual('image/png')
+      expect(+response.headers['content-length']).toBeGreaterThan(500)
+    })
   })
-  describe('endpoints', () => {
+  describe('routes', () => {
 
   })
 })

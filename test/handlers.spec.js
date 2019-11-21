@@ -2,7 +2,7 @@ const strapDefault = require('./helpers/strapDefault')
 const request = require('supertest')
 
 describe('Handlers', () => {
-  it('Intercepts a route when defined in config endpoints property', async () => {
+  it.only('Intercepts a route when defined in config endpoints property', async () => {
     const strap = strapDefault()
     const response = await request(strap).get('/foo')
     expect(response.text).toEqual('foo route intercepted')
