@@ -88,3 +88,19 @@ it('injects state via interactor.injectState method', async () => {
 it('injects state via interactor.injectState REST route', () => {
 
 })
+
+it('returns app status from interactor.getStatus method', () => {
+  const strap = strapDefault()
+  const status = strap.interactor.getStatus()
+  expect(status.state).toBeDefined()
+  expect(status.fixtures).toBeDefined()
+  expect(status.handlers).toBeDefined()
+})
+
+it('returns app status from interactor.getStatus REST call', async () => {
+  const strap = strapDefault()
+  const { body } = await request(strap).post('/__interactor/getStatus')
+  expect(body.state).toBeDefined()
+  expect(body.fixtures).toBeDefined()
+  expect(body.handlers).toBeDefined()
+})
