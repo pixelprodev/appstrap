@@ -21,9 +21,15 @@ describe('Configuration', () => {
       expect(await canStillMakeRequestsUsing(strap)).toBe(true)
     })
     describe('file validation', () => {
-      it('outputs warning when file is missing required endpoints - returns no handlers')
-      it('outputs warning when endpoints in file has no length', () => {
-
+      it('outputs warning when file is missing required endpoints', async () => {
+        const strap = new Appstrap({ config: './test/_configs/noEndpointsConfig.js', logger: testLogger })
+        expect(testLogger.warn.called).toBe(true)
+        expect(await canStillMakeRequestsUsing(strap)).toBe(true)
+      })
+      it('outputs warning when endpoints in file has no length', async () => {
+        const strap = new Appstrap({ config: './test/_configs/emptyEndpointsConfig.js', logger: testLogger })
+        expect(testLogger.warn.called).toBe(true)
+        expect(await canStillMakeRequestsUsing(strap)).toBe(true)
       })
     })
   })
