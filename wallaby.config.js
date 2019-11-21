@@ -4,6 +4,7 @@ module.exports = function () {
       { pattern: 'index.js' },
       { pattern: '.appstrap/**/*.js' },
       { pattern: 'lib/**/*.js' },
+      { pattern: 'test/_configs/assets/*.png', instrument: false },
       { pattern: 'test/**/*.js' },
       { pattern: 'test/**/*.spec.js', ignore: true }
     ],
