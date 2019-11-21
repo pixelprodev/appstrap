@@ -5,7 +5,12 @@
   "author": "James LeClair <james@pixelpro.dev>",
   "license": "ISC",
   "repository": "https://github.com/pixelprodev/appstrap",
+  "scripts": {
+    "test": "mocha --opts config/mocha/mocha.opts"
+  },
   "devDependencies": {
+    "expect": "^24.9.0",
+    "mocha": "^6.2.2",
     "standard": "^14.3.1"
   }
 }
