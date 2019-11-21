@@ -1,4 +1,6 @@
 wallaby.config.js
-_test
+test
 .idea
 .appstrap
+config
+.eslintrc
