@@ -6,11 +6,11 @@ const withStateConfig = require('./_configs/withStateConfig')
 describe('app internal state', () => {
   it('defaults to empty object when no initialState is defined', () => {
     const strap = strapDefault()
-    expect(strap.state).toEqual({})
+    expect(strap.memoryStore.state).toEqual({})
   })
   it('loads initialState into app state when defined', () => {
     const strap = new Appstrap({ config: './test/_configs/withStateConfig.js' })
-    expect(strap.state).toEqual(withStateConfig.initialState)
+    expect(strap.memoryStore.state).toEqual(withStateConfig.initialState)
   })
   it('adds state to the req and res objects', async () => {
     const strap = new Appstrap({ config: './test/_configs/withStateConfig.js' })

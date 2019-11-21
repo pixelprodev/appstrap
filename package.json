@@ -17,6 +17,7 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "@hapi/joi": "^16.1.7",
     "body-parser": "^1.19.0",
     "chalk": "^3.0.0",
     "decache": "^4.5.1",
