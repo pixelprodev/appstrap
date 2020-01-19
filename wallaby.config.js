@@ -1,23 +1,26 @@
 module.exports = function () {
   return {
     files: [
-      { pattern: 'src/**/*.js' },
-      { pattern: 'src/**/*.spec.js', ignore: true }
+      { pattern: 'index.js' },
+      { pattern: '.appstrap/**/*.js' },
+      { pattern: 'lib/**/*.js' },
+      { pattern: 'test/_configs/assets/*.png', instrument: false },
+      { pattern: 'test/**/*.js' },
+      { pattern: 'test/**/*.spec.js', ignore: true }
     ],
     tests: [
-      { pattern: 'src/**/*.spec.js' }
+      { pattern: 'test/**/*.spec.js' }
     ],
     testFramework: 'mocha',
     env: {
       type: 'node',
-      runner: 'node'
+      runner: 'node',
+      params: {
+        env: 'NODE_ENV=test'
+      }
     },
-    filesWithNoCoverageCalculated: [
-      'src/cli.js'
-    ],
-    setup: function (wallaby) {
+    setup: function () {
       global.expect = require('expect')
-      wallaby.testFramework.ui('tdd')
     }
   }
 }

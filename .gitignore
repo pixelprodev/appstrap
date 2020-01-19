@@ -1,6 +1,3 @@
 .idea
-.vscode
 node_modules
-.appstrap
-src/management-interface/dist
 .DS_Store

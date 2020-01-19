@@ -1,3 +1,2 @@
 --require config/mocha/setup.js
---ui tdd
---recursive src/**/*.spec.js
+--recursive test/**/*.spec.js
