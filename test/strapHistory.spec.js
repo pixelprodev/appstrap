@@ -21,4 +21,10 @@ describe('Strap history', () => {
     strap.reset()
     expect(strap.history).toHaveLength(0)
   })
+  it('stores the request query as part of the history report', async () => {
+    const strap = strapDefault()
+    await request(strap).get('/foo?myvar=hey&myvar2=ho')
+    expect(strap.history[0].reqQuery).toBeDefined()
+    expect(strap.history[0].reqQuery).toEqual({ myvar: 'hey', myvar2: 'ho' })
+  })
 })
