@@ -1,6 +1,6 @@
 {
   "name": "@appstrap/core",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "main": "index.js",
   "author": "James LeClair <james@pixelpro.dev>",
   "license": "ISC",
