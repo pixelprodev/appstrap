@@ -15,9 +15,13 @@ describe('Response Sequence', () => {
         successfulResponse('response 3')
       ]
     }])
-    const responses = await Promise.all([
+    const responses = []
+    const requests = [
       request(strap).get('/foo'), request(strap).get('/foo'), request(strap).get('/foo'), request(strap).get('/foo')
-    ])
+    ]
+    for await (const request of requests) {
+      responses.push(await request)
+    }
     expect(responses[0].text).toBe('response 1')
     expect(responses[1].text).toBe('response 2')
     expect(responses[2].text).toBe('response 3')
@@ -63,9 +67,13 @@ describe('Response Sequence', () => {
         successfulResponse('response 2')
       ]
     }])
-    const responses = await Promise.all([
+    const responses = []
+    const requests = [
       request(strap).get('/foo'), request(strap).get('/foo'), request(strap).get('/foo'), request(strap).get('/foo')
-    ])
+    ]
+    for await (const request of requests) {
+      responses.push(await request)
+    }
     expect(responses[0].text).toBe('response 1')
     expect(responses[0].status).toBe(200)
     expect(responses[1].text).toBe('special error message not found')
