@@ -68,12 +68,15 @@ it('allows for setting latency delayed response on an endpoint over REST', async
   expect(delayedResponse.status).toEqual(200)
 })
 
-xit('allows for removing all modifiers on a handler via interactor', async () => {
+it('allows for removing all modifiers on a handler via interactor', async () => {
   const strap = strapDefault()
+
+  strap.interactor.setModifier({ path: 'foo', method: 'get', error: true, errorCode: 400 })
   strap.interactor.clearModifiers({ path: 'foo', method: 'get' })
+  console.log(strap.interactor.getStatus())
 })
 
-xit('allows for removing all modifiers on a handler over REST', async () => {
+it('allows for removing all modifiers on a handler over REST', async () => {
   const strap = strapDefault()
   await request(strap).post('/__interactor/clearModifiers').send({ path: 'foo', method: 'get' })
 })
