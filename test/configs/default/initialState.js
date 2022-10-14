@@ -1,3 +1,3 @@
 module.exports = {
-  endpoints: []
+  foo: 'initial'
 }
