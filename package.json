@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "expect": "^24.9.0",
-    "mocha": "^6.2.2",
+    "mocha": "^10.1.0",
     "performance-now": "^2.1.0",
     "sinon": "^7.5.0",
     "standard": "^14.3.1",
