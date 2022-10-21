@@ -23,6 +23,7 @@
     "chokidar": "^3.3.0",
     "decache": "^4.5.1",
     "express": "^4.17.1",
+    "glob": "^8.0.3",
     "lodash.merge": "^4.6.2"
   },
   "files": [
