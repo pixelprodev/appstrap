@@ -6,11 +6,10 @@
   "license": "ISC",
   "repository": "https://github.com/pixelprodev/appstrap",
   "scripts": {
-    "test": "mocha --opts config/mocha/mocha.opts"
+    "test": "jest"
   },
   "devDependencies": {
-    "expect": "^24.9.0",
-    "mocha": "^10.1.0",
+    "expect": "^27.4.6",
     "performance-now": "^2.1.0",
     "sinon": "^7.5.0",
     "standard": "^14.3.1",
@@ -24,7 +23,8 @@
     "decache": "^4.5.1",
     "express": "^4.17.1",
     "glob": "^8.0.3",
-    "lodash.merge": "^4.6.2"
+    "lodash.merge": "^4.6.2",
+    "mocha": "^10.2.0"
   },
   "files": [
     "index.js",

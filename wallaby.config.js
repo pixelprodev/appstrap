@@ -18,9 +18,6 @@ module.exports = function () {
       params: {
         env: 'NODE_ENV=test'
       }
-    },
-    setup: function () {
-      global.expect = require('expect')
     }
   }
 }
