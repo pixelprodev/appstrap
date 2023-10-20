@@ -1,8 +1,9 @@
 module.exports = {
-  routes: [
+  handlers: [
     {
       path: '/foo',
-      GET: {
+      method: 'GET',
+      payload: {
         bar: 'baz'
       }
     }

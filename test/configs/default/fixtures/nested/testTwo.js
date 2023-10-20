@@ -1,9 +1,10 @@
 module.exports = {
-  routes: [
+  handlers: [
     {
       path: '/nested/twice/zip',
+      method: 'GET',
       mode: 'deepMerge',
-      get: {
+      payload: {
         fixture: 'added'
       }
     }

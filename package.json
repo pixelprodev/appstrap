@@ -24,7 +24,8 @@
     "express": "^4.17.1",
     "glob": "^8.0.3",
     "lodash.merge": "^4.6.2",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "request": "^2.88.2"
   },
   "files": [
     "index.js",
