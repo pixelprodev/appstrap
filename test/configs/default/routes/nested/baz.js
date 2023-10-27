@@ -1,3 +1,3 @@
-module.exports.GET = (req, res) => {
-  res.send('hello world nested/baz')
+module.exports.GET = () => {
+  return 'hello world nested/baz'
 }

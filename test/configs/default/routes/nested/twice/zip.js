@@ -1,5 +1,5 @@
-module.exports.GET = (req, res) => {
-  res.json({
+module.exports.GET = () => {
+  return {
     bar: 'zip'
-  })
+  }
 }
