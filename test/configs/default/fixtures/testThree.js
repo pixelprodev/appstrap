@@ -3,9 +3,7 @@ module.exports = {
     {
       path: '/foo',
       method: 'GET',
-      payload: {
-        bar: 'baz'
-      }
+      payload: { bar: 'bingo', zip: 'zang' }
     }
   ]
 }

@@ -1,3 +1,3 @@
-module.exports.GET = (req, res) => {
-  res.send(req.params.routeParam)
+module.exports.GET = (req) => {
+  return req.params.routeParam
 }

@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const strapDefault = require('./helpers/strapDefault')
+const expect = require('expect')
 
 describe('Responses', () => {
   it('does something', async () => {

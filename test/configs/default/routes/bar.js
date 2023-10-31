@@ -1,6 +1,6 @@
-module.exports.GET = (req, res) => {
-  res.send('hello world baz')
+module.exports.GET = () => {
+  return 'hello world baz'
 }
-module.exports.POST = (req, res) => {
-  res.send('hello world baz - post')
+module.exports.POST = () => {
+  return 'hello world baz - post'
 }

@@ -1,2 +1,0 @@
---require config/mocha/setup.js
---recursive test/**/*.spec.js
