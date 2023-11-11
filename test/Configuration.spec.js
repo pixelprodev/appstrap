@@ -6,7 +6,7 @@ const { ERR_NO_REPOSITORY_DEFINED, ERR_NO_REPOSITORY_FOUND } = require('../lib/_
 describe('Appstrap Configuration', () => {
   it('matches the following shape', () => {
     const strap = strapDefault()
-    const expectedKeys = ['files', 'watchEnabled', 'state', 'hostMap', 'repository', 'endpoints', 'fixtures']
+    const expectedKeys = ['files', 'state', 'hostMap', 'repository', 'endpoints', 'fixtures']
     expect(Object.keys(strap.config)).toEqual(expect.arrayContaining(expectedKeys))
   })
   it('throws an error when no repository is provided on instance construction', () => {
@@ -14,11 +14,6 @@ describe('Appstrap Configuration', () => {
   })
   it('throws an error when an invalid repository is provided on instance construction', () => {
     expect(() => new Appstrap({ repository: 'path/not/found' })).toThrow(ERR_NO_REPOSITORY_FOUND('path/not/found'))
-  })
-  it('default configuration values on no argument instance construction', () => {
-    const strap = strapDefault()
-    expect(strap.config.watchEnabled).toBe(false)
-    expect(strap.config.state).toEqual({})
   })
   it('sets the config repository to the provided value on instance construction', () => {
     const strap = strapDefault()
