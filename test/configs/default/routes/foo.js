@@ -4,3 +4,10 @@ module.exports.GET = () => {
     foo: 'bar'
   }
 }
+
+module.exports.POST = () => {
+  return {
+    post: 'foo',
+    zip: 'zow'
+  }
+}

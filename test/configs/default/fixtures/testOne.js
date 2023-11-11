@@ -3,6 +3,7 @@ module.exports = {
     {
       path: '/foo',
       method: 'GET',
+      mode: 'foobar',
       payload: {
         bar: 'baz'
       }
