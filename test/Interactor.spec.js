@@ -15,9 +15,17 @@ describe('Interactor', () => {
         fixtures: joi.array().items(joi.object({
           name: joi.string(),
           active: joi.bool(),
-          order: joi.number()
+          order: joi.number(),
+          handlers: joi.array().items(joi.object({
+            path: joi.string(),
+            mode: joi.string(),
+            payload: joi.object(),
+            handler: joi.string(),
+            method: joi.string(),
+            operationName: joi.string()
+          }))
         })),
-        routes: joi.array(),
+        endpoints: joi.array(),
         state: joi.object()
       })
     })
