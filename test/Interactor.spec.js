@@ -4,6 +4,7 @@ const expect = require('expect')
 const joi = require('joi')
 const Appstrap = require('../lib/Appstrap')
 const { ERR_NO_MATCHING_METHOD_UPDATE, ERR_NO_MATCHING_ENDPOINT_UPDATE } = require('../lib/_errors')
+const { getByKey } = require('../lib/Config/endpoints')
 
 describe('Interactor', () => {
   beforeEach(() => {
@@ -59,14 +60,14 @@ describe('Interactor', () => {
       })
       it('disables only one method when one is specified by path', () => {
         this.strap.interactor.setEndpointEnabled({ key: '/foo', method: 'GET', enabled: false })
-        const { endpoint } = this.strap.config.endpoints.getByKey('/foo')
+        const { endpoint } = getByKey('/foo', this.strap.config.endpoints)
         expect(endpoint.enabled).toBe(true)
         expect(endpoint.modifiers.get('GET').enabled).toBe(false)
         expect(endpoint.modifiers.get('POST').enabled).toBe(true)
       })
       it('disables the entire route when no method is specified by path', () => {
         this.strap.interactor.setEndpointEnabled({ key: '/foo', enabled: false })
-        const { endpoint } = this.strap.config.endpoints.getByKey('/foo')
+        const { endpoint } = getByKey('/foo', this.strap.config.endpoints)
         expect(endpoint.enabled).toBe(false)
       })
       it('throws an error when a specified GQL operation does not exist', () => {
@@ -78,7 +79,7 @@ describe('Interactor', () => {
         const gqlOperation = 'RunQueryOne'
         const strap = new Appstrap({ repository: 'test/configs/withGQL', gqlEndpoint: '/' })
         strap.interactor.setEndpointEnabled({ key: gqlOperation, enabled: false })
-        const { endpoint } = strap.config.endpoints.getByKey(gqlOperation)
+        const { endpoint } = getByKey(gqlOperation, strap.config.endpoints)
         expect(endpoint.modifiers.get(gqlOperation).enabled).toBe(false)
       })
     })
@@ -95,7 +96,7 @@ describe('Interactor', () => {
           .post('/__interactor/setEndpointEnabled')
           .send({ key: '/foo', method: 'GET', enabled: false })
         expect(response.status).toBe(200)
-        const { endpoint } = this.strap.config.endpoints.getByKey('/foo')
+        const { endpoint } = getByKey('/foo', this.strap.config.endpoints)
         expect(endpoint.enabled).toBe(true)
         expect(endpoint.modifiers.get('GET').enabled).toBe(false)
         expect(endpoint.modifiers.get('POST').enabled).toBe(true)
@@ -105,7 +106,7 @@ describe('Interactor', () => {
           .post('/__interactor/setEndpointEnabled')
           .send({ key: '/foo', enabled: false })
         expect(response.status).toBe(200)
-        const { endpoint } = this.strap.config.endpoints.getByKey('/foo')
+        const { endpoint } = getByKey('/foo', this.strap.config.endpoints)
         expect(endpoint.enabled).toBe(false)
       })
       it('throws an error when a specified GQL operation does not exist', async () => {
@@ -123,7 +124,7 @@ describe('Interactor', () => {
           .post('/__interactor/setEndpointEnabled')
           .send({ key: gqlOperation, enabled: false })
         expect(response.status).toBe(200)
-        const { endpoint } = strap.config.endpoints.getByKey(gqlOperation)
+        const { endpoint } = getByKey(gqlOperation, strap.config.endpoints)
         expect(endpoint.modifiers.get(gqlOperation).enabled).toBe(false)
       })
     })
