@@ -1,6 +1,6 @@
 {
   "name": "@appstrap/core",
-  "version": "3.0.2",
+  "version": "4.0.0-rc.1",
   "main": "index.js",
   "author": "James LeClair <james@pixelpro.dev>",
   "license": "ISC",
@@ -17,7 +17,6 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
-    "@hapi/joi": "^16.1.7",
     "axios": "^1.6.0",
     "body-parser": "^1.19.0",
     "chalk": "^3.0.0",
@@ -25,6 +24,7 @@
     "decache": "^4.5.1",
     "express": "^4.17.1",
     "glob": "^8.0.3",
+    "joi": "^17.11.0",
     "lodash.merge": "^4.6.2",
     "mocha": "^10.2.0"
   },
