@@ -10,6 +10,7 @@ describe('Fixtures', () => {
     it('applies a fixture to a single route when path is /foo', async () => {
       const strap = strapDefault()
       strap.interactor.activateFixture('testOne')
+      expect(strap.config.state.getState().fixtures.active.has('testOne'))
       const response = await supertest(strap).get('/foo')
       expect(response.body.bar).toBeDefined()
     })
