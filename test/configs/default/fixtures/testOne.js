@@ -3,7 +3,7 @@ module.exports = {
     {
       path: '/foo',
       method: 'GET',
-      mode: 'foobar',
+      mode: 'mergeDeep',
       payload: {
         bar: 'baz'
       }
