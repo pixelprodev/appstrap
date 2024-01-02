@@ -3,7 +3,7 @@ module.exports = {
     {
       path: '/nested/twice/zip',
       method: 'GET',
-      mode: 'deepMerge',
+      mode: 'mergeDeep',
       payload: {
         fixture: 'added'
       }

@@ -26,7 +26,10 @@
     "glob": "^8.0.3",
     "joi": "^17.11.0",
     "lodash.merge": "^4.6.2",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "redux": "^4.2.1",
+    "redux-saga": "^1.2.3",
+    "reselect": "^4.1.8"
   },
   "files": [
     "index.js",
