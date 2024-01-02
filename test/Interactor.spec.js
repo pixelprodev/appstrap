@@ -86,18 +86,30 @@ describe('Interactor', () => {
   })
   describe('deactivateFixture()', () => {
     describe('direct', () => {
-      it('deactivates a single fixture at the front of the fixture queue', async () => {
+      it('deactivates a single fixture at the front of the fixture queue', () => {
         this.strap.interactor.activateFixture('nested/testTwo')
         expect(this.strap.config.state.getState().fixtures.active.has('nested/testTwo')).toBe(true)
 
         this.strap.interactor.deactivateFixture('nested/testTwo')
         expect(this.strap.config.state.getState().fixtures.active.has('nested/testTwo')).toBe(false)
       })
-      it('deactivates a single fixture in the middle of the fixture queue')
+      it('deactivates a single fixture in the middle of the fixture queue', () => {
+        this.strap.interactor.activateFixtures(['nested/testTwo', 'testOne', 'testThree'])
+        expect(this.strap.config.state.getState().fixtures.active.has('testOne')).toBe(true)
+
+        this.strap.interactor.deactivateFixture('testOne')
+        expect(this.strap.config.state.getState().fixtures.active.has('testOne')).toBe(false)
+      })
       it('deactivates a single fixture at the end of the fixture queue')
     })
     describe('via rest', () => {
+      it('deactivates a single fixture at the front of the fixture queue', async () => {
+        this.strap.interactor.activateFixture('nested/testTwo')
+        expect(this.strap.config.state.getState().fixtures.active.has('nested/testTwo')).toBe(true)
 
+        await supertest(this.strap).post('/__interactor/deactivateFixture').send({ name: 'nested/testTwo' })
+        expect(this.strap.config.state.getState().fixtures.active.has('nested/testTwo')).toBe(false)
+      })
     })
   })
   describe('injectState()', () => {

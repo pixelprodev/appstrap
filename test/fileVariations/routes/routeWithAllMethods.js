@@ -1,0 +1,5 @@
+module.exports.GET = (context) => ({ method: context.req.method })
+module.exports.PUT = (context) => ({ method: context.req.method })
+module.exports.POST = (context) => ({ method: context.req.method })
+module.exports.PATCH = (context) => ({ method: context.req.method })
+module.exports.DELETE = (context) => ({ method: context.req.method })

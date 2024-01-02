@@ -1,10 +1,21 @@
 const supertest = require('supertest')
 const strapDefault = require('./helpers/strapDefault')
 const expect = require('expect')
+const Fixture = require('../lib/Fixture')
 describe('Fixtures', () => {
-  describe('Configured', () => {
-
+  it('Throws an error when the constructor fails to load the specified file at filePath', () => {
+    expect(() => new Fixture('/path/not/found')).toThrow(/Cannot find module*/)
   })
+  // todo dive deeper on validations
+  it('Throws an error when validation fails for the loaded file', () => {
+    expect(() => new Fixture('/test/fileVariations/fixtures/invalidFixture.js')).toThrow(/^Unable to validate file*/)
+  })
+
+  it('returns the fixture definition when validation succeeds for the loaded file', () => {
+    const fixture = new Fixture('/test/fileVariations/fixtures/validFixture.js')
+    expect(fixture.name).toBe('validFixture')
+  })
+
   describe('Applied', () => {
     it('applies a fixture to a graphql operation')
     it('applies a fixture to a single route when path is /foo', async () => {
